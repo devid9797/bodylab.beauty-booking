@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BodyLab.Beauty — Pieraksts</title>
+<style>
+  :root{
+    --bg:#fdf5f7;
+    --card:#fff8f6;
+    --border:#e8c8d0;
+    --accent:#7a3a50;
+    --accent-soft:#a06070;
+    --text:#6b3a4a;
+    --text-soft:#9c6070;
+    --chip-bg:#fbe9ee;
+    --chip-border:#e0b8c4;
+    --chip-selected:#7a3a50;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:1.5rem 1rem 3rem;
+    color:var(--text);
+  }
+  .wrap{max-width:440px;width:100%}
+  .logo{width:130px;display:block;margin:0 auto 1.25rem}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:1.25rem;
+    margin-bottom:1rem;
+  }
+  h1{font-size:18px;font-weight:600;color:var(--accent);margin-bottom:2px;text-align:center}
+  .sub{font-size:13px;color:var(--accent-soft);text-align:center;margin-bottom:1rem}
+  .divider{width:36px;height:1px;background:var(--chip-border);margin:.75rem auto}
+
+  .day-label{font-size:13px;font-weight:600;color:var(--accent);margin:14px 0 8px}
+  .day-label:first-child{margin-top:0}
+  .times{display:flex;flex-wrap:wrap;gap:8px}
+  .time-chip{
+    background:var(--chip-bg);
+    border:1px solid var(--chip-border);
+    color:var(--accent);
+    border-radius:10px;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  .time-chip:hover{background:#f5d6df}
+  .time-chip.selected{background:var(--chip-selected);color:#fff8f6;border-color:var(--chip-selected)}
+
+  .empty,.loading,.error{font-size:13px;color:var(--text-soft);text-align:center;padding:1rem 0}
+
+  label{display:block;font-size:12px;font-weight:600;color:var(--accent);margin:12px 0 5px}
+  label:first-of-type{margin-top:0}
+  input,select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid var(--chip-border);
+    background:#fff;
+    font-size:14px;
+    color:var(--text);
+    font-family:inherit;
+  }
+  input:focus,select:focus{outline:2px solid var(--accent-soft);outline-offset:1px}
+
+  .selected-slot{
+    background:var(--chip-bg);
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:13px;
+    color:var(--accent);
+    font-weight:600;
+    margin-bottom:4px;
+  }
+
+  .btn{
+    display:block;
+    width:100%;
+    padding:13px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    text-align:center;
+    border:none;
+    cursor:pointer;
+    margin-top:16px;
+  }
+  .btn-primary{background:var(--accent);color:#fff8f6}
+  .btn-primary:disabled{background:#c9a4b2;cursor:not-allowed}
+  .btn-back{background:none;color:var(--text-soft);text-decoration:underline;font-weight:500;font-size:12px;margin-top:10px;padding:4px}
+
+  .hint{font-size:11px;color:var(--text-soft);margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="https://i.postimg.cc/25JjPsHP/Bodylab-Beauty-logo.png" alt="BodyLab.Beauty">
+
+  <div class="card">
+    <h1 id="title">Izvēlies laiku</h1>
+    <div class="sub" id="subtitle">Выберите удобное время</div>
+    <div class="divider"></div>
+    <div id="slots-area">
+      <div class="loading">Ielāde... / Загрузка...</div>
+    </div>
+  </div>
+
+  <div class="card" id="form-card" style="display:none">
+    <div class="selected-slot" id="selected-slot-label"></div>
+    <button class="btn-back" id="back-btn" type="button">← Izvēlēties citu laiku / выбрать другое время</button>
+    <div class="divider"></div>
+
+    <label for="first_name">Vārds / Имя *</label>
+    <input id="first_name" type="text" required>
+
+    <label for="last_name">Uzvārds / Фамилия *</label>
+    <input id="last_name" type="text" required>
+
+    <label for="phone">Telefons / Телефон *</label>
+    <input id="phone" type="tel" placeholder="+371 20000000" required>
+
+    <label for="instagram">Instagram (nav obligāti / необязательно)</label>
+    <input id="instagram" type="text" placeholder="@username">
+
+    <label for="service">Pakalpojums / Услуга *</label>
+    <input id="service" type="text" placeholder="Manikīrs, skropstas..." required>
+
+    <button class="btn btn-primary" id="submit-btn" type="button">Apstiprināt pierakstu / Подтвердить запись</button>
+    <div class="hint" id="form-error" style="color:#b03030"></div>
+  </div>
+</div>
+
+<script>
+  // Замените на актуальные адреса ваших вебхуков, если они изменятся
+  const SLOTS_URL = "https://hook.eu1.make.com/yxt8nps9v5se66dkgawp4pcleaq5n5zj";
+  const BOOK_URL  = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
+
+  const slotsArea   = document.getElementById('slots-area');
+  const formCard    = document.getElementById('form-card');
+  const titleEl     = document.getElementById('title');
+  const subtitleEl  = document.getElementById('subtitle');
+  const selectedLbl = document.getElementById('selected-slot-label');
+  const backBtn     = document.getElementById('back-btn');
+  const submitBtn   = document.getElementById('submit-btn');
+  const formError   = document.getElementById('form-error');
+
+  let selectedSlot = null;
+
+  const WEEKDAYS = ['Sv','Pr','Ot','Tr','Ce','Pk','Se'];
+
+  function formatDayLabel(dateStr){
+    const d = new Date(dateStr);
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return `${WEEKDAYS[d.getDay()]}, ${dd}.${mm}`;
+  }
+
+  function formatTime(dateStr){
+    const d = new Date(dateStr);
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+
+  async function loadSlots(){
+    try{
+      const res = await fetch(SLOTS_URL);
+      if(!res.ok) throw new Error('bad response');
+      const slots = await res.json();
+
+      if(!Array.isArray(slots) || slots.length === 0){
+        slotsArea.innerHTML = '<div class="empty">Šobrīd nav pieejamu laiku.<br>Сейчас нет свободных мест. Сообщите нам в WhatsApp.</div>';
+        return;
+      }
+
+      slots.sort((a,b) => new Date(a.start) - new Date(b.start));
+
+      const byDay = {};
+      slots.forEach(slot => {
+        const dayKey = slot.start.slice(0,10);
+        if(!byDay[dayKey]) byDay[dayKey] = [];
+        byDay[dayKey].push(slot);
+      });
+
+      slotsArea.innerHTML = '';
+      Object.keys(byDay).forEach(dayKey => {
+        const dayLabel = document.createElement('div');
+        dayLabel.className = 'day-label';
+        dayLabel.textContent = formatDayLabel(dayKey);
+        slotsArea.appendChild(dayLabel);
+
+        const timesWrap = document.createElement('div');
+        timesWrap.className = 'times';
+
+        byDay[dayKey].forEach(slot => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'time-chip';
+          chip.textContent = formatTime(slot.start);
+          chip.addEventListener('click', () => selectSlot(slot, chip));
+          timesWrap.appendChild(chip);
+        });
+
+        slotsArea.appendChild(timesWrap);
+      });
+
+    }catch(err){
+      slotsArea.innerHTML = '<div class="error">Neizdevās ielādēt laikus.<br>Не удалось загрузить время. Попробуйте обновить страницу.</div>';
+    }
+  }
+
+  function selectSlot(slot, chipEl){
+    selectedSlot = slot;
+    document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+    chipEl.classList.add('selected');
+
+    selectedLbl.textContent = `${formatDayLabel(slot.start.slice(0,10))} — ${formatTime(slot.start)}`;
+    titleEl.style.display = 'none';
+    subtitleEl.style.display = 'none';
+    document.querySelector('.divider').style.display = 'none';
+    slotsArea.parentElement.style.display = 'none';
+    formCard.style.display = 'block';
+    formError.textContent = '';
+  }
+
+  backBtn.addEventListener('click', () => {
+    formCard.style.display = 'none';
+    titleEl.style.display = '';
+    subtitleEl.style.display = '';
+    document.querySelectorAll('.divider')[0].style.display = '';
+    slotsArea.parentElement.style.display = '';
+    selectedSlot = null;
+  });
+
+  submitBtn.addEventListener('click', async () => {
+    const first_name = document.getElementById('first_name').value.trim();
+    const last_name  = document.getElementById('last_name').value.trim();
+    const phone      = document.getElementById('phone').value.trim();
+    const instagram  = document.getElementById('instagram').value.trim();
+    const service    = document.getElementById('service').value.trim();
+
+    if(!first_name || !last_name || !phone || !service){
+      formError.textContent = 'Lūdzu, aizpildiet visus obligātos laukus. / Заполните все обязательные поля.';
+      return;
+    }
+    if(!selectedSlot){
+      formError.textContent = 'Lūdzu, izvēlieties laiku. / Пожалуйста, выберите время.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sūta... / Отправка...';
+    formError.textContent = '';
+
+    try{
+      const res = await fetch(BOOK_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          event_id: selectedSlot.id,
+          calendar_id: selectedSlot.value,
+          first_name, last_name, phone, instagram, service
+        })
+      });
+      const html = await res.text();
+      document.open();
+      document.write(html);
+      document.close();
+    }catch(err){
+      formError.textContent = 'Kļūda. Lūdzu, mēģiniet vēlreiz. / Ошибка. Попробуйте ещё раз.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Apstiprināt pierakstu / Подтвердить запись';
+    }
+  });
+
+  loadSlots();
+</script>
+</body>
+</html>
