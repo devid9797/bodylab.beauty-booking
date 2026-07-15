@@ -159,7 +159,7 @@
 
 <script>
   // Замените на актуальные адреса ваших вебхуков, если они изменятся
-  const SLOTS_URL = "https://hook.eu1.make.com/chxy2gbr9e3l8tgbgqtlvx6mpwjvyjur";
+  const SLOTS_URL = "https://script.google.com/macros/s/AKfycbwBekbTuKwSahhXylhyP7ipGa08plUctWvta1vOftwLMG6TUx22x0EiYmiOdTmsWktA/exec";
   const BOOK_URL  = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
 
   const slotsArea   = document.getElementById('slots-area');
@@ -189,7 +189,7 @@
 
   async function loadSlots(){
     try{
-      const res = await fetch(SLOTS_URL, { method: 'POST', cache: 'no-store' });
+      const res = await fetch(SLOTS_URL, { method: 'GET', cache: 'no-store' });
       if(!res.ok) throw new Error('bad response');
       const slots = await res.json();
 
