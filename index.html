@@ -6,7 +6,7 @@
 <title>BodyLab.Beauty — Pieraksts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#fdf5f7;
@@ -57,7 +57,7 @@
   }
   .cal-nav-btn:disabled{opacity:.3;cursor:default}
   .cal-nav-btn:not(:disabled):hover{background:var(--chip-bg)}
-  .cal-month-label{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--accent);text-transform:capitalize}
+  .cal-month-label{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;font-weight:600;letter-spacing:.02em;color:var(--accent);text-transform:capitalize}
 
   .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px}
   .cal-weekdays span{
@@ -202,8 +202,8 @@
   <img class="logo" src="https://i.postimg.cc/25JjPsHP/Bodylab-Beauty-logo.png" alt="BodyLab.Beauty">
 
   <div class="card" id="calendar-card">
-    <h1>Izvēlies datumu</h1>
-    <div class="sub">Выберите удобную дату</div>
+    <h1>Izvēlies pieejamu datumu</h1>
+    <div class="sub">Выберите доступную дату</div>
     <div class="divider"></div>
     <div id="cal-area">
       <div class="loading">Ielāde... / Загрузка...</div>
@@ -291,6 +291,7 @@
   let monthIndex   = 0;
 
   const WEEKDAYS = ['Sv','Pr','Ot','Tr','Ce','Pk','Se'];
+  const WEEKDAYS_GRID = ['Pr','Ot','Tr','Ce','Pk','Se','Sv'];
   const MONTHS = ['janvāris','februāris','marts','aprīlis','maijs','jūnijs','jūlijs','augusts','septembris','oktobris','novembris','decembris'];
   const WEEKDAYS_FULL = ['Svētdiena','Pirmdiena','Otrdiena','Trešdiena','Ceturtdiena','Piektdiena','Sestdiena'];
 
@@ -335,7 +336,7 @@
     const [year, month] = monthKey.split('-').map(Number);
     const firstDay = new Date(year, month-1, 1);
     const daysInMonth = new Date(year, month, 0).getDate();
-    const startOffset = firstDay.getDay();
+    const startOffset = (firstDay.getDay() + 6) % 7;
 
     const todayKey = new Date().toISOString().slice(0,10);
 
@@ -346,7 +347,7 @@
       <button class="cal-nav-btn" id="cal-next" type="button" ${monthIndex===monthKeys.length-1?'disabled':''} aria-label="Nākamais mēnesis">›</button>
     </div>`;
 
-    html += '<div class="cal-weekdays">' + WEEKDAYS.map(w => `<span>${w}</span>`).join('') + '</div>';
+    html += '<div class="cal-weekdays">' + WEEKDAYS_GRID.map(w => `<span>${w}</span>`).join('') + '</div>';
     html += '<div class="cal-grid">';
 
     for(let i=0;i<startOffset;i++){ html += '<div class="cal-cell"></div>'; }
