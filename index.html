@@ -48,7 +48,7 @@
 
   /* ---------- Language switch ---------- */
   .lang-switch{
-    position:absolute;top:14px;left:14px;z-index:5;
+    position:absolute;top:14px;right:14px;z-index:5;
   }
   .lang-toggle{
     display:flex;align-items:center;gap:6px;
@@ -64,7 +64,7 @@
   .lang-toggle svg{width:9px;height:9px;transition:transform .2s ease}
   .lang-switch.open .lang-toggle svg{transform:rotate(180deg)}
   .lang-menu{
-    position:absolute;top:calc(100% + 6px);left:0;
+    position:absolute;top:calc(100% + 6px);right:0;
     background:var(--card);
     border:1px solid var(--chip-border);
     border-radius:10px;
@@ -91,22 +91,11 @@
     height:220px;
     position:relative;
     background:
-      radial-gradient(circle at 28% 22%, var(--glow-soft) 0%, transparent 55%),
-      linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
-    /* TODO: replace with a real photo, e.g.:
-       background-image:url('https://your-image-host/hero.jpg');
-       background-size:cover; background-position:center; */
+      linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.18) 100%),
+      url('https://i.postimg.cc/JnXK1cYd/DSC-0200.jpg');
+    background-size:cover;
+    background-position:center;
     overflow:hidden;
-  }
-  .hero-photo::before{
-    content:'BB';
-    position:absolute;
-    right:-10px;bottom:-30px;
-    font-family:'Montserrat',sans-serif;
-    font-size:140px;
-    font-weight:600;
-    color:rgba(255,255,255,.14);
-    line-height:1;
   }
   .hero-logo-wrap{display:flex;justify-content:center;margin-top:-45px;position:relative;z-index:2}
   .hero-logo{
@@ -291,7 +280,7 @@
     width:100%;
     display:flex;
     align-items:flex-start;
-    gap:12px;
+    gap:14px;
     padding:14px 2px;
     background:none;
     border:none;
@@ -301,20 +290,15 @@
   }
   .service-thumb{
     flex:none;
-    width:56px;height:56px;
-    border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Montserrat',sans-serif;
-    font-weight:600;
-    font-size:18px;
-    color:var(--card);
-    /* TODO: replace tone backgrounds with real photo thumbnails, e.g.:
-       .service-thumb{background-image:url('...'); background-size:cover; background-position:center;} */
+    width:80px;height:80px;
+    border-radius:14px;
+    background-size:cover;
+    background-position:center;
   }
-  .service-thumb[data-tone="1"]{background:linear-gradient(135deg,var(--accent-soft),var(--accent))}
-  .service-thumb[data-tone="2"]{background:linear-gradient(135deg,#B4B2B0,#747372)}
-  .service-thumb[data-tone="3"]{background:linear-gradient(135deg,#C4C0BB,#8A8886)}
-  .service-thumb[data-tone="4"]{background:linear-gradient(135deg,#A6A4A2,#5F5E5D)}
+  .service-thumb[data-tone="1"]{background-image:url('https://i.postimg.cc/k4SwnFhd/DSC-0205.jpg')}
+  .service-thumb[data-tone="2"]{background-image:url('https://i.postimg.cc/9M91Wtg8/DSC-0113.jpg')}
+  .service-thumb[data-tone="3"]{background-image:url('https://i.postimg.cc/V6t4YBZV/DSC-0285.jpg')}
+  .service-thumb[data-tone="4"]{background-image:url('https://i.postimg.cc/wBZ08b2S/DSC-3262.jpg')}
   .service-head-text{flex:1;min-width:0}
   .service-badge{
     display:inline-block;
@@ -335,11 +319,12 @@
   .service-chevron{
     flex:none;
     color:var(--text-soft);
-    font-size:14px;
-    margin-top:6px;
+    font-size:22px;
+    margin-top:8px;
     transition:transform .25s ease;
   }
   .service-item.open .service-chevron{transform:rotate(180deg)}
+  .service-item.open .service-head .service-thumb{display:none}
 
   .service-body{
     display:grid;
@@ -350,7 +335,7 @@
   .service-body-inner{overflow:hidden}
   .service-body-content{padding:0 2px 18px 2px}
   .service-body-content .service-thumb-lg{
-    width:100%;height:150px;border-radius:14px;margin-bottom:12px;
+    width:100%;height:315px;border-radius:14px;margin-bottom:12px;
   }
   .service-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
   .service-effects-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
@@ -383,7 +368,7 @@
     </div>
     <div class="hero-logo-wrap">
       <div class="hero-logo">
-        <img src="https://i.postimg.cc/25JjPsHP/Bodylab-Beauty-logo.png" alt="BodyLab.Beauty">
+        <img src="https://i.postimg.cc/Jzd90xK0/Bodylab-Beauty-Logo.jpg" alt="BodyLab.Beauty">
       </div>
     </div>
     <div class="hero-content">
@@ -426,7 +411,7 @@
 
       <div class="service-item">
         <button class="service-head" type="button" aria-expanded="false">
-          <div class="service-thumb" data-tone="1">R</div>
+          <div class="service-thumb" data-tone="1"></div>
           <div class="service-head-text">
             <span class="service-badge" data-i18n="top_badge"></span>
             <div class="service-name">R-Sleek</div>
@@ -459,7 +444,7 @@
 
       <div class="service-item">
         <button class="service-head" type="button" aria-expanded="false">
-          <div class="service-thumb" data-tone="2">B</div>
+          <div class="service-thumb" data-tone="2"></div>
           <div class="service-head-text">
             <div class="service-name">B-Flexy</div>
             <div class="service-tagline" data-i18n="bflexy_tagline"></div>
@@ -480,8 +465,8 @@
                 <li data-i18n="bflexy_eff4"></li>
               </ul>
               <div class="service-prices">
-                <!-- TODO: confirm real price -->
-                <div class="service-price-row"><span data-i18n="bflexy_price1_label"></span><span data-i18n="price_on_request"></span></div>
+                <div class="service-price-row"><span data-i18n="bflexy_price1_label"></span><span>30€</span></div>
+                <div class="service-price-row"><span data-i18n="bflexy_price2_label"></span><span>280€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="B-Flexy (45 min)" data-i18n="book_btn"></button>
             </div>
@@ -491,7 +476,7 @@
 
       <div class="service-item">
         <button class="service-head" type="button" aria-expanded="false">
-          <div class="service-thumb" data-tone="3">E</div>
+          <div class="service-thumb" data-tone="3"></div>
           <div class="service-head-text">
             <div class="service-name">EMS Zero</div>
             <div class="service-tagline" data-i18n="emszero_tagline"></div>
@@ -512,9 +497,8 @@
                 <li data-i18n="emszero_eff4"></li>
               </ul>
               <div class="service-prices">
-                <!-- TODO: confirm real prices -->
-                <div class="service-price-row"><span data-i18n="emszero_price1_label"></span><span data-i18n="price_on_request"></span></div>
-                <div class="service-price-row"><span data-i18n="emszero_price2_label"></span><span data-i18n="price_on_request"></span></div>
+                <div class="service-price-row"><span data-i18n="emszero_price1_label"></span><span>20€</span></div>
+                <div class="service-price-row"><span data-i18n="emszero_price2_label"></span><span>35€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="EMS Zero - 1 procedūra (30 min)" data-i18n="emszero_book1"></button>
               <button class="btn btn-primary service-book-btn" type="button" data-service="EMS Zero - 2 procedūras (60 min)" style="margin-top:8px" data-i18n="emszero_book2"></button>
@@ -525,7 +509,7 @@
 
       <div class="service-item">
         <button class="service-head" type="button" aria-expanded="false">
-          <div class="service-thumb" data-tone="4">P</div>
+          <div class="service-thumb" data-tone="4"></div>
           <div class="service-head-text">
             <div class="service-name">Presoterapija</div>
             <div class="service-tagline" data-i18n="preso_tagline"></div>
@@ -546,8 +530,7 @@
                 <li data-i18n="preso_eff4"></li>
               </ul>
               <div class="service-prices">
-                <!-- TODO: confirm real price -->
-                <div class="service-price-row"><span data-i18n="preso_price1_label"></span><span data-i18n="price_on_request"></span></div>
+                <div class="service-price-row"><span data-i18n="preso_price1_label"></span><span>25€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="Presoterapija (45 min)" data-i18n="book_btn"></button>
             </div>
@@ -689,6 +672,7 @@
       bflexy_eff3:'Ķermeņa kontūru pilnveidošana',
       bflexy_eff4:'Ādas struktūras izlīdzināšana',
       bflexy_price1_label:'1 procedūra',
+      bflexy_price2_label:'10 procedūras',
       emszero_tagline:'EMS muskuļu stimulācija',
       emszero_teaser:'Elektromagnētiskā muskuļu stimulācija...',
       emszero_desc:'Elektromagnētiskā muskuļu stimulācija, kas aktivizē muskuļu šķiedras un paātrina vielmaiņu.',
@@ -707,7 +691,7 @@
       preso_eff2:'Limfas aizplūšanas uzlabošana',
       preso_eff3:'"Smaguma" sajūtas mazināšana kājās',
       preso_eff4:'Ķermeņa relaksācija',
-      preso_price1_label:'1 procedūra'
+      preso_price1_label:'1 procedūra (45 min)'
     },
     en: {
       title_suffix:'Booking',
@@ -764,6 +748,7 @@
       bflexy_eff3:'Refines body contours',
       bflexy_eff4:'Smooths skin texture',
       bflexy_price1_label:'1 session',
+      bflexy_price2_label:'10 sessions',
       emszero_tagline:'EMS muscle stimulation',
       emszero_teaser:'Electromagnetic muscle stimulation...',
       emszero_desc:'Electromagnetic muscle stimulation that activates muscle fibers and speeds up metabolism.',
@@ -782,7 +767,7 @@
       preso_eff2:'Improves lymph drainage',
       preso_eff3:'Eases the feeling of heaviness in the legs',
       preso_eff4:'Full-body relaxation',
-      preso_price1_label:'1 session'
+      preso_price1_label:'1 session (45 min)'
     },
     ru: {
       title_suffix:'Запись',
@@ -839,6 +824,7 @@
       bflexy_eff3:'Коррекция контуров тела',
       bflexy_eff4:'Выравнивание текстуры кожи',
       bflexy_price1_label:'1 процедура',
+      bflexy_price2_label:'10 процедур',
       emszero_tagline:'EMS-стимуляция мышц',
       emszero_teaser:'Электромагнитная стимуляция мышц...',
       emszero_desc:'Электромагнитная стимуляция мышц, которая активирует мышечные волокна и ускоряет обмен веществ.',
@@ -857,7 +843,7 @@
       preso_eff2:'Улучшение оттока лимфы',
       preso_eff3:'Уменьшение чувства тяжести в ногах',
       preso_eff4:'Расслабление тела',
-      preso_price1_label:'1 процедура'
+      preso_price1_label:'1 процедура (45 мин)'
     }
   };
 
