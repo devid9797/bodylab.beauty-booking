@@ -223,6 +223,9 @@
   .btn-outline:hover{background:var(--chip-bg)}
   .btn-back{background:none;color:var(--text-soft);text-decoration:underline;font-weight:500;font-size:12px;margin-top:10px;padding:4px}
 
+  .confirm-cal-row{display:flex;gap:10px;margin-top:16px}
+  .confirm-cal-row .btn{flex:1;margin-top:0}
+
   /* ---------- Directions ---------- */
   .directions-card{padding:1rem 1.25rem}
   .directions-row{display:flex;gap:10px}
@@ -359,31 +362,17 @@
   .service-book-btn{margin-top:14px}
 
   /* ---------- Gift card ---------- */
-  .gift-visual{
+  .gift-photo{
     width:100%;
-    aspect-ratio:1.6/1;
+    aspect-ratio:16/10;
+    object-fit:cover;
     border-radius:16px;
-    background:linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    padding:18px 20px;
+    display:block;
     margin-bottom:14px;
     box-shadow:0 8px 24px rgba(116,115,114,.28);
   }
-  .gift-visual::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:radial-gradient(circle at 85% 12%, rgba(255,255,255,.2) 0%, transparent 45%);
-  }
-  .gift-visual-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
-  .gift-visual-chip{width:36px;height:26px;border-radius:5px;background:rgba(255,254,250,.35);border:1px solid rgba(255,254,250,.55)}
-  .gift-visual-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,254,250,.85)}
-  .gift-visual-logo{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:700;color:var(--card);position:relative;z-index:1}
-  .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:6px}
+  .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
+  .gift-details-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -436,7 +425,10 @@
     <div class="divider"></div>
     <div class="selected-slot" id="confirm-datetime"></div>
     <div class="selected-slot" id="confirm-service" style="margin-top:6px"></div>
-    <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="gcal_link"></a>
+    <div class="confirm-cal-row">
+      <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none" data-i18n="gcal_link"></a>
+      <a class="btn btn-outline" id="ics-link" href="#" download="BodyLabBeauty-booking.ics" style="text-decoration:none" data-i18n="ics_link"></a>
+    </div>
     <div class="hint" data-i18n="gcal_hint" data-i18n-html></div>
   </div>
 
@@ -593,14 +585,14 @@
   <div class="card gift-card">
     <h1 data-i18n="gift_title"></h1>
     <div class="divider"></div>
-    <div class="gift-visual">
-      <div class="gift-visual-top">
-        <span class="gift-visual-chip"></span>
-        <span class="gift-visual-label" data-i18n="gift_visual_label"></span>
-      </div>
-      <div class="gift-visual-logo">BodyLab.Beauty</div>
-    </div>
+    <img class="gift-photo" src="https://i.postimg.cc/c4LZyLsx/Bodylab-Beauty-Gift-card.jpg" alt="BodyLab.Beauty Dāvanu kārte">
     <div class="gift-desc" data-i18n="gift_desc"></div>
+    <div class="gift-details-label" data-i18n="gift_details_label"></div>
+    <ul class="service-effects">
+      <li data-i18n="gift_detail1"></li>
+      <li data-i18n="gift_detail2"></li>
+      <li data-i18n="gift_detail3"></li>
+    </ul>
     <a class="btn btn-primary" id="gift-order-btn" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="gift_order_btn"></a>
   </div>
 
@@ -710,7 +702,8 @@
       confirm_title:'Paldies!',
       confirm_sub:'Jūsu pieraksts ir apstiprināts',
       gcal_link:'+ Google Kalendārs',
-      gcal_hint:'Šī saite pievieno notikumu tikai jūsu personīgajā kalendārā.',
+      ics_link:'+ Tālruņa kalendārs',
+      gcal_hint:'Šīs saites pievieno notikumu tikai jūsu izvēlētajā kalendārā.',
       gcal_details_label:'Pieraksts:',
       gcal_name_label:'Vārds:',
       services_title:'Mūsu pakalpojumi',
@@ -722,8 +715,11 @@
       book_btn:'Veikt rezervāciju',
       price_on_request:'cena pēc pieprasījuma',
       gift_title:'Dāvanu kārte',
-      gift_visual_label:'Dāvanu kārte',
       gift_desc:'Nezini, ko uzdāvināt? BodyLab.Beauty dāvanu karte ir ideāla dāvana jebkurā gadījumā — izvēlies summu vai konkrētu procedūru, un mēs parūpēsimies par pārējo.',
+      gift_details_label:'Nosacījumi:',
+      gift_detail1:'Derīga 3 mēnešus no iegādes datuma',
+      gift_detail2:'Iespējams izvēlēties jebkuru summu vai konkrētu procedūru',
+      gift_detail3:'Pieejama izdrukātā vai digitālā formātā',
       gift_order_btn:'Pasūtīt dāvanu karti',
       gift_wa_message:'Sveiki! Es vēlos pasūtīt BodyLab.Beauty dāvanu karti.',
       sheet_back:'← Izvēlēties citu laiku',
@@ -791,7 +787,8 @@
       confirm_title:'Thank you!',
       confirm_sub:'Your booking is confirmed',
       gcal_link:'+ Google Calendar',
-      gcal_hint:'This link only adds the event to your personal calendar.',
+      ics_link:'+ Phone Calendar',
+      gcal_hint:'These links only add the event to the calendar you choose.',
       gcal_details_label:'Booking:',
       gcal_name_label:'Name:',
       services_title:'Our services',
@@ -803,8 +800,11 @@
       book_btn:'Book now',
       price_on_request:'price on request',
       gift_title:'Gift Card',
-      gift_visual_label:'Gift Card',
       gift_desc:"Not sure what to gift? A BodyLab.Beauty gift card is the perfect present for any occasion — choose an amount or a specific treatment, and we'll take care of the rest.",
+      gift_details_label:'Terms:',
+      gift_detail1:'Valid for 3 months from the purchase date',
+      gift_detail2:'Choose any amount or a specific treatment',
+      gift_detail3:'Available printed or sent digitally',
       gift_order_btn:'Order a gift card',
       gift_wa_message:'Hello! I would like to order a BodyLab.Beauty gift card.',
       sheet_back:'← Choose another time',
@@ -872,7 +872,8 @@
       confirm_title:'Спасибо!',
       confirm_sub:'Ваша запись подтверждена',
       gcal_link:'+ Google Календарь',
-      gcal_hint:'Эта ссылка добавляет событие только в ваш личный календарь.',
+      ics_link:'+ Календарь телефона',
+      gcal_hint:'Эти ссылки добавляют событие только в выбранный вами календарь.',
       gcal_details_label:'Запись:',
       gcal_name_label:'Имя:',
       services_title:'Наши услуги',
@@ -884,8 +885,11 @@
       book_btn:'Записаться',
       price_on_request:'цена по запросу',
       gift_title:'Подарочная карта',
-      gift_visual_label:'Подарочная карта',
       gift_desc:'Не знаете, что подарить? Подарочная карта BodyLab.Beauty — идеальный подарок на любой случай — выберите сумму или конкретную процедуру, а мы позаботимся об остальном.',
+      gift_details_label:'Условия:',
+      gift_detail1:'Действительна 3 месяца с даты покупки',
+      gift_detail2:'Можно выбрать любую сумму или конкретную процедуру',
+      gift_detail3:'Доступна в печатном или цифровом виде',
       gift_order_btn:'Заказать подарочную карту',
       gift_wa_message:'Здравствуйте! Я хочу заказать подарочную карту BodyLab.Beauty.',
       sheet_back:'← Выбрать другое время',
@@ -1174,6 +1178,35 @@
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}`;
   }
 
+  function icsEscape(str){
+    return String(str).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  }
+
+  function buildICSDataUri(slot, service, fullName){
+    const uid = `${slot.event_id || Date.now()}@bodylab.beauty`;
+    const dtStamp = toGCalDate(new Date().toISOString());
+    const summary = icsEscape(`BodyLab.Beauty — ${service}`);
+    const description = icsEscape(`${t('gcal_details_label')} ${service}\n${t('gcal_name_label')} ${fullName}`);
+    const location = icsEscape('Augusta Deglava iela 66, Rīga');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//BodyLab.Beauty//Booking//LV',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART:${toGCalDate(slot.start)}`,
+      `DTEND:${toGCalDate(slot.end)}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      `LOCATION:${location}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
+  }
+
   function showConfirmation(slot, service, fullName){
     closeSheet();
     calendarCard.style.display = 'none';
@@ -1182,6 +1215,7 @@
     document.getElementById('confirm-datetime').textContent = `${dd}.${mm} — ${formatTime(slot.start)}`;
     document.getElementById('confirm-service').textContent = service;
     document.getElementById('gcal-link').href = buildGCalLink(slot, service, fullName);
+    document.getElementById('ics-link').href = buildICSDataUri(slot, service, fullName);
     confirmCard.style.display = 'block';
   }
 
