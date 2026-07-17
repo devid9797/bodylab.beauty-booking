@@ -190,6 +190,10 @@
   }
   input:focus,select:focus{outline:2px solid var(--accent-soft);outline-offset:1px}
 
+  .phone-row{display:flex;gap:8px}
+  .phone-code{width:96px;flex:none;padding-left:8px;padding-right:4px}
+  .phone-row input{flex:1}
+
   .selected-slot{
     background:var(--chip-bg);
     border-radius:12px;
@@ -215,7 +219,15 @@
   }
   .btn-primary{background:var(--accent);color:var(--card)}
   .btn-primary:disabled{background:var(--day-muted);cursor:not-allowed}
+  .btn-outline{background:var(--card);color:var(--accent);border:1px solid var(--chip-border);text-decoration:none}
+  .btn-outline:hover{background:var(--chip-bg)}
   .btn-back{background:none;color:var(--text-soft);text-decoration:underline;font-weight:500;font-size:12px;margin-top:10px;padding:4px}
+
+  /* ---------- Directions ---------- */
+  .directions-card{padding:1rem 1.25rem}
+  .directions-row{display:flex;gap:10px}
+  .directions-row .btn{flex:1;margin-top:0;display:flex;align-items:center;justify-content:center;gap:7px}
+  .directions-row svg{width:16px;height:16px;flex:none}
 
   .hint{font-size:11px;color:var(--text-soft);margin-top:4px}
 
@@ -314,8 +326,6 @@
   }
   .service-name{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:600;color:var(--accent)}
   .service-tagline{font-size:12.5px;color:var(--text-soft);margin-top:1px}
-  .service-teaser{font-size:12px;color:var(--text-soft);margin-top:4px;opacity:.85;
-    display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
   .service-chevron{
     flex:none;
     color:var(--text-soft);
@@ -347,6 +357,33 @@
   .service-price-row + .service-price-row{border-top:1px dashed var(--chip-border)}
   .service-price-row span:last-child{font-weight:600;color:var(--accent)}
   .service-book-btn{margin-top:14px}
+
+  /* ---------- Gift card ---------- */
+  .gift-visual{
+    width:100%;
+    aspect-ratio:1.6/1;
+    border-radius:16px;
+    background:linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:18px 20px;
+    margin-bottom:14px;
+    box-shadow:0 8px 24px rgba(116,115,114,.28);
+  }
+  .gift-visual::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 85% 12%, rgba(255,255,255,.2) 0%, transparent 45%);
+  }
+  .gift-visual-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+  .gift-visual-chip{width:36px;height:26px;border-radius:5px;background:rgba(255,254,250,.35);border:1px solid rgba(255,254,250,.55)}
+  .gift-visual-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,254,250,.85)}
+  .gift-visual-logo{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:700;color:var(--card);position:relative;z-index:1}
+  .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -378,7 +415,7 @@
         <a class="social-btn" href="https://www.instagram.com/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>
         </a>
-        <a class="social-btn" href="https://api.whatsapp.com/send?phone=20001021" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <a class="social-btn" href="https://api.whatsapp.com/send?phone=37120888805" target="_blank" rel="noopener" aria-label="WhatsApp">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         </a>
       </div>
@@ -403,6 +440,19 @@
     <div class="hint" data-i18n="gcal_hint" data-i18n-html></div>
   </div>
 
+  <div class="card directions-card">
+    <div class="directions-row">
+      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        Google Maps
+      </a>
+      <a class="btn btn-outline" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.218 0C9.915 0 6.835 1.49 4.723 4.148c-1.515 1.913-2.31 4.272-2.31 6.706v1.739c0 .894-.62 1.738-1.862 1.813-.298.025-.547.224-.547.522-.05.82.82 2.31 2.012 3.502.82.844 1.788 1.515 2.832 2.036a3 3 0 0 0 2.955 3.528 2.966 2.966 0 0 0 2.931-2.385h2.509c.323 1.689 2.086 2.856 3.974 2.21 1.64-.546 2.36-2.409 1.763-3.924a12.84 12.84 0 0 0 1.838-1.465 10.73 10.73 0 0 0 3.18-7.65c0-2.882-1.118-5.589-3.155-7.625A10.899 10.899 0 0 0 13.218 0zm0 1.217c2.558 0 4.967.994 6.78 2.807a9.525 9.525 0 0 1 2.807 6.78A9.526 9.526 0 0 1 20 17.585a9.647 9.647 0 0 1-6.78 2.807h-2.46a3.008 3.008 0 0 0-2.93-2.41 3.03 3.03 0 0 0-2.534 1.367v.024a8.945 8.945 0 0 1-2.41-1.788c-.844-.844-1.316-1.614-1.515-2.11a2.858 2.858 0 0 0 1.441-.846 2.959 2.959 0 0 0 .795-2.036v-1.789c0-2.11.696-4.197 2.012-5.861 1.863-2.385 4.62-3.726 7.6-3.726zm-2.41 5.986a1.192 1.192 0 0 0-1.191 1.192 1.192 1.192 0 0 0 1.192 1.193A1.192 1.192 0 0 0 12 8.395a1.192 1.192 0 0 0-1.192-1.192zm7.204 0a1.192 1.192 0 0 0-1.192 1.192 1.192 1.192 0 0 0 1.192 1.193 1.192 1.192 0 0 0 1.192-1.193 1.192 1.192 0 0 0-1.192-1.192zm-7.377 4.769a.596.596 0 0 0-.546.845 4.813 4.813 0 0 0 4.346 2.757 4.77 4.77 0 0 0 4.347-2.757.596.596 0 0 0-.547-.845h-.025a.561.561 0 0 0-.521.348 3.59 3.59 0 0 1-3.254 2.061 3.591 3.591 0 0 1-3.254-2.061.64.64 0 0 0-.546-.348z"/></svg>
+        Waze
+      </a>
+    </div>
+  </div>
+
   <div class="card services-card">
     <h1 data-i18n="services_title"></h1>
     <div class="divider"></div>
@@ -416,7 +466,6 @@
             <span class="service-badge" data-i18n="top_badge"></span>
             <div class="service-name">R-Sleek</div>
             <div class="service-tagline" data-i18n="rsleek_tagline"></div>
-            <div class="service-teaser" data-i18n="rsleek_teaser"></div>
           </div>
           <span class="service-chevron">⌄</span>
         </button>
@@ -446,9 +495,9 @@
         <button class="service-head" type="button" aria-expanded="false">
           <div class="service-thumb" data-tone="2"></div>
           <div class="service-head-text">
+            <span class="service-badge" data-i18n="bflexy_badge"></span>
             <div class="service-name">B-Flexy</div>
             <div class="service-tagline" data-i18n="bflexy_tagline"></div>
-            <div class="service-teaser" data-i18n="bflexy_teaser"></div>
           </div>
           <span class="service-chevron">⌄</span>
         </button>
@@ -478,9 +527,9 @@
         <button class="service-head" type="button" aria-expanded="false">
           <div class="service-thumb" data-tone="3"></div>
           <div class="service-head-text">
+            <span class="service-badge" data-i18n="emszero_badge"></span>
             <div class="service-name">EMS Zero</div>
             <div class="service-tagline" data-i18n="emszero_tagline"></div>
-            <div class="service-teaser" data-i18n="emszero_teaser"></div>
           </div>
           <span class="service-chevron">⌄</span>
         </button>
@@ -511,9 +560,9 @@
         <button class="service-head" type="button" aria-expanded="false">
           <div class="service-thumb" data-tone="4"></div>
           <div class="service-head-text">
+            <span class="service-badge" data-i18n="preso_badge"></span>
             <div class="service-name">Presoterapija</div>
             <div class="service-tagline" data-i18n="preso_tagline"></div>
-            <div class="service-teaser" data-i18n="preso_teaser"></div>
           </div>
           <span class="service-chevron">⌄</span>
         </button>
@@ -539,6 +588,20 @@
       </div>
 
     </div>
+  </div>
+
+  <div class="card gift-card">
+    <h1 data-i18n="gift_title"></h1>
+    <div class="divider"></div>
+    <div class="gift-visual">
+      <div class="gift-visual-top">
+        <span class="gift-visual-chip"></span>
+        <span class="gift-visual-label" data-i18n="gift_visual_label"></span>
+      </div>
+      <div class="gift-visual-logo">BodyLab.Beauty</div>
+    </div>
+    <div class="gift-desc" data-i18n="gift_desc"></div>
+    <a class="btn btn-primary" id="gift-order-btn" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="gift_order_btn"></a>
   </div>
 
 </div>
@@ -569,7 +632,24 @@
     <input id="last_name" type="text" required>
 
     <label for="phone" data-i18n="label_phone"></label>
-    <input id="phone" type="tel" placeholder="+371 20000000" required>
+    <div class="phone-row">
+      <select id="phone_code" class="phone-code" data-i18n="phone_code_aria" data-i18n-attr="aria-label">
+        <option value="+371" selected>LV +371</option>
+        <option value="+370">LT +370</option>
+        <option value="+372">EE +372</option>
+        <option value="+7">RU +7</option>
+        <option value="+375">BY +375</option>
+        <option value="+380">UA +380</option>
+        <option value="+48">PL +48</option>
+        <option value="+49">DE +49</option>
+        <option value="+44">UK +44</option>
+        <option value="+358">FI +358</option>
+        <option value="+46">SE +46</option>
+        <option value="+47">NO +47</option>
+        <option value="+1">US/CA +1</option>
+      </select>
+      <input id="phone" type="tel" placeholder="20000000" required>
+    </div>
 
     <label for="instagram" data-i18n="label_instagram"></label>
     <input id="instagram" type="text" placeholder="@username">
@@ -635,14 +715,23 @@
       gcal_name_label:'Vārds:',
       services_title:'Mūsu pakalpojumi',
       top_badge:'Top procedūra',
+      bflexy_badge:'Pretcelulīta',
+      emszero_badge:'Bez piepūles',
+      preso_badge:'Atslābinoša',
       effects_label:'Galvenie efekti:',
       book_btn:'Veikt rezervāciju',
       price_on_request:'cena pēc pieprasījuma',
+      gift_title:'Dāvanu kārte',
+      gift_visual_label:'Dāvanu kārte',
+      gift_desc:'Nezini, ko uzdāvināt? BodyLab.Beauty dāvanu karte ir ideāla dāvana jebkurā gadījumā — izvēlies summu vai konkrētu procedūru, un mēs parūpēsimies par pārējo.',
+      gift_order_btn:'Pasūtīt dāvanu karti',
+      gift_wa_message:'Sveiki! Es vēlos pasūtīt BodyLab.Beauty dāvanu karti.',
       sheet_back:'← Izvēlēties citu laiku',
       close_aria:'Aizvērt',
       label_first_name:'Vārds *',
       label_last_name:'Uzvārds *',
       label_phone:'Telefons *',
+      phone_code_aria:'Valsts kods',
       label_instagram:'Instagram (nav obligāti)',
       label_service:'Pakalpojums *',
       service_placeholder:'Izvēlies pakalpojumu',
@@ -656,7 +745,6 @@
       weekdays_full:['Svētdiena','Pirmdiena','Otrdiena','Trešdiena','Ceturtdiena','Piektdiena','Sestdiena'],
       months:['janvāris','februāris','marts','aprīlis','maijs','jūnijs','jūlijs','augusts','septembris','oktobris','novembris','decembris'],
       rsleek_tagline:'Ķermeņa modelēšanas masāža',
-      rsleek_teaser:'Tiek veikta mehāniska iedarbība ar rotējošiem rullīšiem...',
       rsleek_desc:'Tiek veikta mehāniska iedarbība ar rotējošiem rullīšiem, kas rada dziļu masāžas efektu.',
       rsleek_eff1:'Ķermeņa apjomu samazināšana',
       rsleek_eff2:'Dziļa limfodrenāža',
@@ -665,7 +753,6 @@
       rsleek_price1_label:'1 procedūra',
       rsleek_price2_label:'10 procedūras',
       bflexy_tagline:'Vakuuma rullīšu masāža',
-      bflexy_teaser:'Tiek izmantota rullīšu-vakuuma tehnoloģija...',
       bflexy_desc:'Tiek izmantota rullīšu-vakuuma tehnoloģija, kur vienlaicīgi tiek veikta vakuuma sūkšana un mehāniska masāža.',
       bflexy_eff1:'Celulīta izpausmju mazināšana',
       bflexy_eff2:'Audu mikrocirkulācijas uzlabošana',
@@ -674,7 +761,6 @@
       bflexy_price1_label:'1 procedūra',
       bflexy_price2_label:'10 procedūras',
       emszero_tagline:'EMS muskuļu stimulācija',
-      emszero_teaser:'Elektromagnētiskā muskuļu stimulācija...',
       emszero_desc:'Elektromagnētiskā muskuļu stimulācija, kas aktivizē muskuļu šķiedras un paātrina vielmaiņu.',
       emszero_eff1:'Muskuļu tonusa uzlabošana',
       emszero_eff2:'Tauku sadedzināšanas veicināšana',
@@ -685,7 +771,6 @@
       emszero_book1:'Rezervēt 1 procedūru',
       emszero_book2:'Rezervēt 2 procedūras',
       preso_tagline:'Limfodrenāžas prese terapija',
-      preso_teaser:'Saspiesta gaisa iedarbība uz ķermeni...',
       preso_desc:'Saspiesta gaisa iedarbība uz ķermeni, kas veicina limfas un šķidruma aizplūšanu.',
       preso_eff1:'Pietūkuma mazināšana',
       preso_eff2:'Limfas aizplūšanas uzlabošana',
@@ -711,14 +796,23 @@
       gcal_name_label:'Name:',
       services_title:'Our services',
       top_badge:'Top treatment',
+      bflexy_badge:'Anti-cellulite',
+      emszero_badge:'Effortless',
+      preso_badge:'Relaxing',
       effects_label:'Main effects:',
       book_btn:'Book now',
       price_on_request:'price on request',
+      gift_title:'Gift Card',
+      gift_visual_label:'Gift Card',
+      gift_desc:"Not sure what to gift? A BodyLab.Beauty gift card is the perfect present for any occasion — choose an amount or a specific treatment, and we'll take care of the rest.",
+      gift_order_btn:'Order a gift card',
+      gift_wa_message:'Hello! I would like to order a BodyLab.Beauty gift card.',
       sheet_back:'← Choose another time',
       close_aria:'Close',
       label_first_name:'First name *',
       label_last_name:'Last name *',
       label_phone:'Phone *',
+      phone_code_aria:'Country code',
       label_instagram:'Instagram (optional)',
       label_service:'Service *',
       service_placeholder:'Choose a service',
@@ -732,7 +826,6 @@
       weekdays_full:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
       months:['january','february','march','april','may','june','july','august','september','october','november','december'],
       rsleek_tagline:'Body contouring massage',
-      rsleek_teaser:'Mechanical treatment with rotating rollers...',
       rsleek_desc:'A mechanical treatment using rotating rollers that creates a deep massage effect.',
       rsleek_eff1:'Body volume reduction',
       rsleek_eff2:'Deep lymphatic drainage',
@@ -741,7 +834,6 @@
       rsleek_price1_label:'1 session',
       rsleek_price2_label:'10 sessions',
       bflexy_tagline:'Vacuum roller massage',
-      bflexy_teaser:'Roller-vacuum technology...',
       bflexy_desc:'Roller-vacuum technology combining vacuum suction with mechanical massage.',
       bflexy_eff1:'Reduces the appearance of cellulite',
       bflexy_eff2:'Improves tissue microcirculation',
@@ -750,7 +842,6 @@
       bflexy_price1_label:'1 session',
       bflexy_price2_label:'10 sessions',
       emszero_tagline:'EMS muscle stimulation',
-      emszero_teaser:'Electromagnetic muscle stimulation...',
       emszero_desc:'Electromagnetic muscle stimulation that activates muscle fibers and speeds up metabolism.',
       emszero_eff1:'Improves muscle tone',
       emszero_eff2:'Promotes fat burning',
@@ -761,7 +852,6 @@
       emszero_book1:'Book 1 session',
       emszero_book2:'Book 2 sessions',
       preso_tagline:'Lymphatic drainage pressotherapy',
-      preso_teaser:'Compressed-air treatment on the body...',
       preso_desc:'A compressed-air treatment that promotes lymph and fluid drainage.',
       preso_eff1:'Reduces swelling',
       preso_eff2:'Improves lymph drainage',
@@ -787,14 +877,23 @@
       gcal_name_label:'Имя:',
       services_title:'Наши услуги',
       top_badge:'Топ процедура',
+      bflexy_badge:'Против целлюлита',
+      emszero_badge:'Без усилий',
+      preso_badge:'Расслабляющая',
       effects_label:'Основные эффекты:',
       book_btn:'Записаться',
       price_on_request:'цена по запросу',
+      gift_title:'Подарочная карта',
+      gift_visual_label:'Подарочная карта',
+      gift_desc:'Не знаете, что подарить? Подарочная карта BodyLab.Beauty — идеальный подарок на любой случай — выберите сумму или конкретную процедуру, а мы позаботимся об остальном.',
+      gift_order_btn:'Заказать подарочную карту',
+      gift_wa_message:'Здравствуйте! Я хочу заказать подарочную карту BodyLab.Beauty.',
       sheet_back:'← Выбрать другое время',
       close_aria:'Закрыть',
       label_first_name:'Имя *',
       label_last_name:'Фамилия *',
       label_phone:'Телефон *',
+      phone_code_aria:'Код страны',
       label_instagram:'Instagram (необязательно)',
       label_service:'Услуга *',
       service_placeholder:'Выберите услугу',
@@ -808,7 +907,6 @@
       weekdays_full:['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],
       months:['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],
       rsleek_tagline:'Массаж моделирования тела',
-      rsleek_teaser:'Механическое воздействие вращающимися роликами...',
       rsleek_desc:'Механическое воздействие вращающимися роликами, создающее эффект глубокого массажа.',
       rsleek_eff1:'Уменьшение объёма тела',
       rsleek_eff2:'Глубокий лимфодренаж',
@@ -817,7 +915,6 @@
       rsleek_price1_label:'1 процедура',
       rsleek_price2_label:'10 процедур',
       bflexy_tagline:'Вакуумно-роликовый массаж',
-      bflexy_teaser:'Используется роликово-вакуумная технология...',
       bflexy_desc:'Используется роликово-вакуумная технология, сочетающая вакуумное всасывание и механический массаж.',
       bflexy_eff1:'Уменьшение проявлений целлюлита',
       bflexy_eff2:'Улучшение микроциркуляции тканей',
@@ -826,7 +923,6 @@
       bflexy_price1_label:'1 процедура',
       bflexy_price2_label:'10 процедур',
       emszero_tagline:'EMS-стимуляция мышц',
-      emszero_teaser:'Электромагнитная стимуляция мышц...',
       emszero_desc:'Электромагнитная стимуляция мышц, которая активирует мышечные волокна и ускоряет обмен веществ.',
       emszero_eff1:'Улучшение мышечного тонуса',
       emszero_eff2:'Ускорение сжигания жира',
@@ -837,7 +933,6 @@
       emszero_book1:'Записаться на 1 процедуру',
       emszero_book2:'Записаться на 2 процедуры',
       preso_tagline:'Прессотерапия / лимфодренаж',
-      preso_teaser:'Воздействие сжатым воздухом на тело...',
       preso_desc:'Воздействие сжатым воздухом на тело, способствующее оттоку лимфы и жидкости.',
       preso_eff1:'Уменьшение отёчности',
       preso_eff2:'Улучшение оттока лимфы',
@@ -872,6 +967,8 @@
 
     document.querySelectorAll('.lang-option').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
     langCurrent.textContent = currentLang.toUpperCase();
+
+    document.getElementById('gift-order-btn').href = `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('gift_wa_message'))}`;
 
     if(monthKeys.length) renderCalendar();
     if(currentSheetDateKey) updateSheetDateLabel(currentSheetDateKey);
@@ -1089,13 +1186,15 @@
   }
 
   submitBtn.addEventListener('click', async () => {
-    const first_name = document.getElementById('first_name').value.trim();
-    const last_name  = document.getElementById('last_name').value.trim();
-    const phone      = document.getElementById('phone').value.trim();
-    const instagram  = document.getElementById('instagram').value.trim();
-    const service    = document.getElementById('service').value.trim();
+    const first_name  = document.getElementById('first_name').value.trim();
+    const last_name   = document.getElementById('last_name').value.trim();
+    const phoneCode   = document.getElementById('phone_code').value;
+    const phoneNumber = document.getElementById('phone').value.trim();
+    const phone       = phoneNumber ? `${phoneCode} ${phoneNumber}` : '';
+    const instagram   = document.getElementById('instagram').value.trim();
+    const service     = document.getElementById('service').value.trim();
 
-    if(!first_name || !last_name || !phone || !service){
+    if(!first_name || !last_name || !phoneNumber || !service){
       formError.textContent = t('err_required');
       return;
     }
