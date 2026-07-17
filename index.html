@@ -736,6 +736,7 @@
       err_required:'Lūdzu, aizpildiet visus obligātos laukus.',
       err_no_slot:'Lūdzu, izvēlieties laiku.',
       err_generic:'Kļūda. Lūdzu, mēģiniet vēlreiz.',
+      err_slot_taken:'Diemžēl šis laiks tikko tika aizņemts. Lūdzu, izvēlieties citu laiku.',
       weekdays:['Sv','Pr','Ot','Tr','Ce','Pk','Se'],
       weekdays_grid:['Pr','Ot','Tr','Ce','Pk','Se','Sv'],
       weekdays_full:['Svētdiena','Pirmdiena','Otrdiena','Trešdiena','Ceturtdiena','Piektdiena','Sestdiena'],
@@ -821,6 +822,7 @@
       err_required:'Please fill in all required fields.',
       err_no_slot:'Please choose a time.',
       err_generic:'Something went wrong. Please try again.',
+      err_slot_taken:'Sorry, this time slot was just taken. Please choose another time.',
       weekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
       weekdays_grid:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
       weekdays_full:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
@@ -906,6 +908,7 @@
       err_required:'Пожалуйста, заполните все обязательные поля.',
       err_no_slot:'Пожалуйста, выберите время.',
       err_generic:'Ошибка. Попробуйте ещё раз.',
+      err_slot_taken:'К сожалению, это время только что заняли. Пожалуйста, выберите другое время.',
       weekdays:['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
       weekdays_grid:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
       weekdays_full:['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],
@@ -1256,11 +1259,16 @@
       if(bookingStatus === 'success'){
         const fullName = `${first_name} ${last_name}`.trim();
         showConfirmation(selectedSlot, service, fullName);
+      } else if(bookingStatus === 'taken'){
+        formError.textContent = t('err_slot_taken');
+        submitBtn.disabled = false;
+        submitBtn.textContent = t('submit_btn');
+        selectedSlot = null;
+        await loadSlots();
       } else {
-        const html = await res.text();
-        document.open();
-        document.write(html);
-        document.close();
+        formError.textContent = t('err_generic');
+        submitBtn.disabled = false;
+        submitBtn.textContent = t('submit_btn');
       }
     }catch(err){
       formError.textContent = t('err_generic');
