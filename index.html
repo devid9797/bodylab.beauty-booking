@@ -1031,14 +1031,18 @@
   function dateKeyOf(dateStr){ return dateStr.slice(0,10); }
 
   async function loadSlots(){
+    const currentMonthKey = monthKeys[monthIndex];
     try{
-      const res = await fetch(SLOTS_URL, { method: 'GET', cache: 'no-store' });
+      const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store' });
       if(!res.ok) throw new Error('bad response');
       const slots = await res.json();
 
       if(!Array.isArray(slots) || slots.length === 0){
         calArea.innerHTML = '<div class="empty" data-i18n="cal_empty" data-i18n-html></div>';
         applyTranslations();
+        slotsByDate = {};
+        monthKeys = [];
         return;
       }
 
@@ -1052,7 +1056,8 @@
       });
 
       monthKeys = [...new Set(Object.keys(slotsByDate).map(k => k.slice(0,7)))].sort();
-      monthIndex = 0;
+      const preservedIndex = currentMonthKey ? monthKeys.indexOf(currentMonthKey) : -1;
+      monthIndex = preservedIndex !== -1 ? preservedIndex : 0;
       renderCalendar();
 
     }catch(err){
@@ -1320,6 +1325,7 @@
 
   applyTranslations();
   loadSlots();
+  setInterval(loadSlots, 60000);
 </script>
 </body>
 </html>
