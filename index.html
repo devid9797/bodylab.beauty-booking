@@ -373,6 +373,17 @@
   }
   .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
   .gift-details-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
+
+  /* ---------- Confirmation popup ---------- */
+  #sheet-step-success{min-height:50vh;display:flex;flex-direction:column}
+  #sheet-step-success .sheet-title{font-size:21px}
+  #sheet-step-success .sub{font-size:16px;margin-bottom:18px}
+  #sheet-step-success .service-prices{padding:14px 16px}
+  #sheet-step-success .service-price-row{font-size:16px;padding:9px 0}
+  #sheet-step-success .gift-details-label{font-size:15px;margin-top:22px}
+  #sheet-step-success .confirm-cal-row{margin-top:12px;gap:12px}
+  #sheet-step-success .confirm-cal-row .btn{font-size:16px;padding:16px}
+  #sheet-step-success .hint{font-size:14px;line-height:1.6;margin-top:14px}
 </style>
 </head>
 <body>
@@ -654,13 +665,18 @@
     </div>
     <div class="sub" style="margin-bottom:14px" data-i18n="confirm_sub"></div>
     <div class="divider"></div>
-    <div class="selected-slot" id="confirm-datetime"></div>
-    <div class="selected-slot" id="confirm-service" style="margin-top:6px"></div>
-    <div class="confirm-cal-row">
-      <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none" data-i18n="gcal_link"></a>
-      <a class="btn btn-outline" id="ics-link" href="#" download="BodyLabBeauty-booking.ics" style="text-decoration:none" data-i18n="ics_link"></a>
+    <div class="service-prices">
+      <div class="service-price-row"><span data-i18n="confirm_date_label"></span><span id="confirm-date"></span></div>
+      <div class="service-price-row"><span data-i18n="confirm_time_label"></span><span id="confirm-time"></span></div>
+      <div class="service-price-row"><span data-i18n="confirm_service_label"></span><span id="confirm-service"></span></div>
+    </div>
+    <div class="gift-details-label" style="margin-top:16px" data-i18n="confirm_add_calendar_label"></div>
+    <div class="confirm-cal-row" style="margin-top:8px">
+      <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none;margin-top:0" data-i18n="gcal_link"></a>
+      <a class="btn btn-outline" id="ics-link" href="#" download="BodyLabBeauty-booking.ics" style="text-decoration:none;margin-top:0" data-i18n="ics_link"></a>
     </div>
     <div class="hint" data-i18n="gcal_hint" data-i18n-html></div>
+    <div class="hint" style="margin-top:10px" data-i18n="confirm_reminder_hint"></div>
   </div>
 </div>
 
@@ -704,11 +720,19 @@
       cal_next_aria:'Nākamais mēnesis',
       confirm_title:'Paldies!',
       confirm_sub:'Jūsu pieraksts ir apstiprināts',
+      confirm_date_label:'Datums:',
+      confirm_time_label:'Laiks:',
+      confirm_service_label:'Pakalpojums:',
+      confirm_add_calendar_label:'Pievieno šo pierakstu savā kalendārā:',
+      confirm_reminder_hint:'Kad pieraksts apstiprināts, apmēram vienu dienu pirms tikšanās jums pienāks atgādinājums ar lūgumu apstiprināt ierašanos.',
       gcal_link:'+ Google Kalendārs',
       ics_link:'+ Tālruņa kalendārs',
       gcal_hint:'Šīs saites pievieno notikumu tikai jūsu izvēlētajā kalendārā.',
       gcal_details_label:'Pieraksts:',
       gcal_name_label:'Vārds:',
+      gcal_address_label:'Adrese:',
+      gcal_phone_label:'Tālrunis:',
+      gcal_instagram_label:'Instagram:',
       services_title:'Mūsu pakalpojumi',
       top_badge:'Top procedūra',
       bflexy_badge:'Pretcelulīta',
@@ -790,11 +814,19 @@
       cal_next_aria:'Next month',
       confirm_title:'Thank you!',
       confirm_sub:'Your booking is confirmed',
+      confirm_date_label:'Date:',
+      confirm_time_label:'Time:',
+      confirm_service_label:'Service:',
+      confirm_add_calendar_label:'Add this booking to your calendar:',
+      confirm_reminder_hint:"Once your booking is confirmed, you'll get a reminder about a day before your appointment asking you to confirm you'll attend.",
       gcal_link:'+ Google Calendar',
       ics_link:'+ Phone Calendar',
       gcal_hint:'These links only add the event to the calendar you choose.',
       gcal_details_label:'Booking:',
       gcal_name_label:'Name:',
+      gcal_address_label:'Address:',
+      gcal_phone_label:'Phone:',
+      gcal_instagram_label:'Instagram:',
       services_title:'Our services',
       top_badge:'Top treatment',
       bflexy_badge:'Anti-cellulite',
@@ -876,11 +908,19 @@
       cal_next_aria:'Следующий месяц',
       confirm_title:'Спасибо!',
       confirm_sub:'Ваша запись подтверждена',
+      confirm_date_label:'Дата:',
+      confirm_time_label:'Время:',
+      confirm_service_label:'Услуга:',
+      confirm_add_calendar_label:'Добавьте эту запись в свой календарь:',
+      confirm_reminder_hint:'После подтверждения записи примерно за сутки до визита вам придёт напоминание с просьбой подтвердить, что вы придёте.',
       gcal_link:'+ Google Календарь',
       ics_link:'+ Календарь телефона',
       gcal_hint:'Эти ссылки добавляют событие только в выбранный вами календарь.',
       gcal_details_label:'Запись:',
       gcal_name_label:'Имя:',
+      gcal_address_label:'Адрес:',
+      gcal_phone_label:'Телефон:',
+      gcal_instagram_label:'Instagram:',
       services_title:'Наши услуги',
       top_badge:'Топ процедура',
       bflexy_badge:'Против целлюлита',
@@ -1183,10 +1223,20 @@
     return iso.replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
   }
 
+  function buildEventDescription(service, fullName){
+    return [
+      `${t('gcal_details_label')} ${service}`,
+      `${t('gcal_name_label')} ${fullName}`,
+      `${t('gcal_address_label')} Augusta Deglava iela 66, Rīga`,
+      `${t('gcal_phone_label')} +371 20 888 805`,
+      `${t('gcal_instagram_label')} instagram.com/bodylab.beauty`
+    ].join('\n');
+  }
+
   function buildGCalLink(slot, service, fullName){
     const dates = toGCalDate(slot.start) + '/' + toGCalDate(slot.end);
     const text = encodeURIComponent(`BodyLab.Beauty — ${service}`);
-    const details = encodeURIComponent(`${t('gcal_details_label')} ${service}\n${t('gcal_name_label')} ${fullName}`);
+    const details = encodeURIComponent(buildEventDescription(service, fullName));
     const location = encodeURIComponent('Augusta Deglava iela 66, Rīga');
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}`;
   }
@@ -1201,7 +1251,7 @@
     const uid = `${slot.event_id || Date.now()}@bodylab.beauty`;
     const dtStamp = toGCalDate(new Date().toISOString());
     const summary = icsEscape(`BodyLab.Beauty — ${service}`);
-    const description = icsEscape(`${t('gcal_details_label')} ${service}\n${t('gcal_name_label')} ${fullName}`);
+    const description = icsEscape(buildEventDescription(service, fullName));
     const location = icsEscape('Augusta Deglava iela 66, Rīga');
     const ics = [
       'BEGIN:VCALENDAR',
@@ -1228,7 +1278,8 @@
   function showConfirmation(slot, service, fullName){
     const dd = String(new Date(slot.start).getDate()).padStart(2,'0');
     const mm = String(new Date(slot.start).getMonth()+1).padStart(2,'0');
-    document.getElementById('confirm-datetime').textContent = `${dd}.${mm} — ${formatTime(slot.start)}`;
+    document.getElementById('confirm-date').textContent = `${dd}.${mm}`;
+    document.getElementById('confirm-time').textContent = formatTime(slot.start);
     document.getElementById('confirm-service').textContent = service;
     document.getElementById('gcal-link').href = buildGCalLink(slot, service, fullName);
     document.getElementById('ics-link').href = buildICSBlobUrl(slot, service, fullName);
