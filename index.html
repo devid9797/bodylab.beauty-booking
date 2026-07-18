@@ -419,19 +419,6 @@
     </div>
   </div>
 
-  <div class="card" id="confirm-card" style="display:none">
-    <h1 style="margin-bottom:10px" data-i18n="confirm_title"></h1>
-    <div class="sub" style="margin-bottom:14px" data-i18n="confirm_sub"></div>
-    <div class="divider"></div>
-    <div class="selected-slot" id="confirm-datetime"></div>
-    <div class="selected-slot" id="confirm-service" style="margin-top:6px"></div>
-    <div class="confirm-cal-row">
-      <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none" data-i18n="gcal_link"></a>
-      <a class="btn btn-outline" id="ics-link" href="#" download="BodyLabBeauty-booking.ics" style="text-decoration:none" data-i18n="ics_link"></a>
-    </div>
-    <div class="hint" data-i18n="gcal_hint" data-i18n-html></div>
-  </div>
-
   <div class="card directions-card">
     <div class="directions-row">
       <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener">
@@ -659,6 +646,22 @@
     <button class="btn btn-primary" id="submit-btn" type="button" data-i18n="submit_btn"></button>
     <div class="hint" id="form-error" style="color:#b03030"></div>
   </div>
+
+  <div id="sheet-step-success" style="display:none">
+    <div class="sheet-header">
+      <div class="sheet-title" data-i18n="confirm_title"></div>
+      <button class="sheet-close" id="sheet-close-3" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
+    </div>
+    <div class="sub" style="margin-bottom:14px" data-i18n="confirm_sub"></div>
+    <div class="divider"></div>
+    <div class="selected-slot" id="confirm-datetime"></div>
+    <div class="selected-slot" id="confirm-service" style="margin-top:6px"></div>
+    <div class="confirm-cal-row">
+      <a class="btn btn-primary" id="gcal-link" href="#" target="_blank" rel="noopener" style="text-decoration:none" data-i18n="gcal_link"></a>
+      <a class="btn btn-outline" id="ics-link" href="#" download="BodyLabBeauty-booking.ics" style="text-decoration:none" data-i18n="ics_link"></a>
+    </div>
+    <div class="hint" data-i18n="gcal_hint" data-i18n-html></div>
+  </div>
 </div>
 
 <script>
@@ -667,7 +670,6 @@
 
   const calArea      = document.getElementById('cal-area');
   const calendarCard = document.getElementById('calendar-card');
-  const confirmCard  = document.getElementById('confirm-card');
 
   const sheet         = document.getElementById('sheet');
   const sheetBackdrop = document.getElementById('sheet-backdrop');
@@ -675,6 +677,7 @@
   const sheetTimes    = document.getElementById('sheet-times');
   const stepTimes     = document.getElementById('sheet-step-times');
   const stepForm      = document.getElementById('sheet-step-form');
+  const stepSuccess   = document.getElementById('sheet-step-success');
   const selectedLbl   = document.getElementById('selected-slot-label');
   const submitBtn     = document.getElementById('submit-btn');
   const formError     = document.getElementById('form-error');
@@ -1131,6 +1134,7 @@
 
     stepTimes.style.display = 'block';
     stepForm.style.display = 'none';
+    stepSuccess.style.display = 'none';
     openSheet();
   }
 
@@ -1164,6 +1168,7 @@
   sheetBackdrop.addEventListener('click', closeSheet);
   document.getElementById('sheet-close-1').addEventListener('click', closeSheet);
   document.getElementById('sheet-close-2').addEventListener('click', closeSheet);
+  document.getElementById('sheet-close-3').addEventListener('click', closeSheet);
   document.getElementById('sheet-back').addEventListener('click', () => {
     stepForm.style.display = 'none';
     stepTimes.style.display = 'block';
@@ -1185,7 +1190,9 @@
     return String(str).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
   }
 
-  function buildICSDataUri(slot, service, fullName){
+  let icsObjectUrl = null;
+
+  function buildICSBlobUrl(slot, service, fullName){
     const uid = `${slot.event_id || Date.now()}@bodylab.beauty`;
     const dtStamp = toGCalDate(new Date().toISOString());
     const summary = icsEscape(`BodyLab.Beauty — ${service}`);
@@ -1207,19 +1214,29 @@
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
-    return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
+    if(icsObjectUrl) URL.revokeObjectURL(icsObjectUrl);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    icsObjectUrl = URL.createObjectURL(blob);
+    return icsObjectUrl;
   }
 
   function showConfirmation(slot, service, fullName){
-    closeSheet();
-    calendarCard.style.display = 'none';
     const dd = String(new Date(slot.start).getDate()).padStart(2,'0');
     const mm = String(new Date(slot.start).getMonth()+1).padStart(2,'0');
     document.getElementById('confirm-datetime').textContent = `${dd}.${mm} — ${formatTime(slot.start)}`;
     document.getElementById('confirm-service').textContent = service;
     document.getElementById('gcal-link').href = buildGCalLink(slot, service, fullName);
-    document.getElementById('ics-link').href = buildICSDataUri(slot, service, fullName);
-    confirmCard.style.display = 'block';
+    document.getElementById('ics-link').href = buildICSBlobUrl(slot, service, fullName);
+
+    stepTimes.style.display = 'none';
+    stepForm.style.display = 'none';
+    stepSuccess.style.display = 'block';
+    sheet.scrollTop = 0;
+    openSheet();
+
+    selectedSlot = null;
+    currentSheetDateKey = null;
+    loadSlots();
   }
 
   submitBtn.addEventListener('click', async () => {
