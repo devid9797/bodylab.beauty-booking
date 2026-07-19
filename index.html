@@ -728,10 +728,8 @@
 <script>
   const SLOTS_URL = "https://script.google.com/macros/s/AKfycbyUN_pLo0v-laLE7NDLfAZ8bKmyEQt2-jZNyfAX4Wc3fd2PVzq5JxfT8SkUORIcdFiR/exec";
   const BOOK_URL  = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
-  // TODO: set this once you have a backend (Apps Script Web App or Make.com
-  // scenario) that accepts POST {event_id, calendar_id, action} and marks
-  // the matching Google Calendar event confirmed/declined.
-  const RSVP_URL  = "";
+  // Same Apps Script Web App as SLOTS_URL: GET -> doGet (slots), POST -> doPost (RSVP confirm/decline).
+  const RSVP_URL  = SLOTS_URL;
 
   const calArea      = document.getElementById('cal-area');
   const calendarCard = document.getElementById('calendar-card');
@@ -1603,6 +1601,8 @@
           body: JSON.stringify({ event_id: eventId, calendar_id: calendarId, action })
         });
         if(!res.ok) throw new Error('bad response');
+        const data = await res.json();
+        if(data && data.error) throw new Error(data.error);
         document.getElementById('rsvp-actions').style.display = 'none';
         resultEl.textContent = action === 'confirm' ? t('rsvp_thanks_confirmed') : t('rsvp_thanks_declined');
       }catch(err){
