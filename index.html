@@ -429,6 +429,22 @@
     </div>
   </div>
 
+  <div class="card" id="rsvp-card" style="display:none">
+    <h1 data-i18n="rsvp_title"></h1>
+    <div class="divider"></div>
+    <div class="service-prices">
+      <div class="service-price-row"><span data-i18n="rsvp_name_label"></span><span id="rsvp-name"></span></div>
+      <div class="service-price-row"><span data-i18n="confirm_date_label"></span><span id="rsvp-date"></span></div>
+      <div class="service-price-row"><span data-i18n="confirm_time_label"></span><span id="rsvp-time"></span></div>
+      <div class="service-price-row"><span data-i18n="confirm_service_label"></span><span id="rsvp-service"></span></div>
+    </div>
+    <div id="rsvp-actions">
+      <button class="btn btn-primary" id="rsvp-confirm-btn" type="button" data-i18n="rsvp_confirm_btn"></button>
+      <button class="btn btn-outline" id="rsvp-decline-btn" type="button" data-i18n="rsvp_decline_btn"></button>
+    </div>
+    <div class="hint" id="rsvp-result"></div>
+  </div>
+
   <div class="card" id="calendar-card">
     <h1 data-i18n="cal_title"></h1>
     <div class="divider"></div>
@@ -673,6 +689,10 @@
 <script>
   const SLOTS_URL = "https://script.google.com/macros/s/AKfycbyUN_pLo0v-laLE7NDLfAZ8bKmyEQt2-jZNyfAX4Wc3fd2PVzq5JxfT8SkUORIcdFiR/exec";
   const BOOK_URL  = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
+  // TODO: set this once you have a backend (Apps Script Web App or Make.com
+  // scenario) that accepts POST {event_id, calendar_id, action} and marks
+  // the matching Google Calendar event confirmed/declined.
+  const RSVP_URL  = "";
 
   const calArea      = document.getElementById('cal-area');
   const calendarCard = document.getElementById('calendar-card');
@@ -709,6 +729,14 @@
       cal_prev_aria:'Iepriekšējais mēnesis',
       cal_next_aria:'Nākamais mēnesis',
       confirm_message:'Paldies! Jūsu pieraksts ir apstiprināts.',
+      rsvp_title:'Vai jūs ieradīsieties uz šo pierakstu?',
+      rsvp_name_label:'Vārds:',
+      rsvp_confirm_btn:'Jā, es būšu',
+      rsvp_decline_btn:'Nē, atceļu pierakstu',
+      rsvp_thanks_confirmed:'Paldies! Jūsu apmeklējums ir apstiprināts.',
+      rsvp_thanks_declined:'Jūsu pieraksts ir atcelts. Paldies, ka informējāt!',
+      rsvp_error:'Kļūda. Lūdzu, mēģiniet vēlreiz vai sazinieties ar mums WhatsApp.',
+      rsvp_not_configured:'Šī funkcija vēl nav pilnībā iestatīta. Lūdzu, sazinieties ar mums WhatsApp.',
       confirm_date_label:'Datums:',
       confirm_time_label:'Laiks:',
       confirm_service_label:'Pakalpojums:',
@@ -803,6 +831,14 @@
       cal_prev_aria:'Previous month',
       cal_next_aria:'Next month',
       confirm_message:'Thank you! Your booking is confirmed.',
+      rsvp_title:'Will you be attending this appointment?',
+      rsvp_name_label:'Name:',
+      rsvp_confirm_btn:"Yes, I'll be there",
+      rsvp_decline_btn:'No, cancel my booking',
+      rsvp_thanks_confirmed:'Thank you! Your attendance is confirmed.',
+      rsvp_thanks_declined:'Your booking has been cancelled. Thanks for letting us know!',
+      rsvp_error:'Something went wrong. Please try again or message us on WhatsApp.',
+      rsvp_not_configured:"This feature isn't fully set up yet. Please message us on WhatsApp.",
       confirm_date_label:'Date:',
       confirm_time_label:'Time:',
       confirm_service_label:'Service:',
@@ -897,6 +933,14 @@
       cal_prev_aria:'Предыдущий месяц',
       cal_next_aria:'Следующий месяц',
       confirm_message:'Спасибо! Ваша запись подтверждена.',
+      rsvp_title:'Вы придёте на эту запись?',
+      rsvp_name_label:'Имя:',
+      rsvp_confirm_btn:'Да, я приду',
+      rsvp_decline_btn:'Нет, отменяю запись',
+      rsvp_thanks_confirmed:'Спасибо! Ваш визит подтверждён.',
+      rsvp_thanks_declined:'Ваша запись отменена. Спасибо, что сообщили!',
+      rsvp_error:'Ошибка. Попробуйте ещё раз или напишите нам в WhatsApp.',
+      rsvp_not_configured:'Эта функция ещё не полностью настроена. Пожалуйста, напишите нам в WhatsApp.',
       confirm_date_label:'Дата:',
       confirm_time_label:'Время:',
       confirm_service_label:'Услуга:',
@@ -1438,9 +1482,75 @@
     });
   });
 
+  // ---------- RSVP landing page ----------
+  // Reached via a link like:
+  // https://<your-site>/?rsvp=1&event_id=...&calendar_id=...&service=R-Sleek%20(45%20min)&start=2026-07-20T13%3A00%3A00.000Z&name=J%C4%81nis%20B%C4%93rzi%C5%86%C5%A1
+  function initRsvpMode(params){
+    document.getElementById('rsvp-card').style.display = 'block';
+    document.getElementById('calendar-card').style.display = 'none';
+    document.querySelector('.directions-card').style.display = 'none';
+    document.querySelector('.services-card').style.display = 'none';
+    document.querySelector('.gift-card').style.display = 'none';
+
+    const eventId    = params.get('event_id') || '';
+    const calendarId = params.get('calendar_id') || '';
+    const service    = params.get('service') || '';
+    const name       = params.get('name') || '';
+    const startIso   = params.get('start') || '';
+
+    document.getElementById('rsvp-name').textContent = name;
+    document.getElementById('rsvp-service').textContent = service;
+    if(startIso){
+      const d = new Date(startIso);
+      document.getElementById('rsvp-date').textContent = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
+      document.getElementById('rsvp-time').textContent = formatTime(startIso);
+    }
+
+    const confirmBtn = document.getElementById('rsvp-confirm-btn');
+    const declineBtn = document.getElementById('rsvp-decline-btn');
+    const resultEl   = document.getElementById('rsvp-result');
+
+    async function sendRsvp(action){
+      if(!eventId || !calendarId){
+        resultEl.textContent = t('rsvp_error');
+        return;
+      }
+      if(!RSVP_URL){
+        resultEl.textContent = t('rsvp_not_configured');
+        return;
+      }
+      confirmBtn.disabled = true;
+      declineBtn.disabled = true;
+      resultEl.textContent = '';
+      try{
+        const res = await fetch(RSVP_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ event_id: eventId, calendar_id: calendarId, action })
+        });
+        if(!res.ok) throw new Error('bad response');
+        document.getElementById('rsvp-actions').style.display = 'none';
+        resultEl.textContent = action === 'confirm' ? t('rsvp_thanks_confirmed') : t('rsvp_thanks_declined');
+      }catch(err){
+        resultEl.textContent = t('rsvp_error');
+        confirmBtn.disabled = false;
+        declineBtn.disabled = false;
+      }
+    }
+
+    confirmBtn.addEventListener('click', () => sendRsvp('confirm'));
+    declineBtn.addEventListener('click', () => sendRsvp('decline'));
+  }
+
   applyTranslations();
-  loadSlots();
-  setInterval(loadSlots, 60000);
+
+  const rsvpParams = new URLSearchParams(window.location.search);
+  if(rsvpParams.get('rsvp') === '1'){
+    initRsvpMode(rsvpParams);
+  } else {
+    loadSlots();
+    setInterval(loadSlots, 60000);
+  }
 </script>
 </body>
 </html>
