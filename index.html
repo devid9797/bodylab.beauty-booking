@@ -1595,14 +1595,18 @@
       declineBtn.disabled = true;
       resultEl.textContent = '';
       try{
-        const res = await fetch(RSVP_URL, {
+        // Apps Script Web Apps serve responses via a redirect through
+        // script.googleusercontent.com that doesn't reliably carry CORS
+        // headers, so a normal 'cors' fetch can throw here even though
+        // doPost already ran successfully server-side. Using 'no-cors'
+        // means we can't read the response body/status, so we treat
+        // "the request didn't throw" as success.
+        await fetch(RSVP_URL, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          mode: 'no-cors',
+          headers: {'Content-Type':'text/plain'},
           body: JSON.stringify({ event_id: eventId, calendar_id: calendarId, action })
         });
-        if(!res.ok) throw new Error('bad response');
-        const data = await res.json();
-        if(data && data.error) throw new Error(data.error);
         document.getElementById('rsvp-actions').style.display = 'none';
         resultEl.textContent = action === 'confirm' ? t('rsvp_thanks_confirmed') : t('rsvp_thanks_declined');
       }catch(err){
