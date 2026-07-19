@@ -375,9 +375,14 @@
   .gift-details-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
 
   /* ---------- Confirmation popup ---------- */
-  #sheet-step-success{min-height:50vh;display:flex;flex-direction:column}
-  #sheet-step-success .sheet-title{font-size:21px}
-  #sheet-step-success .sub{font-size:16px;margin-bottom:18px}
+  #sheet-step-success{min-height:50vh;display:flex;flex-direction:column;position:relative}
+  #sheet-step-success #sheet-close-3{position:absolute;top:0;right:0}
+  #sheet-step-success .confirm-message{
+    font-family:'Montserrat',sans-serif;
+    font-size:14px;font-weight:600;color:var(--accent);
+    padding-right:30px;margin-bottom:16px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
   #sheet-step-success .service-prices{padding:14px 16px}
   #sheet-step-success .service-price-row{flex-direction:column;align-items:flex-start;gap:2px;padding:10px 0}
   #sheet-step-success .service-price-row span:first-child{font-size:12px;color:var(--text-soft);font-weight:600}
@@ -647,11 +652,8 @@
   </div>
 
   <div id="sheet-step-success" style="display:none">
-    <div class="sheet-header">
-      <div class="sheet-title" data-i18n="confirm_title"></div>
-      <button class="sheet-close" id="sheet-close-3" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
-    </div>
-    <div class="sub" style="margin-bottom:14px" data-i18n="confirm_sub"></div>
+    <button class="sheet-close" id="sheet-close-3" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
+    <div class="confirm-message" data-i18n="confirm_message"></div>
     <div class="divider"></div>
     <div class="service-prices">
       <div class="service-price-row"><span data-i18n="confirm_date_label"></span><span id="confirm-date"></span></div>
@@ -706,8 +708,7 @@
       cal_error:'Neizdevās ielādēt laikus.<br>Lūdzu, mēģiniet vēlreiz.',
       cal_prev_aria:'Iepriekšējais mēnesis',
       cal_next_aria:'Nākamais mēnesis',
-      confirm_title:'Paldies!',
-      confirm_sub:'Jūsu pieraksts ir apstiprināts',
+      confirm_message:'Paldies! Jūsu pieraksts ir apstiprināts.',
       confirm_date_label:'Datums:',
       confirm_time_label:'Laiks:',
       confirm_service_label:'Pakalpojums:',
@@ -801,8 +802,7 @@
       cal_error:'Failed to load available times.<br>Please try refreshing the page.',
       cal_prev_aria:'Previous month',
       cal_next_aria:'Next month',
-      confirm_title:'Thank you!',
-      confirm_sub:'Your booking is confirmed',
+      confirm_message:'Thank you! Your booking is confirmed.',
       confirm_date_label:'Date:',
       confirm_time_label:'Time:',
       confirm_service_label:'Service:',
@@ -896,8 +896,7 @@
       cal_error:'Не удалось загрузить время.<br>Попробуйте обновить страницу.',
       cal_prev_aria:'Предыдущий месяц',
       cal_next_aria:'Следующий месяц',
-      confirm_title:'Спасибо!',
-      confirm_sub:'Ваша запись подтверждена',
+      confirm_message:'Спасибо! Ваша запись подтверждена.',
       confirm_date_label:'Дата:',
       confirm_time_label:'Время:',
       confirm_service_label:'Услуга:',
