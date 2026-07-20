@@ -1563,7 +1563,7 @@
   // ---------- RSVP landing page ----------
   // Reached via a link like:
   // https://<your-site>/?rsvp=1&event_id=...&calendar_id=...&service=R-Sleek%20(45%20min)&start=2026-07-20T13%3A00%3A00.000Z&name=J%C4%81nis%20B%C4%93rzi%C5%86%C5%A1
-  function initRsvpMode(params){
+  async function initRsvpMode(params){
     document.querySelector('.hero-content').style.display = 'none';
     document.querySelector('.hero-card').classList.add('rsvp-merged');
     document.getElementById('rsvp-card').classList.add('rsvp-merged');
@@ -1574,11 +1574,45 @@
     document.querySelector('.services-card').style.display = 'none';
     document.querySelector('.gift-card').style.display = 'none';
 
-    const eventId    = params.get('event_id') || '';
-    const calendarId = params.get('calendar_id') || '';
-    const service    = params.get('service') || '';
-    const name       = params.get('name') || '';
-    const startIso   = params.get('start') || '';
+    const confirmBtn = document.getElementById('rsvp-confirm-btn');
+    const declineBtn = document.getElementById('rsvp-decline-btn');
+    const resultEl   = document.getElementById('rsvp-result');
+
+    const eventId  = params.get('event_id') || '';
+    const calIndex = params.get('cal');
+    const calendarIdParam = params.get('calendar_id') || '';
+
+    // Short links only carry event_id + which calendar (by index, e.g.
+    // "&cal=2") to keep them cheap to send by SMS/WhatsApp. Everything
+    // else (service, date, time, name) is fetched fresh from the live
+    // calendar event when the page opens. A full calendar_id is also
+    // accepted directly, mainly for hand-built test links.
+    let lookupUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}action=rsvp_lookup&event_id=${encodeURIComponent(eventId)}`;
+    if(calendarIdParam) lookupUrl += `&calendar_id=${encodeURIComponent(calendarIdParam)}`;
+    else if(calIndex !== null) lookupUrl += `&cal=${encodeURIComponent(calIndex)}`;
+
+    let calendarId = calendarIdParam, service = '', name = '', startIso = '';
+
+    if(!eventId || (!calendarIdParam && calIndex === null)){
+      resultEl.textContent = t('rsvp_error');
+      document.getElementById('rsvp-actions').style.display = 'none';
+      return;
+    }
+
+    try{
+      const res = await fetch(lookupUrl, { cache: 'no-store' });
+      if(!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      if(data.error) throw new Error(data.error);
+      calendarId = data.calendar_id;
+      service    = data.service || '';
+      name       = data.name || '';
+      startIso   = data.start || '';
+    }catch(err){
+      resultEl.textContent = t('rsvp_error');
+      document.getElementById('rsvp-actions').style.display = 'none';
+      return;
+    }
 
     document.getElementById('rsvp-name').textContent = name;
     document.getElementById('rsvp-service').textContent = service;
@@ -1591,10 +1625,6 @@
     document.getElementById('rsvp-whatsapp-btn').href =
       `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('rsvp_wa_message').replace('{service}', service).replace('{time}', startIso ? formatTime(startIso) : ''))}`;
     document.getElementById('rsvp-home-link').href = window.location.origin + window.location.pathname;
-
-    const confirmBtn = document.getElementById('rsvp-confirm-btn');
-    const declineBtn = document.getElementById('rsvp-decline-btn');
-    const resultEl   = document.getElementById('rsvp-result');
 
     async function sendRsvp(action){
       if(!eventId || !calendarId){
