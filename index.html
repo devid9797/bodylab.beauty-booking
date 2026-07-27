@@ -122,6 +122,18 @@
   .social-btn svg{width:17px;height:17px}
 
   .empty,.loading,.error{font-size:13px;color:var(--text-soft);text-align:center;padding:1rem 0}
+  .loading{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .loading-spinner{
+    width:26px;height:26px;
+    border:3px solid var(--chip-border);
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){
+    .loading-spinner{animation:none}
+  }
 
   .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
   .cal-nav-btn{
@@ -230,11 +242,18 @@
   .confirm-cal-row{display:flex;gap:10px;margin-top:16px}
   .confirm-cal-row .btn{flex:1;margin-top:0}
 
-  /* ---------- Directions ---------- */
-  .directions-card{padding:1rem 1.25rem}
+  /* ---------- Directions / location ---------- */
+  .directions-card{padding:1.25rem}
   .directions-row{display:flex;gap:10px}
   .directions-row .btn{flex:1;margin-top:0;display:flex;align-items:center;justify-content:center;gap:7px}
   .directions-row svg{width:16px;height:16px;flex:none}
+  .location-buildings{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
+  .location-buildings img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;box-shadow:0 8px 24px rgba(116,115,114,.28)}
+  .location-photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0 4px}
+  .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+
+  /* ---------- Stebby ---------- */
+  .stebby-logo{width:100%;max-width:260px;height:auto;display:block;margin:0 auto 14px}
 
   .hint{font-size:11px;color:var(--text-soft);margin-top:4px}
 
@@ -483,7 +502,7 @@
     <div class="divider"></div>
     <div class="gift-details-label" data-i18n="rsvp_find_us_label"></div>
     <div class="gift-desc" data-i18n="rsvp_address_text"></div>
-    <img class="rsvp-building-photo" src="https://i.postimg.cc/3NbrGcg5/GG00037.jpg" alt="BodyLab.Beauty ēka">
+    <img class="rsvp-building-photo" src="https://i.postimg.cc/3NbrGcg5/GG00037.jpg" alt="BodyLab.Beauty ēka" loading="lazy" decoding="async">
     <div class="gift-desc" data-i18n="rsvp_parking_text"></div>
     <a class="btn btn-outline" id="rsvp-video-link" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODc4ODM3NzgxODM2MDgz?story_media_id=3320747361642892891&igsh=YnE5MGNoMnlucWtn" target="_blank" rel="noopener" data-i18n="rsvp_video_link"></a>
     <div class="directions-row" style="margin-top:6px">
@@ -502,20 +521,10 @@
     <h1 data-i18n="cal_title"></h1>
     <div class="divider"></div>
     <div id="cal-area">
-      <div class="loading" data-i18n="cal_loading"></div>
-    </div>
-  </div>
-
-  <div class="card directions-card">
-    <div class="directions-row">
-      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-        Google Maps
-      </a>
-      <a class="btn btn-outline" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.218 0C9.915 0 6.835 1.49 4.723 4.148c-1.515 1.913-2.31 4.272-2.31 6.706v1.739c0 .894-.62 1.738-1.862 1.813-.298.025-.547.224-.547.522-.05.82.82 2.31 2.012 3.502.82.844 1.788 1.515 2.832 2.036a3 3 0 0 0 2.955 3.528 2.966 2.966 0 0 0 2.931-2.385h2.509c.323 1.689 2.086 2.856 3.974 2.21 1.64-.546 2.36-2.409 1.763-3.924a12.84 12.84 0 0 0 1.838-1.465 10.73 10.73 0 0 0 3.18-7.65c0-2.882-1.118-5.589-3.155-7.625A10.899 10.899 0 0 0 13.218 0zm0 1.217c2.558 0 4.967.994 6.78 2.807a9.525 9.525 0 0 1 2.807 6.78A9.526 9.526 0 0 1 20 17.585a9.647 9.647 0 0 1-6.78 2.807h-2.46a3.008 3.008 0 0 0-2.93-2.41 3.03 3.03 0 0 0-2.534 1.367v.024a8.945 8.945 0 0 1-2.41-1.788c-.844-.844-1.316-1.614-1.515-2.11a2.858 2.858 0 0 0 1.441-.846 2.959 2.959 0 0 0 .795-2.036v-1.789c0-2.11.696-4.197 2.012-5.861 1.863-2.385 4.62-3.726 7.6-3.726zm-2.41 5.986a1.192 1.192 0 0 0-1.191 1.192 1.192 1.192 0 0 0 1.192 1.193A1.192 1.192 0 0 0 12 8.395a1.192 1.192 0 0 0-1.192-1.192zm7.204 0a1.192 1.192 0 0 0-1.192 1.192 1.192 1.192 0 0 0 1.192 1.193 1.192 1.192 0 0 0 1.192-1.193 1.192 1.192 0 0 0-1.192-1.192zm-7.377 4.769a.596.596 0 0 0-.546.845 4.813 4.813 0 0 0 4.346 2.757 4.77 4.77 0 0 0 4.347-2.757.596.596 0 0 0-.547-.845h-.025a.561.561 0 0 0-.521.348 3.59 3.59 0 0 1-3.254 2.061 3.591 3.591 0 0 1-3.254-2.061.64.64 0 0 0-.546-.348z"/></svg>
-        Waze
-      </a>
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <span data-i18n="cal_loading"></span>
+      </div>
     </div>
   </div>
 
@@ -656,10 +665,35 @@
     </div>
   </div>
 
+  <div class="card directions-card">
+    <h1 data-i18n="location_title"></h1>
+    <div class="divider"></div>
+    <div class="gift-desc" data-i18n="rsvp_address_text"></div>
+    <div class="location-buildings">
+      <img src="https://i.postimg.cc/3NbrGcg5/GG00037.jpg" alt="BodyLab.Beauty ēka" loading="lazy" decoding="async">
+      <img src="https://i.postimg.cc/wBM9sjgc/GG00252.jpg" alt="BodyLab.Beauty ēka" loading="lazy" decoding="async">
+    </div>
+    <div class="directions-row">
+      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        Google Maps
+      </a>
+      <a class="btn btn-outline" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.218 0C9.915 0 6.835 1.49 4.723 4.148c-1.515 1.913-2.31 4.272-2.31 6.706v1.739c0 .894-.62 1.738-1.862 1.813-.298.025-.547.224-.547.522-.05.82.82 2.31 2.012 3.502.82.844 1.788 1.515 2.832 2.036a3 3 0 0 0 2.955 3.528 2.966 2.966 0 0 0 2.931-2.385h2.509c.323 1.689 2.086 2.856 3.974 2.21 1.64-.546 2.36-2.409 1.763-3.924a12.84 12.84 0 0 0 1.838-1.465 10.73 10.73 0 0 0 3.18-7.65c0-2.882-1.118-5.589-3.155-7.625A10.899 10.899 0 0 0 13.218 0zm0 1.217c2.558 0 4.967.994 6.78 2.807a9.525 9.525 0 0 1 2.807 6.78A9.526 9.526 0 0 1 20 17.585a9.647 9.647 0 0 1-6.78 2.807h-2.46a3.008 3.008 0 0 0-2.93-2.41 3.03 3.03 0 0 0-2.534 1.367v.024a8.945 8.945 0 0 1-2.41-1.788c-.844-.844-1.316-1.614-1.515-2.11a2.858 2.858 0 0 0 1.441-.846 2.959 2.959 0 0 0 .795-2.036v-1.789c0-2.11.696-4.197 2.012-5.861 1.863-2.385 4.62-3.726 7.6-3.726zm-2.41 5.986a1.192 1.192 0 0 0-1.191 1.192 1.192 1.192 0 0 0 1.192 1.193A1.192 1.192 0 0 0 12 8.395a1.192 1.192 0 0 0-1.192-1.192zm7.204 0a1.192 1.192 0 0 0-1.192 1.192 1.192 1.192 0 0 0 1.192 1.193 1.192 1.192 0 0 0 1.192-1.193 1.192 1.192 0 0 0-1.192-1.192zm-7.377 4.769a.596.596 0 0 0-.546.845 4.813 4.813 0 0 0 4.346 2.757 4.77 4.77 0 0 0 4.347-2.757.596.596 0 0 0-.547-.845h-.025a.561.561 0 0 0-.521.348 3.59 3.59 0 0 1-3.254 2.061 3.591 3.591 0 0 1-3.254-2.061.64.64 0 0 0-.546-.348z"/></svg>
+        Waze
+      </a>
+    </div>
+    <div class="location-photos">
+      <img src="https://i.postimg.cc/85gzvV50/DSC-0092.jpg" alt="BodyLab.Beauty studija" loading="lazy" decoding="async">
+      <img src="https://i.postimg.cc/sXPD90Qb/DSC-0228.jpg" alt="BodyLab.Beauty studija" loading="lazy" decoding="async">
+      <img src="https://i.postimg.cc/zBwXSPb9/DSC-2930.jpg" alt="BodyLab.Beauty studija" loading="lazy" decoding="async">
+    </div>
+  </div>
+
   <div class="card gift-card">
     <h1 data-i18n="gift_title"></h1>
     <div class="divider"></div>
-    <img class="gift-photo" src="https://i.postimg.cc/c4LZyLsx/Bodylab-Beauty-Gift-card.jpg" alt="BodyLab.Beauty Dāvanu kārte">
+    <img class="gift-photo" src="https://i.postimg.cc/c4LZyLsx/Bodylab-Beauty-Gift-card.jpg" alt="BodyLab.Beauty Dāvanu kārte" loading="lazy" decoding="async">
     <div class="gift-desc" data-i18n="gift_desc"></div>
     <div class="gift-details-label" data-i18n="gift_details_label"></div>
     <ul class="service-effects">
@@ -668,6 +702,14 @@
       <li data-i18n="gift_detail3"></li>
     </ul>
     <a class="btn btn-primary" id="gift-order-btn" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="gift_order_btn"></a>
+  </div>
+
+  <div class="card stebby-card">
+    <h1 data-i18n="stebby_title"></h1>
+    <div class="divider"></div>
+    <img class="stebby-logo" src="https://i.postimg.cc/BnDWKP1y/Stebby-Logo-pink-black-horizontal-RGB.png" alt="Stebby" loading="lazy" decoding="async">
+    <div class="gift-desc" data-i18n="stebby_desc"></div>
+    <a class="btn btn-primary" href="https://app.stebby.eu/group/bodylab.beauty" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="stebby_btn"></a>
   </div>
 
 </div>
@@ -818,6 +860,10 @@
       effects_label:'Galvenie efekti:',
       book_btn:'Veikt rezervāciju',
       price_on_request:'cena pēc pieprasījuma',
+      location_title:'Kur mūs atrast',
+      stebby_title:'Maksā ar Stebby',
+      stebby_desc:'Stebby ir lielākā labbūtības pabalstu platforma Baltijā. Ja tavs darba devējs piedāvā Stebby labumus, vari tos izmantot, lai apmaksātu BodyLab.Beauty procedūras tieši caur Stebby lietotni.',
+      stebby_btn:'Atvērt Stebby',
       gift_title:'Dāvanu kārte',
       gift_desc:'Nezini, ko uzdāvināt? BodyLab.Beauty dāvanu karte ir ideāla dāvana jebkurā gadījumā — izvēlies summu vai konkrētu procedūru, un mēs parūpēsimies par pārējo.',
       gift_details_label:'Nosacījumi:',
@@ -929,6 +975,10 @@
       effects_label:'Main effects:',
       book_btn:'Book now',
       price_on_request:'price on request',
+      location_title:'Where to find us',
+      stebby_title:'Pay with Stebby',
+      stebby_desc:"Stebby is the largest employee wellness benefits platform in the Baltics. If your employer offers Stebby benefits, you can use them to pay for BodyLab.Beauty treatments directly through the Stebby app.",
+      stebby_btn:'Open Stebby',
       gift_title:'Gift Card',
       gift_desc:"Not sure what to gift? A BodyLab.Beauty gift card is the perfect present for any occasion — choose an amount or a specific treatment, and we'll take care of the rest.",
       gift_details_label:'Terms:',
@@ -1040,6 +1090,10 @@
       effects_label:'Основные эффекты:',
       book_btn:'Записаться',
       price_on_request:'цена по запросу',
+      location_title:'Где нас найти',
+      stebby_title:'Оплата через Stebby',
+      stebby_desc:'Stebby — крупнейшая платформа велнес-льгот в странах Балтии. Если ваш работодатель предоставляет льготы Stebby, вы можете оплатить процедуры BodyLab.Beauty прямо через приложение Stebby.',
+      stebby_btn:'Открыть Stebby',
       gift_title:'Подарочная карта',
       gift_desc:'Не знаете, что подарить? Подарочная карта BodyLab.Beauty — идеальный подарок на любой случай — выберите сумму или конкретную процедуру, а мы позаботимся об остальном.',
       gift_details_label:'Условия:',
@@ -1573,6 +1627,7 @@
     document.querySelector('.directions-card').style.display = 'none';
     document.querySelector('.services-card').style.display = 'none';
     document.querySelector('.gift-card').style.display = 'none';
+    document.querySelector('.stebby-card').style.display = 'none';
 
     const confirmBtn = document.getElementById('rsvp-confirm-btn');
     const declineBtn = document.getElementById('rsvp-decline-btn');
