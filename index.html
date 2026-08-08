@@ -252,20 +252,36 @@
   .directions-row .btn{flex:1;margin-top:0;display:flex;align-items:center;justify-content:center;gap:7px}
   .directions-row svg{width:16px;height:16px;flex:none}
   .location-buildings{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
-  .location-buildings img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;box-shadow:0 8px 24px rgba(116,115,114,.28)}
+  .location-buildings img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;box-shadow:0 8px 24px rgba(116,115,114,.28);cursor:zoom-in}
   .location-photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0 4px}
-  .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+  .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;cursor:zoom-in}
+
+  /* ---------- Photo lightbox ---------- */
+  .photo-lightbox-backdrop{
+    position:fixed;inset:0;z-index:20;
+    background:rgba(20,19,18,.9);
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 20px;
+    opacity:0;pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .photo-lightbox-backdrop.open{opacity:1;pointer-events:auto}
+  .photo-lightbox-img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .photo-lightbox-close{
+    position:fixed;top:18px;right:18px;
+    width:38px;height:38px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.15);color:#fff;font-size:18px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
 
   /* ---------- Products ---------- */
   .brand-strip{display:flex;align-items:center;gap:12px;background:var(--chip-bg);border-radius:14px;padding:12px 14px;margin-bottom:14px}
   .brand-wordmark{flex:none;font-family:'Montserrat',sans-serif;font-weight:700;font-size:17px;letter-spacing:.03em;color:var(--accent);line-height:1}
   .brand-wordmark small{display:block;font-weight:600;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft);margin-top:3px}
   .brand-strip-text{font-size:11.5px;line-height:1.45;color:var(--text-soft)}
-  .products-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:4px}
-  .product-tile{grid-column:span 2;display:flex;flex-direction:column;height:100%;gap:6px;background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer}
+  .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+  .product-tile{display:flex;flex-direction:column;height:100%;gap:6px;background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer}
   .product-tile:nth-child(n+4){border-top:1px solid var(--chip-border);padding-top:14px}
-  .product-tile:nth-child(7){grid-column:2 / span 2}
-  .product-tile:nth-child(8){grid-column:4 / span 2}
   .product-thumb{width:100%;aspect-ratio:1;border-radius:12px;background-size:cover;background-position:center;background-color:var(--chip-bg)}
   .product-tile-name{font-size:12px;font-weight:600;color:var(--accent);line-height:1.3}
   .product-tile-price{
@@ -356,6 +372,11 @@
   .sheet.open{transform:translateY(0)}
   .sheet-handle{width:36px;height:4px;background:var(--chip-border);border-radius:2px;margin:0 auto 14px}
   .sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  #product-sheet .sheet-header{
+    position:sticky;top:0;z-index:2;
+    background:var(--card);
+    padding-bottom:10px;
+  }
   .sheet-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600;color:var(--accent);text-transform:capitalize}
   .sheet-close{
     width:28px;height:28px;border-radius:50%;border:none;background:var(--chip-bg);
@@ -813,6 +834,11 @@
   </button>
 </div>
 
+<div class="photo-lightbox-backdrop" id="photo-lightbox-backdrop">
+  <button class="photo-lightbox-close" id="photo-lightbox-close" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
+  <img class="photo-lightbox-img" id="photo-lightbox-img" src="" alt="">
+</div>
+
 <div class="sheet-backdrop" id="sheet-backdrop"></div>
 <div class="sheet" id="sheet">
   <div class="sheet-handle"></div>
@@ -991,6 +1017,7 @@
       gift_wa_message:'Sveiki! Es vēlos pasūtīt BodyLab.Beauty dāvanu karti.',
       products_title:'Produkti',
       product_brand_text:'Sadarbojamies ar itāļu zīmolu Arosha Aesthetic Science un esam sertificēts šo produktu izplatītājs Latvijā.',
+      product_tab_description:'Apraksts',
       product_tab_composition:'Sastāvs',
       product_tab_usage:'Lietošana',
       product_tab_properties:'Īpašības',
@@ -1118,6 +1145,7 @@
       gift_wa_message:'Hello! I would like to order a BodyLab.Beauty gift card.',
       products_title:'Products',
       product_brand_text:'We partner with the Italian brand Arosha Aesthetic Science and are a certified distributor of these products in Latvia.',
+      product_tab_description:'Description',
       product_tab_composition:'Composition',
       product_tab_usage:'How to use',
       product_tab_properties:'Properties',
@@ -1245,6 +1273,7 @@
       gift_wa_message:'Здравствуйте! Я хочу заказать подарочную карту BodyLab.Beauty.',
       products_title:'Продукция',
       product_brand_text:'Мы сотрудничаем с итальянским брендом Arosha Aesthetic Science и являемся сертифицированным дистрибьютором этой продукции в Латвии.',
+      product_tab_description:'Описание',
       product_tab_composition:'Состав',
       product_tab_usage:'Применение',
       product_tab_properties:'Свойства',
@@ -1460,6 +1489,23 @@
     if(!fabContact.contains(e.target)) fabContact.classList.remove('open');
   });
 
+  // ---------- Photo lightbox ----------
+  const photoLightboxBackdrop = document.getElementById('photo-lightbox-backdrop');
+  const photoLightboxImg      = document.getElementById('photo-lightbox-img');
+  function openPhotoLightbox(src, alt){
+    photoLightboxImg.src = src;
+    photoLightboxImg.alt = alt || '';
+    photoLightboxBackdrop.classList.add('open');
+  }
+  function closePhotoLightbox(){
+    photoLightboxBackdrop.classList.remove('open');
+  }
+  photoLightboxBackdrop.addEventListener('click', closePhotoLightbox);
+  document.getElementById('photo-lightbox-close').addEventListener('click', closePhotoLightbox);
+  document.querySelectorAll('.location-buildings img, .location-photos img').forEach(img => {
+    img.addEventListener('click', () => openPhotoLightbox(img.src, img.alt));
+  });
+
   function formatTime(dateStr){
     const d = new Date(dateStr);
     return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
@@ -1662,6 +1708,7 @@
       content: {
         lv: {
           name: 'Arosha 501 Nio Drain', size: '200 ml', sizes: null,
+          description: 'Drenējošs krēms ar īpašām aktīvajām sastāvdaļām, kurām piemīt drenējošas un asinsvadus sašaurinošas īpašības.',
           composition: [
             ['E vitamīns','Spēcīgs antioksidants, atjauno ādas mitrumu un stiprina kolagēnu.'],
             ['Saldo mandeļu eļļa','Bagātīgi mitrina un veicina audu atjaunošanos.'],
@@ -1673,6 +1720,7 @@
         },
         en: {
           name: 'Arosha 501 Nio Drain', size: '200 ml', sizes: null,
+          description: 'A draining cream with specific active ingredients that have draining and vasoconstrictive properties.',
           composition: [
             ['Vitamin E','Powerful antioxidant, restores skin hydration and strengthens collagen.'],
             ['Sweet Almond Oil','Deeply moisturising, supports tissue renewal.'],
@@ -1684,6 +1732,7 @@
         },
         ru: {
           name: 'Arosha 501 Nio Drain', size: '200 мл', sizes: null,
+          description: 'Дренажный крем со специальными активными веществами, обладающими дренажным и сосудосуживающим действием.',
           composition: [
             ['Витамин E','Мощный антиоксидант, восстанавливает увлажнённость кожи и укрепляет коллаген.'],
             ['Масло сладкого миндаля','Глубоко увлажняет, способствует восстановлению тканей.'],
@@ -1701,28 +1750,19 @@
       content: {
         lv: {
           name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
-          composition: [
-            ['Dermofibra®','Pavediens ar kristāliem, kas izstaro bioinfrasarkano starojumu, stimulējot mikrocirkulāciju.'],
-            ['Sastāvs','55% poliesteris, 30% poliamīds, 15% elastāns.']
-          ],
+          description: 'Kompresijas legingi ar Dermofibra® Bio-Infrared diegu, lai stimulētu asinsriti un izvadītu lieko šķidrumu.',
           usage: 'Valkāt dienā vai naktī, virs vai zem apģērba, arī sporta laikā. Mazgāt tikai ar rokām. Ieteicams lietot kopā ar Arosha ķermeņa krēmiem.',
           properties: ['Uzlabo asinsriti','Drenējošs efekts','Mazina celulīta izpausmes','Uzlabo ķermeņa kontūras']
         },
         en: {
           name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
-          composition: [
-            ['Dermofibra®','Crystal-infused thread that emits bio-infrared rays, stimulating microcirculation.'],
-            ['Fabric','55% polyester, 30% polyamide, 15% elastane.']
-          ],
+          description: 'Compression leggings with Dermofibra® Bio-Infrared thread to stimulate circulation and remove excess fluid.',
           usage: 'Wear day or night, over or under clothing, even during sport. Hand wash only. Recommended together with Arosha body creams.',
           properties: ['Improves circulation','Draining effect','Reduces the appearance of cellulite','Improves body contours']
         },
         ru: {
           name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
-          composition: [
-            ['Dermofibra®','Нить с кристаллами, излучающими био-инфракрасное излучение, стимулирует микроциркуляцию.'],
-            ['Состав','55% полиэстер, 30% полиамид, 15% эластан.']
-          ],
+          description: 'Компрессионные легинсы с нитью Dermofibra® Bio-Infrared для стимуляции кровообращения и выведения лишней жидкости.',
           usage: 'Носить днём или ночью, поверх или под одеждой, можно во время спорта. Стирать только вручную. Рекомендуется использовать вместе с кремами Arosha.',
           properties: ['Улучшает кровообращение','Дренажный эффект','Уменьшает проявления целлюлита','Улучшает контуры тела']
         }
@@ -1734,35 +1774,44 @@
       content: {
         lv: {
           name: 'Arosha 521 Silhouette Pants Refill', size: '1 uzpildes komplekts', sizes: null,
-          composition: [
-            ['Fosfatidilholīns','Palīdz šķelt taukus, samazinot tauku šūnu izmēru.'],
-            ['Kofeīns','Stimulē triglicerīdu sadalīšanos, spēcīgs antioksidants.'],
-            ['Karnitīns','Atbalsta enerģijas ražošanu un tauku dedzināšanu.'],
-            ['Kolagenāzes ferments','Mazina fibrozi un "apelsīna mizas" efektu.']
-          ],
+          description: 'Kosmētiskais līdzeklis cīņai ar celulīta nepilnībām, satur fosfatidilholīnu un kofeīnu.',
           usage: 'Uzvilkt .521 Silhouette bikses, virsū uzvilkt plastmasas bikses, atstāt 30-60 min, noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens, žāvēt gaisā. Lietot 1-2 reizes nedēļā.',
           properties: ['Tauku šķelšana','Celulīta korekcija','Ādas struktūras uzlabošana','Ādas gludināšana un tonizēšana']
         },
         en: {
           name: 'Arosha 521 Silhouette Pants Refill', size: '1 refill kit', sizes: null,
-          composition: [
-            ['Phosphatidylcholine','Helps break down fat, reducing fat cell size.'],
-            ['Caffeine','Stimulates triglyceride breakdown, strong antioxidant.'],
-            ['Carnitine','Supports energy production and fat burning.'],
-            ['Collagenase enzyme','Reduces fibrosis and the "orange peel" effect.']
-          ],
+          description: 'A cosmetic treatment for cellulite imperfections, containing phosphatidylcholine and caffeine.',
           usage: 'Put on the .521 Silhouette pants, cover with the plastic shorts, leave for 30-60 minutes, remove and massage in the remaining product. Rinse the pants under running water and air dry. Use 1-2 times a week.',
           properties: ['Fat breakdown','Cellulite correction','Improves skin texture','Smooths and tones the skin']
         },
         ru: {
           name: 'Arosha 521 Silhouette Pants Refill', size: '1 комплект заправки', sizes: null,
-          composition: [
-            ['Фосфатидилхолин','Помогает расщеплять жир, уменьшая размер жировых клеток.'],
-            ['Кофеин','Стимулирует расщепление триглицеридов, сильный антиоксидант.'],
-            ['Карнитин','Поддерживает выработку энергии и сжигание жира.'],
-            ['Фермент коллагеназа','Уменьшает фиброз и эффект «апельсиновой корки».']
-          ],
+          description: 'Косметическое средство для борьбы с проявлениями целлюлита, содержит фосфатидилхолин и кофеин.',
           usage: 'Надеть брюки .521 Silhouette, сверху пластиковые шорты, оставить на 30-60 минут, снять и втереть остаток средства. Промыть брюки под проточной водой, сушить на воздухе. Использовать 1-2 раза в неделю.',
+          properties: ['Расщепление жира','Коррекция целлюлита','Улучшение текстуры кожи','Разглаживание и тонизирование кожи']
+        }
+      }
+    },
+    silhouettepants: {
+      image: 'images/product-silhouettepants.jpg',
+      price: '50 €',
+      content: {
+        lv: {
+          name: 'Arosha 521 Silhouette Pants (bikses + uzpilde)', size: null, sizes: 'Viens izmērs (S-L)',
+          description: 'Kosmētiskais līdzeklis cīņai ar celulīta nepilnībām, satur fosfatidilholīnu un kofeīnu.',
+          usage: 'Uzvilkt .521 Silhouette bikses, virsū uzvilkt plastmasas bikses, atstāt 30-60 min, noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens, žāvēt gaisā. Pirms nākamās lietošanas legingus atkārtoti piesūcināt ar uzpildes serumu. Lietot 1-2 reizes nedēļā.',
+          properties: ['Tauku šķelšana','Celulīta korekcija','Ādas struktūras uzlabošana','Ādas gludināšana un tonizēšana']
+        },
+        en: {
+          name: 'Arosha 521 Silhouette Pants (pants + refill)', size: null, sizes: 'One size (S-L)',
+          description: 'A cosmetic treatment for cellulite imperfections, containing phosphatidylcholine and caffeine.',
+          usage: 'Put on the .521 Silhouette pants, cover with the plastic shorts, leave for 30-60 minutes, remove and massage in the remaining product. Rinse the pants under running water and air dry. Re-soak the leggings in the refill serum before the next use. Use 1-2 times a week.',
+          properties: ['Fat breakdown','Cellulite correction','Improves skin texture','Smooths and tones the skin']
+        },
+        ru: {
+          name: 'Arosha 521 Silhouette Pants (брюки + заправка)', size: null, sizes: 'Один размер (S-L)',
+          description: 'Косметическое средство для борьбы с проявлениями целлюлита, содержит фосфатидилхолин и кофеин.',
+          usage: 'Надеть брюки .521 Silhouette, сверху пластиковые шорты, оставить на 30-60 минут, снять и втереть остаток средства. Промыть брюки под проточной водой, сушить на воздухе. Перед следующим использованием пропитать легинсы заправочной сывороткой. Использовать 1-2 раза в неделю.',
           properties: ['Расщепление жира','Коррекция целлюлита','Улучшение текстуры кожи','Разглаживание и тонизирование кожи']
         }
       }
@@ -1773,37 +1822,19 @@
       content: {
         lv: {
           name: 'Arosha 520 Nio Drain Pant (bikses + uzpilde)', size: null, sizes: 'Viens izmērs (S-L)',
-          composition: [
-            ['NIOCONTROL™','Niosomās balstīta piegādes sistēma labākai uzsūkšanai.'],
-            ['Nāves jūras sāļi','Atbalsta detoksikāciju.'],
-            ['Escīns','Pretiekaisuma iedarbība, atbalsta limfātisko sistēmu.'],
-            ['Centella Asiatica ekstrakts','Uzlabo mikrocirkulāciju, drenējošs efekts.'],
-            ['Bērza lapu ekstrakts','Mazina šķidruma aizturi.']
-          ],
+          description: 'Kosmētikas līdzeklis ar drenāžas īpašībām, kurā iekapsulēts bērza ekstrakts un Nāves jūras sāļi.',
           usage: 'Uzvilkt drenējošās bikses, virsū uzvilkt plastmasas bikses uz 30-60 min, pēc tam noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens. Lietot 1-2 reizes nedēļā.',
           properties: ['Mazina kāju smaguma sajūtu un pietūkumu','Detoksikācija','Stimulē mikrocirkulāciju','Pretiekaisuma iedarbība']
         },
         en: {
           name: 'Arosha 520 Nio Drain Pant (pants + refill)', size: null, sizes: 'One size (S-L)',
-          composition: [
-            ['NIOCONTROL™','Niosome-based delivery system for better absorption.'],
-            ['Dead Sea salts','Support detoxification.'],
-            ['Escin','Anti-inflammatory, supports the lymphatic system.'],
-            ['Centella Asiatica extract','Improves microcirculation, draining effect.'],
-            ['Birch leaf extract','Reduces fluid retention.']
-          ],
+          description: 'A cosmetic product with draining properties, featuring encapsulated birch extract and Dead Sea salts.',
           usage: 'Put on the draining pants, cover with the plastic shorts for 30-60 minutes, then remove and massage in the remaining product. Rinse the pants under running water. Use 1-2 times a week.',
           properties: ['Reduces heavy, swollen legs','Detoxifying','Stimulates microcirculation','Anti-inflammatory']
         },
         ru: {
           name: 'Arosha 520 Nio Drain Pant (брюки + заправка)', size: null, sizes: 'Один размер (S-L)',
-          composition: [
-            ['NIOCONTROL™','Система доставки на основе ниосом для лучшего усвоения.'],
-            ['Соли Мёртвого моря','Поддерживают детоксикацию.'],
-            ['Эсцин','Противовоспалительное действие, поддержка лимфосистемы.'],
-            ['Экстракт центеллы азиатской','Улучшает микроциркуляцию, дренажный эффект.'],
-            ['Экстракт листьев берёзы','Уменьшает задержку жидкости.']
-          ],
+          description: 'Косметическое средство с дренажными свойствами, содержащее инкапсулированный экстракт берёзы и соли Мёртвого моря.',
           usage: 'Надеть дренажные брюки, сверху пластиковые шорты на 30-60 минут, затем снять и втереть остаток средства. Промыть брюки под проточной водой. Использовать 1-2 раза в неделю.',
           properties: ['Уменьшает тяжесть и отёчность ног','Детоксикация','Стимулирует микроциркуляцию','Противовоспалительное действие']
         }
@@ -1815,37 +1846,19 @@
       content: {
         lv: {
           name: 'Arosha 520 Nio Drain Pants Refill', size: '1 uzpildes komplekts (bez legingiem)', sizes: null,
-          composition: [
-            ['NIOCONTROL™','Niosomās balstīta piegādes sistēma labākai uzsūkšanai.'],
-            ['Nāves jūras sāļi','Atbalsta detoksikāciju.'],
-            ['Escīns','Pretiekaisuma iedarbība, atbalsta limfātisko sistēmu.'],
-            ['Centella Asiatica ekstrakts','Uzlabo mikrocirkulāciju, drenējošs efekts.'],
-            ['Bērza lapu ekstrakts','Mazina šķidruma aizturi.']
-          ],
+          description: 'Kosmētikas līdzeklis ar drenāžas īpašībām, kurā iekapsulēts bērza ekstrakts un Nāves jūras sāļi.',
           usage: 'Uzvilkt drenējošās bikses, virsū uzvilkt plastmasas bikses uz 30-60 min, pēc tam noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens. Lietot 1-2 reizes nedēļā.',
           properties: ['Mazina kāju smaguma sajūtu un pietūkumu','Detoksikācija','Stimulē mikrocirkulāciju','Pretiekaisuma iedarbība']
         },
         en: {
           name: 'Arosha 520 Nio Drain Pants Refill', size: '1 refill kit (no leggings)', sizes: null,
-          composition: [
-            ['NIOCONTROL™','Niosome-based delivery system for better absorption.'],
-            ['Dead Sea salts','Support detoxification.'],
-            ['Escin','Anti-inflammatory, supports the lymphatic system.'],
-            ['Centella Asiatica extract','Improves microcirculation, draining effect.'],
-            ['Birch leaf extract','Reduces fluid retention.']
-          ],
+          description: 'A cosmetic product with draining properties, featuring encapsulated birch extract and Dead Sea salts.',
           usage: 'Put on the draining pants, cover with the plastic shorts for 30-60 minutes, then remove and massage in the remaining product. Rinse the pants under running water. Use 1-2 times a week.',
           properties: ['Reduces heavy, swollen legs','Detoxifying','Stimulates microcirculation','Anti-inflammatory']
         },
         ru: {
           name: 'Arosha 520 Nio Drain Pants Refill', size: '1 комплект заправки (без брюк)', sizes: null,
-          composition: [
-            ['NIOCONTROL™','Система доставки на основе ниосом для лучшего усвоения.'],
-            ['Соли Мёртвого моря','Поддерживают детоксикацию.'],
-            ['Эсцин','Противовоспалительное действие, поддержка лимфосистемы.'],
-            ['Экстракт центеллы азиатской','Улучшает микроциркуляцию, дренажный эффект.'],
-            ['Экстракт листьев берёзы','Уменьшает задержку жидкости.']
-          ],
+          description: 'Косметическое средство с дренажными свойствами, содержащее инкапсулированный экстракт берёзы и соли Мёртвого моря.',
           usage: 'Надеть дренажные брюки, сверху пластиковые шорты на 30-60 минут, затем снять и втереть остаток средства. Промыть брюки под проточной водой. Использовать 1-2 раза в неделю.',
           properties: ['Уменьшает тяжесть и отёчность ног','Детоксикация','Стимулирует микроциркуляцию','Противовоспалительное действие']
         }
@@ -1857,6 +1870,7 @@
       content: {
         lv: {
           name: 'Arosha 516 Cellunight', size: '200 ml', sizes: null,
+          description: 'Nakts krēms ar NOCTURSHAPE™, kas iedarbojas uz nakts olbaltumvielu atbildīgo par tauku uzkrāšanos.',
           composition: [
             ['NOCTURSHAPE™','No planktona iegūta molekula, kas bloķē nakts tauku uzkrāšanos.'],
             ['Kofeīns','Stimulē tauku šķelšanos, antioksidants.'],
@@ -1869,6 +1883,7 @@
         },
         en: {
           name: 'Arosha 516 Cellunight', size: '200 ml', sizes: null,
+          description: 'A night cream with NOCTURSHAPE™, which targets the night-time protein responsible for fat storage.',
           composition: [
             ['NOCTURSHAPE™','Plankton-derived molecule that blocks night-time fat storage.'],
             ['Caffeine','Stimulates fat breakdown, antioxidant.'],
@@ -1881,6 +1896,7 @@
         },
         ru: {
           name: 'Arosha 516 Cellunight', size: '200 мл', sizes: null,
+          description: 'Ночной крем с NOCTURSHAPE™, воздействующий на ночной белок, отвечающий за накопление жира.',
           composition: [
             ['NOCTURSHAPE™','Молекула из планктона, блокирующая ночное накопление жира.'],
             ['Кофеин','Стимулирует расщепление жиров, антиоксидант.'],
@@ -1899,28 +1915,19 @@
       content: {
         lv: {
           name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
-          composition: [
-            ['Dermofibra®','Bioinfrasarkanā starojuma pavediens, stimulē mikrocirkulāciju un relaksē muskuļus.'],
-            ['Sastāvs','57% poliesteris, 32% poliamīds, 11% elastāns.']
-          ],
+          description: 'Bodijs no Dermofibra® diega ar slaidinošu un ķermeņa formu veidojošu efektu uz vēdera zonas.',
           usage: 'Mazgāt tikai ar rokām 30°C temperatūrā, nelietot audu mīkstinātāju. Uzmanīgi ar pulksteņiem un rotaslietām.',
           properties: ['Tonizējošs un veidojošs efekts','Uzlabo asinsriti','Limfātiskā atbalsta iedarbība','Mazina celulīta izpausmes']
         },
         en: {
           name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
-          composition: [
-            ['Dermofibra®','Bio-infrared thread that stimulates microcirculation and relaxes muscles.'],
-            ['Fabric','57% polyester, 32% polyamide, 11% elastane.']
-          ],
+          description: 'A bodysuit made from Dermofibra® thread with a slimming and body-shaping effect on the abdominal area.',
           usage: 'Hand wash only at 30°C, no fabric softener. Be careful around watches and jewellery.',
           properties: ['Toning, reshaping effect','Improves circulation','Supports lymphatic drainage','Reduces the appearance of cellulite']
         },
         ru: {
           name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
-          composition: [
-            ['Dermofibra®','Нить с био-инфракрасным излучением, стимулирует микроциркуляцию и расслабляет мышцы.'],
-            ['Состав','57% полиэстер, 32% полиамид, 11% эластан.']
-          ],
+          description: 'Боди из нити Dermofibra® с моделирующим и подтягивающим эффектом в области живота.',
           usage: 'Стирать только вручную при 30°C, без кондиционера для белья. Соблюдать осторожность рядом с часами и украшениями.',
           properties: ['Тонизирующий и моделирующий эффект','Улучшает кровообращение','Поддержка лимфодренажа','Уменьшает проявления целлюлита']
         }
@@ -1932,6 +1939,7 @@
       content: {
         lv: {
           name: 'Arosha 515 Body Rescue Cellulite', size: '200 ml', sizes: null,
+          description: 'Intensīvs krēms pret celulītu ar SLIM COMPLEX, kofeīnu un karnitīnu cīņai pret ādas nepilnībām.',
           composition: [
             ['Rodisterols (2%)','Veicina tauku dedzināšanu, uzlabo ādas stingrumu.'],
             ['Sculptosan (1%)','Palielina ādas stingrumu un elastību.'],
@@ -1943,6 +1951,7 @@
         },
         en: {
           name: 'Arosha 515 Body Rescue Cellulite', size: '200 ml', sizes: null,
+          description: 'An intensive anti-cellulite cream with SLIM COMPLEX, caffeine and carnitine to fight skin imperfections.',
           composition: [
             ['Rodisterol (2%)','Promotes fat burning, improves skin firmness.'],
             ['Sculptosan (1%)','Increases skin firmness and elasticity.'],
@@ -1954,6 +1963,7 @@
         },
         ru: {
           name: 'Arosha 515 Body Rescue Cellulite', size: '200 мл', sizes: null,
+          description: 'Интенсивный крем против целлюлита с SLIM COMPLEX, кофеином и карнитином для борьбы с несовершенствами кожи.',
           composition: [
             ['Родистерол (2%)','Способствует сжиганию жира, улучшает упругость кожи.'],
             ['Sculptosan (1%)','Повышает упругость и эластичность кожи.'],
@@ -1966,13 +1976,13 @@
       }
     }
   };
-  const PRODUCT_ORDER = ['niodrain','cellunight','bodyrescue','pressopants','silhouetterefill','niodrainpantset','niodrainpantrefill','bodyslim'];
+  const PRODUCT_ORDER = ['niodrain','cellunight','bodyrescue','pressopants','silhouetterefill','silhouettepants','niodrainpantset','niodrainpantrefill','bodyslim'];
 
   const productsGrid         = document.getElementById('products-grid');
   const productSheetBackdrop = document.getElementById('product-sheet-backdrop');
   const productSheet         = document.getElementById('product-sheet');
   let currentProductId = null;
-  let currentProductTab = 'composition';
+  let currentProductTab = 'description';
 
   function renderProductTiles(){
     productsGrid.innerHTML = PRODUCT_ORDER.map(id => {
@@ -1993,7 +2003,9 @@
 
   function renderProductTabPanel(c){
     const panel = document.getElementById('product-tab-panel');
-    if(currentProductTab === 'composition'){
+    if(currentProductTab === 'description'){
+      panel.innerHTML = `<p>${c.description}</p>`;
+    } else if(currentProductTab === 'composition'){
       panel.innerHTML = '<ul>' + c.composition.map(([name, desc]) =>
         `<li><span class="ingredient-name">${name}.</span> ${desc}</li>`
       ).join('') + '</ul>';
@@ -2008,7 +2020,7 @@
     const p = PRODUCTS[id];
     if(!p) return;
     currentProductId = id;
-    currentProductTab = 'composition';
+    currentProductTab = 'description';
     const c = p.content[currentLang];
 
     document.getElementById('product-sheet-name').textContent = c.name;
@@ -2019,7 +2031,8 @@
     document.getElementById('product-sheet-sizes').textContent = c.sizes ? `${t('product_sizes_label')}: ${c.sizes}` : '';
 
     const tabs = [
-      ['composition', t('product_tab_composition')],
+      ['description', t('product_tab_description')],
+      ...(c.composition ? [['composition', t('product_tab_composition')]] : []),
       ['usage', t('product_tab_usage')],
       ['properties', t('product_tab_properties')]
     ];
