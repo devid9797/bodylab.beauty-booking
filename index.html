@@ -91,6 +91,7 @@
     height:220px;
     position:relative;
     background:
+      linear-gradient(180deg, transparent 65%, var(--card) 100%),
       linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.18) 100%),
       url('images/hero.jpg');
     background-size:cover;
@@ -253,14 +254,58 @@
   .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
 
   /* ---------- Products ---------- */
-  .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
-  .product-tile{display:flex;flex-direction:column;gap:6px;background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer}
+  .brand-strip{display:flex;align-items:center;gap:12px;background:var(--chip-bg);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .brand-wordmark{flex:none;font-family:'Montserrat',sans-serif;font-weight:700;font-size:17px;letter-spacing:.03em;color:var(--accent);line-height:1}
+  .brand-wordmark small{display:block;font-weight:600;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft);margin-top:3px}
+  .brand-strip-text{font-size:11.5px;line-height:1.45;color:var(--text-soft)}
+  .products-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:4px}
+  .product-tile{grid-column:span 2;display:flex;flex-direction:column;height:100%;gap:6px;background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer}
+  .product-tile:nth-child(n+4){border-top:1px solid var(--chip-border);padding-top:14px}
+  .product-tile:nth-child(7){grid-column:2 / span 2}
+  .product-tile:nth-child(8){grid-column:4 / span 2}
   .product-thumb{width:100%;aspect-ratio:1;border-radius:12px;background-size:cover;background-position:center;background-color:var(--chip-bg)}
-  .product-thumb.placeholder{display:flex;align-items:center;justify-content:center;text-align:center;font-size:10.5px;line-height:1.3;color:var(--text-soft);padding:6px}
   .product-tile-name{font-size:12px;font-weight:600;color:var(--accent);line-height:1.3}
-  .product-tile-price{font-size:11.5px;color:var(--text-soft)}
+  .product-tile-price{
+    display:inline-block;align-self:flex-start;margin-top:auto;
+    font-size:13px;font-weight:700;color:var(--card);
+    background:var(--accent);border-radius:8px;padding:3px 9px;
+  }
   .product-sheet-photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;margin-bottom:12px;box-shadow:0 8px 24px rgba(116,115,114,.28)}
-  .product-sheet-price{font-size:17px;font-weight:700;color:var(--accent);margin-bottom:14px}
+  .product-sheet-price{font-size:17px;font-weight:700;color:var(--accent);margin-bottom:2px}
+  .product-sheet-sizes{font-size:12px;color:var(--text-soft);margin-bottom:10px}
+  .product-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .product-tab-btn{
+    padding:7px 13px;border-radius:20px;border:1px solid var(--chip-border);
+    background:var(--chip-bg);color:var(--text-soft);font-size:12px;font-weight:600;
+    cursor:pointer;font-family:inherit;
+  }
+  .product-tab-btn.active{background:var(--accent);color:var(--card);border-color:var(--accent)}
+  .product-tab-panel{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:4px}
+  .product-tab-panel ul{list-style:none}
+  .product-tab-panel li{padding-left:16px;position:relative;margin-bottom:7px}
+  .product-tab-panel li::before{content:'•';position:absolute;left:2px;color:var(--accent-soft)}
+  .product-tab-panel .ingredient-name{font-weight:600;color:var(--accent)}
+  .product-availability{font-size:12px;line-height:1.5;color:var(--text-soft);background:var(--chip-bg);border-radius:10px;padding:10px 12px;margin-top:14px}
+
+  /* ---------- Floating contact button ---------- */
+  .fab-contact{position:fixed;right:18px;bottom:18px;z-index:9;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .fab-option{
+    width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.2);
+    opacity:0;transform:translateY(10px) scale(.7);pointer-events:none;
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .fab-option svg{width:22px;height:22px}
+  .fab-option.fab-whatsapp{background:#25D366}
+  .fab-option.fab-instagram{background:radial-gradient(circle at 30% 110%,#fdf497,#fdf497,#fd5949,#d6249f,#285AEB)}
+  .fab-contact.open .fab-option{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+  .fab-toggle{
+    width:58px;height:58px;border-radius:50%;border:none;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 8px 20px rgba(116,115,114,.4);transition:transform .2s ease;
+  }
+  .fab-toggle svg{width:26px;height:26px;transition:transform .2s ease}
+  .fab-contact.open .fab-toggle svg{transform:rotate(135deg)}
 
   /* ---------- Stebby ---------- */
   .stebby-logo{width:100%;max-width:260px;height:auto;display:block;margin:0 auto 14px}
@@ -460,9 +505,6 @@
     .wrap.rsvp-mode{
       column-count:1;
       max-width:440px;
-    }
-    .products-grid{
-      grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
     }
   }
 </style>
@@ -724,38 +766,12 @@
   <div class="card products-card">
     <h1 data-i18n="products_title"></h1>
     <div class="divider"></div>
-    <div class="products-grid">
-      <button class="product-tile" type="button" data-product="pressopants">
-        <div class="product-thumb" style="background-image:url('images/product-pressopants.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_pressopants_name"></div>
-        <div class="product-tile-price">39 €</div>
-      </button>
-      <button class="product-tile" type="button" data-product="toningplus">
-        <div class="product-thumb" style="background-image:url('images/product-toningplus.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_toningplus_name"></div>
-        <div class="product-tile-price">45 €</div>
-      </button>
-      <button class="product-tile" type="button" data-product="niodrain">
-        <div class="product-thumb" style="background-image:url('images/product-niodrain.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_niodrain_name"></div>
-        <div class="product-tile-price">17 €</div>
-      </button>
-      <button class="product-tile" type="button" data-product="pressopants">
-        <div class="product-thumb" style="background-image:url('images/product-pressopants.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_pressopants_name"></div>
-        <div class="product-tile-price">39 €</div>
-      </button>
-      <button class="product-tile" type="button" data-product="toningplus">
-        <div class="product-thumb" style="background-image:url('images/product-toningplus.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_toningplus_name"></div>
-        <div class="product-tile-price">45 €</div>
-      </button>
-      <button class="product-tile" type="button" data-product="niodrain">
-        <div class="product-thumb" style="background-image:url('images/product-niodrain.jpg')"></div>
-        <div class="product-tile-name" data-i18n="product_niodrain_name"></div>
-        <div class="product-tile-price">17 €</div>
-      </button>
+    <div class="brand-strip">
+      <div class="brand-wordmark">AROSHA<small>Aesthetic Science</small></div>
+      <div class="brand-strip-text" data-i18n="product_brand_text"></div>
     </div>
+    <div class="products-grid" id="products-grid"></div>
+    <div class="product-availability" data-i18n="product_availability_note"></div>
   </div>
 
   <div class="card gift-card">
@@ -780,6 +796,18 @@
     <a class="btn btn-primary" href="https://app.stebby.eu/group/bodylab.beauty" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="stebby_btn"></a>
   </div>
 
+</div>
+
+<div class="fab-contact" id="fab-contact">
+  <a class="fab-option fab-whatsapp" id="fab-whatsapp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+  <a class="fab-option fab-instagram" id="fab-instagram" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>
+  </a>
+  <button class="fab-toggle" id="fab-toggle" type="button" data-i18n="fab_aria" data-i18n-attr="aria-label">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  </button>
 </div>
 
 <div class="sheet-backdrop" id="sheet-backdrop"></div>
@@ -857,8 +885,10 @@
     <button class="sheet-close" id="product-sheet-close" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
   </div>
   <img class="product-sheet-photo" id="product-sheet-photo" src="" alt="">
-  <div class="gift-desc" id="product-sheet-desc"></div>
   <div class="product-sheet-price" id="product-sheet-price"></div>
+  <div class="product-sheet-sizes" id="product-sheet-sizes"></div>
+  <div class="product-tabs" id="product-tabs"></div>
+  <div class="product-tab-panel" id="product-tab-panel"></div>
   <a class="btn btn-primary" id="product-order-btn" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="product_order_btn"></a>
 </div>
 
@@ -954,15 +984,16 @@
       gift_order_btn:'Pasūtīt dāvanu karti',
       gift_wa_message:'Sveiki! Es vēlos pasūtīt BodyLab.Beauty dāvanu karti.',
       products_title:'Produkti',
-      product_coming_soon:'Drīzumā',
-      product_pressopants_name:'Arosha 500 Pressopants',
-      product_pressopants_desc:'Speciālas bikses ar spiedienmasāžas un mikrostimulācijas efektu - uzlabo asinsriti, mazina kāju pietūkumu un uzlabo ādas tonusu.',
-      product_toningplus_name:'Arosha 345 Toning Plus',
-      product_toningplus_desc:'Bagātīgs masāžas krēms ar stingrinošu un elastību uzlabojošu efektu - restrukturē ādas šķiedras, veicina kolagēna veidošanos un uzlabo ādas mitruma līdzsvaru.',
-      product_niodrain_name:'Arosha 501 Nio Drain',
-      product_niodrain_desc:'Vieglas struktūras drenējošs želejkrēms, kas uzlabo mikrocirkulāciju, mazina šķidruma aizturi un kāju smaguma sajūtu.',
+      product_brand_text:'Sadarbojamies ar itāļu zīmolu Arosha Aesthetic Science un esam sertificēts šo produktu izplatītājs Latvijā.',
+      product_tab_composition:'Sastāvs',
+      product_tab_usage:'Lietošana',
+      product_tab_properties:'Īpašības',
+      product_sizes_label:'Pieejamie izmēri',
+      product_availability_note:'Šis produkts pieejams mūsu salonā - vari to iegādāties uz vietas vai iepriekš pasūtīt un pārbaudīt pieejamību, sazinoties ar mums.',
       product_order_btn:'Pasūtīt',
       product_wa_message:'Sveiki! Es vēlos pasūtīt: {product}.',
+      fab_aria:'Sazināties',
+      fab_wa_message:'Sveiki! Man ir jautājums.',
       sheet_back:'← Izvēlēties citu laiku',
       close_aria:'Aizvērt',
       label_first_name:'Vārds *',
@@ -1079,15 +1110,16 @@
       gift_order_btn:'Order a gift card',
       gift_wa_message:'Hello! I would like to order a BodyLab.Beauty gift card.',
       products_title:'Products',
-      product_coming_soon:'Coming soon',
-      product_pressopants_name:'Arosha 500 Pressopants',
-      product_pressopants_desc:'Compression leggings with a pressure-massage and microstimulation effect - improve circulation, reduce leg swelling and enhance skin tone.',
-      product_toningplus_name:'Arosha 345 Toning Plus',
-      product_toningplus_desc:"Rich firming massage cream that restructures the skin's elastic fibres, stimulates collagen synthesis and improves its natural hydration for a firmer, more toned look.",
-      product_niodrain_name:'Arosha 501 Nio Drain',
-      product_niodrain_desc:'Lightweight draining gel cream that improves microcirculation, reduces fluid retention and relieves the feeling of heavy legs.',
+      product_brand_text:'We partner with the Italian brand Arosha Aesthetic Science and are a certified distributor of these products in Latvia.',
+      product_tab_composition:'Composition',
+      product_tab_usage:'How to use',
+      product_tab_properties:'Properties',
+      product_sizes_label:'Available sizes',
+      product_availability_note:'This product is available in our salon - you can buy it on the spot or pre-order and check availability by contacting us.',
       product_order_btn:'Order',
       product_wa_message:'Hello! I would like to order: {product}.',
+      fab_aria:'Contact us',
+      fab_wa_message:'Hello! I have a question.',
       sheet_back:'← Choose another time',
       close_aria:'Close',
       label_first_name:'First name *',
@@ -1204,15 +1236,16 @@
       gift_order_btn:'Заказать подарочную карту',
       gift_wa_message:'Здравствуйте! Я хочу заказать подарочную карту BodyLab.Beauty.',
       products_title:'Продукция',
-      product_coming_soon:'Скоро',
-      product_pressopants_name:'Arosha 500 Pressopants',
-      product_pressopants_desc:'Компрессионные легинсы с эффектом прессомассажа и микростимуляции - улучшают кровообращение, уменьшают отёчность ног и повышают тонус кожи.',
-      product_toningplus_name:'Arosha 345 Toning Plus',
-      product_toningplus_desc:'Насыщенный массажный крем с укрепляющим и повышающим эластичность эффектом - восстанавливает эластичные волокна кожи, стимулирует выработку коллагена и улучшает увлажнение.',
-      product_niodrain_name:'Arosha 501 Nio Drain',
-      product_niodrain_desc:'Лёгкий дренажный гель-крем, улучшающий микроциркуляцию, уменьшающий задержку жидкости и чувство тяжести в ногах.',
+      product_brand_text:'Мы сотрудничаем с итальянским брендом Arosha Aesthetic Science и являемся сертифицированным дистрибьютором этой продукции в Латвии.',
+      product_tab_composition:'Состав',
+      product_tab_usage:'Применение',
+      product_tab_properties:'Свойства',
+      product_sizes_label:'Доступные размеры',
+      product_availability_note:'Этот продукт доступен у нас в салоне - можно купить на месте или заранее заказать и проверить наличие, связавшись с нами.',
       product_order_btn:'Заказать',
       product_wa_message:'Здравствуйте! Я хочу заказать: {product}.',
+      fab_aria:'Связаться с нами',
+      fab_wa_message:'Здравствуйте! У меня есть вопрос.',
       sheet_back:'← Выбрать другое время',
       close_aria:'Закрыть',
       label_first_name:'Имя *',
@@ -1360,7 +1393,9 @@
     langCurrent.textContent = currentLang.toUpperCase();
 
     document.getElementById('gift-order-btn').href = `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('gift_wa_message'))}`;
+    document.getElementById('fab-whatsapp').href = `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('fab_wa_message'))}`;
 
+    renderProductTiles();
     if(currentProductId) openProductSheet(currentProductId);
 
     if(monthKeys.length) renderCalendar();
@@ -1404,6 +1439,17 @@
   });
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') closeLangMenu();
+  });
+
+  // ---------- Floating contact button ----------
+  const fabContact = document.getElementById('fab-contact');
+  const fabToggle  = document.getElementById('fab-toggle');
+  fabToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fabContact.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if(!fabContact.contains(e.target)) fabContact.classList.remove('open');
   });
 
   function formatTime(dateStr){
@@ -1564,42 +1610,388 @@
 
   // ---------- Products ----------
   const PRODUCTS = {
-    pressopants: {
-      image: 'images/product-pressopants.jpg',
-      nameKey: 'product_pressopants_name',
-      descKey: 'product_pressopants_desc',
-      price: '39 €'
-    },
-    toningplus: {
-      image: 'images/product-toningplus.jpg',
-      nameKey: 'product_toningplus_name',
-      descKey: 'product_toningplus_desc',
-      price: '45 €'
-    },
     niodrain: {
       image: 'images/product-niodrain.jpg',
-      nameKey: 'product_niodrain_name',
-      descKey: 'product_niodrain_desc',
-      price: '17 €'
+      price: '65 €',
+      content: {
+        lv: {
+          name: 'Arosha 501 Nio Drain', size: '200 ml', sizes: null,
+          composition: [
+            ['E vitamīns','Spēcīgs antioksidants, atjauno ādas mitrumu un stiprina kolagēnu.'],
+            ['Saldo mandeļu eļļa','Bagātīgi mitrina un veicina audu atjaunošanos.'],
+            ['Rīsu eļļa','Antioksidanta iedarbība, aizsargā ādu.'],
+            ['NIOCONTROL tehnoloģija','Aktīvās vielas iekapsulētas niosomās labākai uzsūkšanai.']
+          ],
+          usage: 'Uzklāt uz ādas un masēt, līdz pilnībā uzsūcies. Izvairīties no kontakta ar acīm un gļotādām.',
+          properties: ['Uzlabo mikrocirkulāciju','Veicina šķidruma aizplūšanu','Antioksidanta aizsardzība','Viegla, ātri uzsūcas tekstūra']
+        },
+        en: {
+          name: 'Arosha 501 Nio Drain', size: '200 ml', sizes: null,
+          composition: [
+            ['Vitamin E','Powerful antioxidant, restores skin hydration and strengthens collagen.'],
+            ['Sweet Almond Oil','Deeply moisturising, supports tissue renewal.'],
+            ['Rice Bran Oil','Antioxidant protection for the skin.'],
+            ['NIOCONTROL technology','Active ingredients encapsulated in niosomes for better absorption.']
+          ],
+          usage: 'Apply to the skin and massage until fully absorbed. Avoid contact with eyes and mucous membranes.',
+          properties: ['Improves microcirculation','Promotes fluid drainage','Antioxidant protection','Light, fast-absorbing texture']
+        },
+        ru: {
+          name: 'Arosha 501 Nio Drain', size: '200 мл', sizes: null,
+          composition: [
+            ['Витамин E','Мощный антиоксидант, восстанавливает увлажнённость кожи и укрепляет коллаген.'],
+            ['Масло сладкого миндаля','Глубоко увлажняет, способствует восстановлению тканей.'],
+            ['Рисовое масло','Антиоксидантная защита кожи.'],
+            ['Технология NIOCONTROL','Активные вещества в ниосомах для лучшего проникновения.']
+          ],
+          usage: 'Нанести на кожу и массировать до полного впитывания. Избегать контакта с глазами и слизистыми.',
+          properties: ['Улучшает микроциркуляцию','Способствует оттоку жидкости','Антиоксидантная защита','Лёгкая, быстро впитывающаяся текстура']
+        }
+      }
+    },
+    pressopants: {
+      image: 'images/product-pressopants.jpg',
+      price: '75 €',
+      content: {
+        lv: {
+          name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
+          composition: [
+            ['Dermofibra®','Pavediens ar kristāliem, kas izstaro bioinfrasarkano starojumu, stimulējot mikrocirkulāciju.'],
+            ['Sastāvs','55% poliesteris, 30% poliamīds, 15% elastāns.']
+          ],
+          usage: 'Valkāt dienā vai naktī, virs vai zem apģērba, arī sporta laikā. Mazgāt tikai ar rokām. Ieteicams lietot kopā ar Arosha ķermeņa krēmiem.',
+          properties: ['Uzlabo asinsriti','Drenējošs efekts','Mazina celulīta izpausmes','Uzlabo ķermeņa kontūras']
+        },
+        en: {
+          name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
+          composition: [
+            ['Dermofibra®','Crystal-infused thread that emits bio-infrared rays, stimulating microcirculation.'],
+            ['Fabric','55% polyester, 30% polyamide, 15% elastane.']
+          ],
+          usage: 'Wear day or night, over or under clothing, even during sport. Hand wash only. Recommended together with Arosha body creams.',
+          properties: ['Improves circulation','Draining effect','Reduces the appearance of cellulite','Improves body contours']
+        },
+        ru: {
+          name: 'Arosha 500 Pressopants', size: null, sizes: 'S (38-40), M (42-44), L (46-48), XL/XXL (50-52)',
+          composition: [
+            ['Dermofibra®','Нить с кристаллами, излучающими био-инфракрасное излучение, стимулирует микроциркуляцию.'],
+            ['Состав','55% полиэстер, 30% полиамид, 15% эластан.']
+          ],
+          usage: 'Носить днём или ночью, поверх или под одеждой, можно во время спорта. Стирать только вручную. Рекомендуется использовать вместе с кремами Arosha.',
+          properties: ['Улучшает кровообращение','Дренажный эффект','Уменьшает проявления целлюлита','Улучшает контуры тела']
+        }
+      }
+    },
+    silhouetterefill: {
+      image: 'images/product-silhouette-refill.jpg',
+      price: '18 €',
+      content: {
+        lv: {
+          name: 'Arosha 521 Silhouette Pants Refill', size: '1 uzpildes komplekts', sizes: null,
+          composition: [
+            ['Fosfatidilholīns','Palīdz šķelt taukus, samazinot tauku šūnu izmēru.'],
+            ['Kofeīns','Stimulē triglicerīdu sadalīšanos, spēcīgs antioksidants.'],
+            ['Karnitīns','Atbalsta enerģijas ražošanu un tauku dedzināšanu.'],
+            ['Kolagenāzes ferments','Mazina fibrozi un "apelsīna mizas" efektu.']
+          ],
+          usage: 'Uzvilkt .521 Silhouette bikses, virsū uzvilkt plastmasas bikses, atstāt 30-60 min, noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens, žāvēt gaisā. Lietot 1-2 reizes nedēļā.',
+          properties: ['Tauku šķelšana','Celulīta korekcija','Ādas struktūras uzlabošana','Ādas gludināšana un tonizēšana']
+        },
+        en: {
+          name: 'Arosha 521 Silhouette Pants Refill', size: '1 refill kit', sizes: null,
+          composition: [
+            ['Phosphatidylcholine','Helps break down fat, reducing fat cell size.'],
+            ['Caffeine','Stimulates triglyceride breakdown, strong antioxidant.'],
+            ['Carnitine','Supports energy production and fat burning.'],
+            ['Collagenase enzyme','Reduces fibrosis and the "orange peel" effect.']
+          ],
+          usage: 'Put on the .521 Silhouette pants, cover with the plastic shorts, leave for 30-60 minutes, remove and massage in the remaining product. Rinse the pants under running water and air dry. Use 1-2 times a week.',
+          properties: ['Fat breakdown','Cellulite correction','Improves skin texture','Smooths and tones the skin']
+        },
+        ru: {
+          name: 'Arosha 521 Silhouette Pants Refill', size: '1 комплект заправки', sizes: null,
+          composition: [
+            ['Фосфатидилхолин','Помогает расщеплять жир, уменьшая размер жировых клеток.'],
+            ['Кофеин','Стимулирует расщепление триглицеридов, сильный антиоксидант.'],
+            ['Карнитин','Поддерживает выработку энергии и сжигание жира.'],
+            ['Фермент коллагеназа','Уменьшает фиброз и эффект «апельсиновой корки».']
+          ],
+          usage: 'Надеть брюки .521 Silhouette, сверху пластиковые шорты, оставить на 30-60 минут, снять и втереть остаток средства. Промыть брюки под проточной водой, сушить на воздухе. Использовать 1-2 раза в неделю.',
+          properties: ['Расщепление жира','Коррекция целлюлита','Улучшение текстуры кожи','Разглаживание и тонизирование кожи']
+        }
+      }
+    },
+    niodrainpantset: {
+      image: 'images/product-niodrainpant-set.jpg',
+      price: '50 €',
+      content: {
+        lv: {
+          name: 'Arosha 520 Nio Drain Pant (bikses + uzpilde)', size: null, sizes: 'Viens izmērs (S-L)',
+          composition: [
+            ['NIOCONTROL™','Niosomās balstīta piegādes sistēma labākai uzsūkšanai.'],
+            ['Nāves jūras sāļi','Atbalsta detoksikāciju.'],
+            ['Escīns','Pretiekaisuma iedarbība, atbalsta limfātisko sistēmu.'],
+            ['Centella Asiatica ekstrakts','Uzlabo mikrocirkulāciju, drenējošs efekts.'],
+            ['Bērza lapu ekstrakts','Mazina šķidruma aizturi.']
+          ],
+          usage: 'Uzvilkt drenējošās bikses, virsū uzvilkt plastmasas bikses uz 30-60 min, pēc tam noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens. Lietot 1-2 reizes nedēļā.',
+          properties: ['Mazina kāju smaguma sajūtu un pietūkumu','Detoksikācija','Stimulē mikrocirkulāciju','Pretiekaisuma iedarbība']
+        },
+        en: {
+          name: 'Arosha 520 Nio Drain Pant (pants + refill)', size: null, sizes: 'One size (S-L)',
+          composition: [
+            ['NIOCONTROL™','Niosome-based delivery system for better absorption.'],
+            ['Dead Sea salts','Support detoxification.'],
+            ['Escin','Anti-inflammatory, supports the lymphatic system.'],
+            ['Centella Asiatica extract','Improves microcirculation, draining effect.'],
+            ['Birch leaf extract','Reduces fluid retention.']
+          ],
+          usage: 'Put on the draining pants, cover with the plastic shorts for 30-60 minutes, then remove and massage in the remaining product. Rinse the pants under running water. Use 1-2 times a week.',
+          properties: ['Reduces heavy, swollen legs','Detoxifying','Stimulates microcirculation','Anti-inflammatory']
+        },
+        ru: {
+          name: 'Arosha 520 Nio Drain Pant (брюки + заправка)', size: null, sizes: 'Один размер (S-L)',
+          composition: [
+            ['NIOCONTROL™','Система доставки на основе ниосом для лучшего усвоения.'],
+            ['Соли Мёртвого моря','Поддерживают детоксикацию.'],
+            ['Эсцин','Противовоспалительное действие, поддержка лимфосистемы.'],
+            ['Экстракт центеллы азиатской','Улучшает микроциркуляцию, дренажный эффект.'],
+            ['Экстракт листьев берёзы','Уменьшает задержку жидкости.']
+          ],
+          usage: 'Надеть дренажные брюки, сверху пластиковые шорты на 30-60 минут, затем снять и втереть остаток средства. Промыть брюки под проточной водой. Использовать 1-2 раза в неделю.',
+          properties: ['Уменьшает тяжесть и отёчность ног','Детоксикация','Стимулирует микроциркуляцию','Противовоспалительное действие']
+        }
+      }
+    },
+    niodrainpantrefill: {
+      image: 'images/product-niodrainpant-refill.jpg',
+      price: '18 €',
+      content: {
+        lv: {
+          name: 'Arosha 520 Nio Drain Pants Refill', size: '1 uzpildes komplekts (bez legingiem)', sizes: null,
+          composition: [
+            ['NIOCONTROL™','Niosomās balstīta piegādes sistēma labākai uzsūkšanai.'],
+            ['Nāves jūras sāļi','Atbalsta detoksikāciju.'],
+            ['Escīns','Pretiekaisuma iedarbība, atbalsta limfātisko sistēmu.'],
+            ['Centella Asiatica ekstrakts','Uzlabo mikrocirkulāciju, drenējošs efekts.'],
+            ['Bērza lapu ekstrakts','Mazina šķidruma aizturi.']
+          ],
+          usage: 'Uzvilkt drenējošās bikses, virsū uzvilkt plastmasas bikses uz 30-60 min, pēc tam noņemt un iemasēt atlikušo produktu. Bikses izskalot zem tekoša ūdens. Lietot 1-2 reizes nedēļā.',
+          properties: ['Mazina kāju smaguma sajūtu un pietūkumu','Detoksikācija','Stimulē mikrocirkulāciju','Pretiekaisuma iedarbība']
+        },
+        en: {
+          name: 'Arosha 520 Nio Drain Pants Refill', size: '1 refill kit (no leggings)', sizes: null,
+          composition: [
+            ['NIOCONTROL™','Niosome-based delivery system for better absorption.'],
+            ['Dead Sea salts','Support detoxification.'],
+            ['Escin','Anti-inflammatory, supports the lymphatic system.'],
+            ['Centella Asiatica extract','Improves microcirculation, draining effect.'],
+            ['Birch leaf extract','Reduces fluid retention.']
+          ],
+          usage: 'Put on the draining pants, cover with the plastic shorts for 30-60 minutes, then remove and massage in the remaining product. Rinse the pants under running water. Use 1-2 times a week.',
+          properties: ['Reduces heavy, swollen legs','Detoxifying','Stimulates microcirculation','Anti-inflammatory']
+        },
+        ru: {
+          name: 'Arosha 520 Nio Drain Pants Refill', size: '1 комплект заправки (без брюк)', sizes: null,
+          composition: [
+            ['NIOCONTROL™','Система доставки на основе ниосом для лучшего усвоения.'],
+            ['Соли Мёртвого моря','Поддерживают детоксикацию.'],
+            ['Эсцин','Противовоспалительное действие, поддержка лимфосистемы.'],
+            ['Экстракт центеллы азиатской','Улучшает микроциркуляцию, дренажный эффект.'],
+            ['Экстракт листьев берёзы','Уменьшает задержку жидкости.']
+          ],
+          usage: 'Надеть дренажные брюки, сверху пластиковые шорты на 30-60 минут, затем снять и втереть остаток средства. Промыть брюки под проточной водой. Использовать 1-2 раза в неделю.',
+          properties: ['Уменьшает тяжесть и отёчность ног','Детоксикация','Стимулирует микроциркуляцию','Противовоспалительное действие']
+        }
+      }
+    },
+    cellunight: {
+      image: 'images/product-cellunight.jpg',
+      price: '65 €',
+      content: {
+        lv: {
+          name: 'Arosha 516 Cellunight', size: '200 ml', sizes: null,
+          composition: [
+            ['NOCTURSHAPE™','No planktona iegūta molekula, kas bloķē nakts tauku uzkrāšanos.'],
+            ['Kofeīns','Stimulē tauku šķelšanos, antioksidants.'],
+            ['Karnitīns','Atbalsta tauku dedzināšanu.'],
+            ['Kolagenāzes ferments','Mazina "apelsīna mizas" efektu.'],
+            ['Sviesta koka sviests, mandeļu un rīsu eļļas','Mitrina un mīkstina ādu.']
+          ],
+          usage: 'Uzklāt vakarā uz ādas, masēt līdz pilnīgai uzsūkšanai. Tikai ārējai lietošanai.',
+          properties: ['Mazina celulīta izpausmes','Uzlabo ādas elastību','Nostiprina un tonizē ādu']
+        },
+        en: {
+          name: 'Arosha 516 Cellunight', size: '200 ml', sizes: null,
+          composition: [
+            ['NOCTURSHAPE™','Plankton-derived molecule that blocks night-time fat storage.'],
+            ['Caffeine','Stimulates fat breakdown, antioxidant.'],
+            ['Carnitine','Supports fat burning.'],
+            ['Collagenase enzyme','Reduces the "orange peel" effect.'],
+            ['Shea butter, almond & rice oils','Moisturise and soften the skin.']
+          ],
+          usage: 'Apply in the evening and massage until fully absorbed. External use only.',
+          properties: ['Reduces the appearance of cellulite','Improves skin elasticity','Firms and tones the skin']
+        },
+        ru: {
+          name: 'Arosha 516 Cellunight', size: '200 мл', sizes: null,
+          composition: [
+            ['NOCTURSHAPE™','Молекула из планктона, блокирующая ночное накопление жира.'],
+            ['Кофеин','Стимулирует расщепление жиров, антиоксидант.'],
+            ['Карнитин','Поддерживает сжигание жира.'],
+            ['Фермент коллагеназа','Уменьшает эффект «апельсиновой корки».'],
+            ['Масло ши, миндальное и рисовое масла','Увлажняют и смягчают кожу.']
+          ],
+          usage: 'Наносить вечером и массировать до полного впитывания. Только для наружного применения.',
+          properties: ['Уменьшает проявления целлюлита','Улучшает эластичность кожи','Укрепляет и тонизирует кожу']
+        }
+      }
+    },
+    bodyslim: {
+      image: 'images/product-bodyslim.jpg',
+      price: '80 €',
+      content: {
+        lv: {
+          name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
+          composition: [
+            ['Dermofibra®','Bioinfrasarkanā starojuma pavediens, stimulē mikrocirkulāciju un relaksē muskuļus.'],
+            ['Sastāvs','57% poliesteris, 32% poliamīds, 11% elastāns.']
+          ],
+          usage: 'Mazgāt tikai ar rokām 30°C temperatūrā, nelietot audu mīkstinātāju. Uzmanīgi ar pulksteņiem un rotaslietām.',
+          properties: ['Tonizējošs un veidojošs efekts','Uzlabo asinsriti','Limfātiskā atbalsta iedarbība','Mazina celulīta izpausmes']
+        },
+        en: {
+          name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
+          composition: [
+            ['Dermofibra®','Bio-infrared thread that stimulates microcirculation and relaxes muscles.'],
+            ['Fabric','57% polyester, 32% polyamide, 11% elastane.']
+          ],
+          usage: 'Hand wash only at 30°C, no fabric softener. Be careful around watches and jewellery.',
+          properties: ['Toning, reshaping effect','Improves circulation','Supports lymphatic drainage','Reduces the appearance of cellulite']
+        },
+        ru: {
+          name: 'Arosha 503 Bodyslim', size: null, sizes: 'S/M, M/L, L/XL, XL/XXL',
+          composition: [
+            ['Dermofibra®','Нить с био-инфракрасным излучением, стимулирует микроциркуляцию и расслабляет мышцы.'],
+            ['Состав','57% полиэстер, 32% полиамид, 11% эластан.']
+          ],
+          usage: 'Стирать только вручную при 30°C, без кондиционера для белья. Соблюдать осторожность рядом с часами и украшениями.',
+          properties: ['Тонизирующий и моделирующий эффект','Улучшает кровообращение','Поддержка лимфодренажа','Уменьшает проявления целлюлита']
+        }
+      }
+    },
+    bodyrescue: {
+      image: 'images/product-bodyrescue.jpg',
+      price: '65 €',
+      content: {
+        lv: {
+          name: 'Arosha 515 Body Rescue Cellulite', size: '200 ml', sizes: null,
+          composition: [
+            ['Rodisterols (2%)','Veicina tauku dedzināšanu, uzlabo ādas stingrumu.'],
+            ['Sculptosan (1%)','Palielina ādas stingrumu un elastību.'],
+            ['Kofeīns (4%)','Veicina dehidratāciju un toksīnu izvadi.'],
+            ['L-karnitīns (0.5%)','Stimulē tauku izmantošanu, limfātisks atbalsts.']
+          ],
+          usage: 'Uzklāt uz ādas un masēt līdz pilnīgai uzsūkšanai. Tikai ārējai lietošanai.',
+          properties: ['Mazina celulīta izpausmes','Uzlabo asinsriti','Nostiprina un izlīdzina ādu']
+        },
+        en: {
+          name: 'Arosha 515 Body Rescue Cellulite', size: '200 ml', sizes: null,
+          composition: [
+            ['Rodisterol (2%)','Promotes fat burning, improves skin firmness.'],
+            ['Sculptosan (1%)','Increases skin firmness and elasticity.'],
+            ['Caffeine (4%)','Supports dehydration and toxin removal.'],
+            ['L-Carnitine (0.5%)','Stimulates fat use, supports the lymphatic system.']
+          ],
+          usage: 'Apply to the skin and massage until fully absorbed. External use only.',
+          properties: ['Reduces the appearance of cellulite','Improves circulation','Firms and smooths the skin']
+        },
+        ru: {
+          name: 'Arosha 515 Body Rescue Cellulite', size: '200 мл', sizes: null,
+          composition: [
+            ['Родистерол (2%)','Способствует сжиганию жира, улучшает упругость кожи.'],
+            ['Sculptosan (1%)','Повышает упругость и эластичность кожи.'],
+            ['Кофеин (4%)','Способствует выведению жидкости и токсинов.'],
+            ['L-карнитин (0.5%)','Стимулирует использование жира, поддержка лимфосистемы.']
+          ],
+          usage: 'Нанести на кожу и массировать до полного впитывания. Только для наружного применения.',
+          properties: ['Уменьшает проявления целлюлита','Улучшает кровообращение','Укрепляет и разглаживает кожу']
+        }
+      }
     }
   };
+  const PRODUCT_ORDER = ['niodrain','cellunight','bodyrescue','pressopants','silhouetterefill','niodrainpantset','niodrainpantrefill','bodyslim'];
 
+  const productsGrid         = document.getElementById('products-grid');
   const productSheetBackdrop = document.getElementById('product-sheet-backdrop');
   const productSheet         = document.getElementById('product-sheet');
   let currentProductId = null;
+  let currentProductTab = 'composition';
+
+  function renderProductTiles(){
+    productsGrid.innerHTML = PRODUCT_ORDER.map(id => {
+      const p = PRODUCTS[id];
+      const c = p.content[currentLang];
+      return `
+        <button class="product-tile" type="button" data-product="${id}">
+          <div class="product-thumb" style="background-image:url('${p.image}')"></div>
+          <div class="product-tile-name">${c.name}</div>
+          <div class="product-tile-price">${p.price}</div>
+        </button>
+      `;
+    }).join('');
+    productsGrid.querySelectorAll('.product-tile[data-product]').forEach(btn => {
+      btn.addEventListener('click', () => openProductSheet(btn.dataset.product));
+    });
+  }
+
+  function renderProductTabPanel(c){
+    const panel = document.getElementById('product-tab-panel');
+    if(currentProductTab === 'composition'){
+      panel.innerHTML = '<ul>' + c.composition.map(([name, desc]) =>
+        `<li><span class="ingredient-name">${name}.</span> ${desc}</li>`
+      ).join('') + '</ul>';
+    } else if(currentProductTab === 'usage'){
+      panel.innerHTML = `<p>${c.usage}</p>`;
+    } else {
+      panel.innerHTML = '<ul>' + c.properties.map(item => `<li>${item}</li>`).join('') + '</ul>';
+    }
+  }
 
   function openProductSheet(id){
     const p = PRODUCTS[id];
     if(!p) return;
     currentProductId = id;
-    document.getElementById('product-sheet-name').textContent = t(p.nameKey);
+    currentProductTab = 'composition';
+    const c = p.content[currentLang];
+
+    document.getElementById('product-sheet-name').textContent = c.name;
     const photo = document.getElementById('product-sheet-photo');
     photo.src = p.image;
-    photo.alt = t(p.nameKey);
-    document.getElementById('product-sheet-desc').textContent = t(p.descKey);
-    document.getElementById('product-sheet-price').textContent = p.price;
+    photo.alt = c.name;
+    document.getElementById('product-sheet-price').textContent = p.price + (c.size ? ` · ${c.size}` : '');
+    document.getElementById('product-sheet-sizes').textContent = c.sizes ? `${t('product_sizes_label')}: ${c.sizes}` : '';
+
+    const tabs = [
+      ['composition', t('product_tab_composition')],
+      ['usage', t('product_tab_usage')],
+      ['properties', t('product_tab_properties')]
+    ];
+    const tabsEl = document.getElementById('product-tabs');
+    tabsEl.innerHTML = tabs.map(([key, label]) =>
+      `<button type="button" class="product-tab-btn${key === currentProductTab ? ' active' : ''}" data-tab="${key}">${label}</button>`
+    ).join('');
+    tabsEl.querySelectorAll('.product-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentProductTab = btn.dataset.tab;
+        tabsEl.querySelectorAll('.product-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === currentProductTab));
+        renderProductTabPanel(c);
+      });
+    });
+    renderProductTabPanel(c);
+
     document.getElementById('product-order-btn').href =
-      `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('product_wa_message').replace('{product}', t(p.nameKey)))}`;
+      `https://api.whatsapp.com/send?phone=37120888805&text=${encodeURIComponent(t('product_wa_message').replace('{product}', c.name))}`;
     productSheetBackdrop.classList.add('open');
     productSheet.classList.add('open');
   }
@@ -1610,9 +2002,6 @@
   }
   productSheetBackdrop.addEventListener('click', closeProductSheet);
   document.getElementById('product-sheet-close').addEventListener('click', closeProductSheet);
-  document.querySelectorAll('.product-tile[data-product]').forEach(btn => {
-    btn.addEventListener('click', () => openProductSheet(btn.dataset.product));
-  });
 
   function toGCalDate(iso){
     return iso.replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
