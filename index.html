@@ -181,6 +181,9 @@
   }
   .cal-day.available:hover{background:var(--chip-bg)}
   .cal-day.today{box-shadow:inset 0 0 0 1px var(--chip-border)}
+  .cal-day.preview{cursor:default;opacity:.5}
+  .cal-day.preview::before{animation:none;opacity:.25}
+  .cal-updating-hint{font-size:12px;color:var(--text-soft);text-align:center;margin:-4px 0 12px}
   @keyframes glow-pulse{
     0%,100%{opacity:.55;transform:scale(.9)}
     50%{opacity:1;transform:scale(1.08)}
@@ -918,9 +921,11 @@
   let monthIndex   = 0;
   let pendingService = null;
   let currentSheetDateKey = null;
+  let slotsVerified = false;
 
   // ---------- i18n ----------
   const LANG_KEY = 'bb_lang';
+  const SLOTS_CACHE_KEY = 'bb_slots_cache_v1';
   const I18N = {
     lv: {
       title_suffix:'Pieraksts',
@@ -930,6 +935,7 @@
       cal_loading:'Ielāde...',
       cal_empty:'Šobrīd nav pieejamu laiku.<br>Sazinies ar mums WhatsApp.',
       cal_error:'Neizdevās ielādēt laikus.<br>Lūdzu, mēģiniet vēlreiz.',
+      cal_updating:'Pārbaudām aktuālo pieejamību...',
       cal_prev_aria:'Iepriekšējais mēnesis',
       cal_next_aria:'Nākamais mēnesis',
       confirm_message:'Paldies! Jūsu pieraksts ir apstiprināts.',
@@ -1056,6 +1062,7 @@
       cal_loading:'Loading...',
       cal_empty:'No available times right now.<br>Message us on WhatsApp.',
       cal_error:'Failed to load available times.<br>Please try refreshing the page.',
+      cal_updating:'Checking current availability...',
       cal_prev_aria:'Previous month',
       cal_next_aria:'Next month',
       confirm_message:'Thank you! Your booking is confirmed.',
@@ -1182,6 +1189,7 @@
       cal_loading:'Загрузка...',
       cal_empty:'Сейчас нет свободных мест.<br>Напишите нам в WhatsApp.',
       cal_error:'Не удалось загрузить время.<br>Попробуйте обновить страницу.',
+      cal_updating:'Проверяем актуальную доступность...',
       cal_prev_aria:'Предыдущий месяц',
       cal_next_aria:'Следующий месяц',
       confirm_message:'Спасибо! Ваша запись подтверждена.',
@@ -1398,7 +1406,7 @@
     renderProductTiles();
     if(currentProductId) openProductSheet(currentProductId);
 
-    if(monthKeys.length) renderCalendar();
+    if(monthKeys.length) renderCalendar(slotsVerified);
     if(currentSheetDateKey) updateSheetDateLabel(currentSheetDateKey);
     if(selectedSlot) updateSelectedSlotLabel(selectedSlot);
     if(!submitBtn.disabled) submitBtn.textContent = t('submit_btn');
@@ -1459,8 +1467,36 @@
 
   function dateKeyOf(dateStr){ return dateStr.slice(0,10); }
 
+  function buildSlotsByDate(slots){
+    const byDate = {};
+    slots.forEach(slot => {
+      const key = dateKeyOf(slot.start);
+      if(!byDate[key]) byDate[key] = [];
+      byDate[key].push(slot);
+    });
+    return byDate;
+  }
+
+  // Shows a non-clickable preview from the last confirmed slots (localStorage)
+  // instantly on load, purely so the calendar doesn't sit on a blank spinner.
+  // It is never used to power an actual booking - selectSlot() only ever reads
+  // from slotsByDate after a fresh, verified fetch has populated it below.
+  function showCachedSlotsPreview(){
+    if(monthKeys.length) return; // already have real data on screen
+    try{
+      const cached = JSON.parse(localStorage.getItem(SLOTS_CACHE_KEY) || 'null');
+      if(!cached || !Array.isArray(cached.slots) || !cached.slots.length) return;
+      slotsByDate = buildSlotsByDate(cached.slots);
+      monthKeys = [...new Set(Object.keys(slotsByDate).map(k => k.slice(0,7)))].sort();
+      monthIndex = 0;
+      slotsVerified = false;
+      renderCalendar(false);
+    }catch(e){ /* corrupt cache, ignore */ }
+  }
+
   async function loadSlots(){
     const currentMonthKey = monthKeys[monthIndex];
+    showCachedSlotsPreview();
     try{
       const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
       const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store' });
@@ -1472,30 +1508,32 @@
         applyTranslations();
         slotsByDate = {};
         monthKeys = [];
+        slotsVerified = false;
+        localStorage.removeItem(SLOTS_CACHE_KEY);
         return;
       }
 
       slots.sort((a,b) => new Date(a.start) - new Date(b.start));
 
-      slotsByDate = {};
-      slots.forEach(slot => {
-        const key = dateKeyOf(slot.start);
-        if(!slotsByDate[key]) slotsByDate[key] = [];
-        slotsByDate[key].push(slot);
-      });
-
+      slotsByDate = buildSlotsByDate(slots);
       monthKeys = [...new Set(Object.keys(slotsByDate).map(k => k.slice(0,7)))].sort();
       const preservedIndex = currentMonthKey ? monthKeys.indexOf(currentMonthKey) : -1;
       monthIndex = preservedIndex !== -1 ? preservedIndex : 0;
-      renderCalendar();
+      slotsVerified = true;
+      renderCalendar(true);
+
+      try{ localStorage.setItem(SLOTS_CACHE_KEY, JSON.stringify({ slots })); }catch(e){ /* storage full/unavailable, ignore */ }
 
     }catch(err){
       calArea.innerHTML = '<div class="error" data-i18n="cal_error" data-i18n-html></div>';
       applyTranslations();
+      slotsByDate = {};
+      monthKeys = [];
+      slotsVerified = false;
     }
   }
 
-  function renderCalendar(){
+  function renderCalendar(interactive = true){
     const monthKey = monthKeys[monthIndex];
     const [year, month] = monthKey.split('-').map(Number);
     const firstDay = new Date(year, month-1, 1);
@@ -1508,10 +1546,14 @@
 
     let html = '';
     html += `<div class="cal-nav">
-      <button class="cal-nav-btn" id="cal-prev" type="button" ${monthIndex===0?'disabled':''} aria-label="${t('cal_prev_aria')}">‹</button>
+      <button class="cal-nav-btn" id="cal-prev" type="button" ${(!interactive || monthIndex===0)?'disabled':''} aria-label="${t('cal_prev_aria')}">‹</button>
       <div class="cal-month-label">${MONTHS[month-1]} ${year}</div>
-      <button class="cal-nav-btn" id="cal-next" type="button" ${monthIndex===monthKeys.length-1?'disabled':''} aria-label="${t('cal_next_aria')}">›</button>
+      <button class="cal-nav-btn" id="cal-next" type="button" ${(!interactive || monthIndex===monthKeys.length-1)?'disabled':''} aria-label="${t('cal_next_aria')}">›</button>
     </div>`;
+
+    if(!interactive){
+      html += `<div class="cal-updating-hint">${t('cal_updating')}</div>`;
+    }
 
     html += '<div class="cal-weekdays">' + WEEKDAYS_GRID.map(w => `<span>${w}</span>`).join('') + '</div>';
     html += '<div class="cal-grid">';
@@ -1524,11 +1566,15 @@
       const dateKey = `${year}-${mm}-${dd}`;
       const hasSlots = !!slotsByDate[dateKey];
       const isToday = dateKey === todayKey;
-      html += `<div class="cal-cell"><button type="button" class="cal-day${hasSlots?' available':''}${isToday?' today':''}" data-date="${dateKey}" ${hasSlots?'':'disabled'}>${d}</button></div>`;
+      const clickable = hasSlots && interactive;
+      const dayClass = hasSlots ? (interactive ? ' available' : ' available preview') : '';
+      html += `<div class="cal-cell"><button type="button" class="cal-day${dayClass}${isToday?' today':''}" data-date="${dateKey}" ${clickable?'':'disabled'}>${d}</button></div>`;
     }
 
     html += '</div>';
     calArea.innerHTML = html;
+
+    if(!interactive) return; // preview only - no navigation or selection until verified
 
     document.getElementById('cal-prev')?.addEventListener('click', () => { monthIndex--; renderCalendar(); });
     document.getElementById('cal-next')?.addEventListener('click', () => { monthIndex++; renderCalendar(); });
