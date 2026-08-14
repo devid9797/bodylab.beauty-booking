@@ -1,0 +1,18 @@
+# BodyLab.Beauty
+
+> Body-contouring beauty studio in Riga, Latvia (Ķermeņa modelēšanas studija Rīgā). Online appointment booking, treatment info, and Arosha cosmetic products.
+
+BodyLab.Beauty offers non-invasive body-contouring treatments in Riga:
+- R-Sleek - body-contouring roller massage
+- B-Flexy - vacuum-roller anti-cellulite massage
+- EMS Zero - EMS muscle stimulation
+- Presoterapija - lymphatic-drainage pressotherapy
+
+Visitors can book an appointment directly on the website (real-time availability from Google Calendar), browse and order Arosha Aesthetic Science skincare/cosmetic products (creams and compression garments), buy a gift card, and find the studio's location and directions.
+
+## Key facts
+- Website: https://bodylab-beauty.lv
+- Instagram: https://www.instagram.com/bodylab.beauty
+- WhatsApp: https://api.whatsapp.com/send?phone=37120888805
+- Address: Augusta Deglava iela 66, "Deglava Biroji", 5th floor, office 506, Rīga, Latvia
+- Languages available on site: Latvian (default), English, Russian
