@@ -1679,7 +1679,7 @@
     try{
       const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 25000);
       let res;
       try{
         res = await fetch(bustUrl, { method: 'GET', cache: 'no-store', signal: controller.signal });
