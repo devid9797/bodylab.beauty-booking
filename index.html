@@ -2432,6 +2432,21 @@
     return icsObjectUrl;
   }
 
+  // Removes a just-booked slot from local state immediately, without waiting on the
+  // server. The Make.com webhook creates the calendar event asynchronously, so a
+  // slots re-fetch right after booking can still race the backend and come back
+  // showing the slot as available - leaving the customer unsure whether it worked.
+  function removeSlotLocally(slot){
+    const dateKey = dateKeyOf(slot.start);
+    const dayList = slotsByDate[dateKey];
+    if(!dayList) return;
+    const idx = dayList.findIndex(s => s.event_id === slot.event_id || s.start === slot.start);
+    if(idx === -1) return;
+    dayList.splice(idx, 1);
+    if(dayList.length === 0) delete slotsByDate[dateKey];
+    if(monthKeys[monthIndex]) renderCalendar(true);
+  }
+
   function showConfirmation(slot, service, fullName){
     const dd = String(new Date(slot.start).getDate()).padStart(2,'0');
     const mm = String(new Date(slot.start).getMonth()+1).padStart(2,'0');
@@ -2446,6 +2461,8 @@
     stepSuccess.style.display = 'block';
     sheet.scrollTop = 0;
     openSheet();
+
+    removeSlotLocally(slot);
 
     selectedSlot = null;
     currentSheetDateKey = null;
