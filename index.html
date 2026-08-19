@@ -1157,7 +1157,22 @@
   const LANG_KEY = 'bb_lang';
   const SLOTS_CACHE_KEY = 'bb_slots_cache_v1';
   const BOOKED_IDS_KEY = 'bb_booked_ids_v1';
-  const BOOKED_SUPPRESS_MS = 5 * 60 * 1000; // bridges the Make.com -> Calendar propagation gap, not a permanent block
+  const BOOKED_SUPPRESS_MS = 90 * 1000; // safety-net floor beneath the fast-poll burst below, not a permanent block
+  const FAST_POLL_MS = 8000;
+  const FAST_POLL_DURATION_MS = BOOKED_SUPPRESS_MS;
+
+  // Polls the live backend every ~8s for a short burst instead of waiting for the
+  // normal 60s cadence. Used right after a booking (and again on page load if a
+  // recent booking is still within its suppression window) so the calendar catches
+  // up with the real backend quickly in both directions - once the booking is
+  // actually confirmed server-side, and if the slot is freed again for any reason.
+  function startFastPolling(){
+    const stopAt = Date.now() + FAST_POLL_DURATION_MS;
+    const iv = setInterval(() => {
+      if(Date.now() > stopAt){ clearInterval(iv); return; }
+      loadSlots();
+    }, FAST_POLL_MS);
+  }
 
   // Slots this browser has successfully booked, kept across every loadSlots() call
   // (including the 60s poll) for a bounded window. The backend confirms bookings
@@ -2482,6 +2497,7 @@
   // as available for a while, leaving the customer unsure whether it worked.
   function removeSlotLocally(slot){
     markSlotBooked(slot);
+    startFastPolling();
     const dateKey = dateKeyOf(slot.start);
     const dayList = slotsByDate[dateKey];
     if(!dayList) return;
@@ -2736,6 +2752,7 @@
   } else {
     loadSlots();
     setInterval(loadSlots, 60000);
+    if(bookedEventIds.size) startFastPolling();
   }
 </script>
 </body>
