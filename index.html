@@ -1157,23 +1157,36 @@
   const LANG_KEY = 'bb_lang';
   const SLOTS_CACHE_KEY = 'bb_slots_cache_v1';
   const BOOKED_IDS_KEY = 'bb_booked_ids_v1';
+  const BOOKED_SUPPRESS_MS = 5 * 60 * 1000; // bridges the Make.com -> Calendar propagation gap, not a permanent block
 
   // Slots this browser has successfully booked, kept across every loadSlots() call
-  // (including the 60s poll). The backend confirms bookings asynchronously (Make.com
-  // webhook -> Google Calendar), so a slots re-fetch can keep returning a just-booked
-  // slot as available for a while after the fact - this list makes sure it never
-  // reappears in this browser regardless of how long the backend takes to catch up.
-  let bookedEventIds;
-  try{ bookedEventIds = new Set(JSON.parse(localStorage.getItem(BOOKED_IDS_KEY) || '[]')); }
-  catch(e){ bookedEventIds = new Set(); }
+  // (including the 60s poll) for a bounded window. The backend confirms bookings
+  // asynchronously (Make.com webhook -> Google Calendar), so a slots re-fetch can
+  // keep returning a just-booked slot as available for a short while after the fact.
+  // The window is time-limited (not forever) so that if the slot is later freed again
+  // (booking cancelled, etc.) the site goes back to trusting the server instead of
+  // hiding it permanently.
+  let bookedEventIds; // Map event_id -> timestamp booked
+  try{ bookedEventIds = new Map(Object.entries(JSON.parse(localStorage.getItem(BOOKED_IDS_KEY) || '{}'))); }
+  catch(e){ bookedEventIds = new Map(); }
+
+  function persistBookedIds(){
+    try{ localStorage.setItem(BOOKED_IDS_KEY, JSON.stringify(Object.fromEntries(bookedEventIds))); }catch(e){ /* storage full/unavailable, ignore */ }
+  }
 
   function markSlotBooked(slot){
     if(!slot || !slot.event_id) return;
-    bookedEventIds.add(slot.event_id);
-    try{ localStorage.setItem(BOOKED_IDS_KEY, JSON.stringify([...bookedEventIds])); }catch(e){ /* storage full/unavailable, ignore */ }
+    bookedEventIds.set(slot.event_id, Date.now());
+    persistBookedIds();
   }
 
   function stripBookedSlots(byDate){
+    const now = Date.now();
+    let expired = false;
+    bookedEventIds.forEach((ts, id) => {
+      if(now - ts > BOOKED_SUPPRESS_MS){ bookedEventIds.delete(id); expired = true; }
+    });
+    if(expired) persistBookedIds();
     if(!bookedEventIds.size) return byDate;
     Object.keys(byDate).forEach(dateKey => {
       byDate[dateKey] = byDate[dateKey].filter(s => !bookedEventIds.has(s.event_id));
@@ -1927,10 +1940,15 @@
     sheet.classList.add('open');
   }
   function closeSheet(){
+    const wasSuccess = stepSuccess.style.display === 'block';
     sheetBackdrop.classList.remove('open');
     sheet.classList.remove('open');
     selectedSlot = null;
     currentSheetDateKey = null;
+    // Closing the booking-confirmed screen is a natural moment to re-sync with the
+    // backend - more time has passed since the booking than the initial re-fetch got,
+    // so this catches cases where the server was still lagging right after submit.
+    if(wasSuccess) loadSlots();
   }
 
   // ---------- Sheet drag-to-dismiss: 1:1 tracking, rubber-band boundary, velocity-projected commit, spring settle ----------
