@@ -1156,6 +1156,31 @@
   // ---------- i18n ----------
   const LANG_KEY = 'bb_lang';
   const SLOTS_CACHE_KEY = 'bb_slots_cache_v1';
+  const BOOKED_IDS_KEY = 'bb_booked_ids_v1';
+
+  // Slots this browser has successfully booked, kept across every loadSlots() call
+  // (including the 60s poll). The backend confirms bookings asynchronously (Make.com
+  // webhook -> Google Calendar), so a slots re-fetch can keep returning a just-booked
+  // slot as available for a while after the fact - this list makes sure it never
+  // reappears in this browser regardless of how long the backend takes to catch up.
+  let bookedEventIds;
+  try{ bookedEventIds = new Set(JSON.parse(localStorage.getItem(BOOKED_IDS_KEY) || '[]')); }
+  catch(e){ bookedEventIds = new Set(); }
+
+  function markSlotBooked(slot){
+    if(!slot || !slot.event_id) return;
+    bookedEventIds.add(slot.event_id);
+    try{ localStorage.setItem(BOOKED_IDS_KEY, JSON.stringify([...bookedEventIds])); }catch(e){ /* storage full/unavailable, ignore */ }
+  }
+
+  function stripBookedSlots(byDate){
+    if(!bookedEventIds.size) return byDate;
+    Object.keys(byDate).forEach(dateKey => {
+      byDate[dateKey] = byDate[dateKey].filter(s => !bookedEventIds.has(s.event_id));
+      if(byDate[dateKey].length === 0) delete byDate[dateKey];
+    });
+    return byDate;
+  }
   const I18N = {
     lv: {
       title_suffix:'Pieraksts',
@@ -1742,7 +1767,7 @@
     try{
       const cached = JSON.parse(localStorage.getItem(SLOTS_CACHE_KEY) || 'null');
       if(!cached || !Array.isArray(cached.slots) || !cached.slots.length) return;
-      slotsByDate = buildSlotsByDate(cached.slots);
+      slotsByDate = stripBookedSlots(buildSlotsByDate(cached.slots));
       monthKeys = [...new Set(Object.keys(slotsByDate).map(k => k.slice(0,7)))].sort();
       monthIndex = 0;
       slotsVerified = false;
@@ -1778,7 +1803,7 @@
 
       slots.sort((a,b) => new Date(a.start) - new Date(b.start));
 
-      slotsByDate = buildSlotsByDate(slots);
+      slotsByDate = stripBookedSlots(buildSlotsByDate(slots));
       monthKeys = [...new Set(Object.keys(slotsByDate).map(k => k.slice(0,7)))].sort();
       const preservedIndex = currentMonthKey ? monthKeys.indexOf(currentMonthKey) : -1;
       monthIndex = preservedIndex !== -1 ? preservedIndex : 0;
@@ -2433,10 +2458,12 @@
   }
 
   // Removes a just-booked slot from local state immediately, without waiting on the
-  // server. The Make.com webhook creates the calendar event asynchronously, so a
-  // slots re-fetch right after booking can still race the backend and come back
-  // showing the slot as available - leaving the customer unsure whether it worked.
+  // server, and remembers it (markSlotBooked) so it stays removed even after a later
+  // loadSlots() re-fetch - the Make.com webhook creates the calendar event
+  // asynchronously, so a re-fetch can otherwise keep bringing a just-booked slot back
+  // as available for a while, leaving the customer unsure whether it worked.
   function removeSlotLocally(slot){
+    markSlotBooked(slot);
     const dateKey = dateKeyOf(slot.start);
     const dayList = slotsByDate[dateKey];
     if(!dayList) return;
