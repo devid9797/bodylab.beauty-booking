@@ -71,8 +71,14 @@
     --shadow-sm:0 2px 10px rgba(75,71,67,.07);
     --shadow-md:0 10px 30px rgba(75,71,67,.1);
     --shadow-lift:0 16px 40px rgba(75,71,67,.16);
+    --shadow-dual:0 8px 28px rgba(75,71,67,.09),0 1px 2px rgba(75,71,67,.08);
     --ease:cubic-bezier(.16,1,.3,1);
     --ease-drawer:cubic-bezier(.32,.72,0,1);
+    --radius-card:24px;
+    --radius-section:30px;
+    --radius-pill:999px;
+    --radius-tag:12px;
+    --radius-image:16px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{background:var(--bg)}
@@ -89,14 +95,13 @@
   .wrap{max-width:440px;width:100%}
   .card{
     background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
+    border-radius:var(--radius-card);
     padding:1.25rem;
     margin-bottom:1rem;
-    box-shadow:var(--shadow-sm);
+    box-shadow:var(--shadow-dual);
     transition:box-shadow .3s var(--ease);
   }
-  h1{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--accent);margin-bottom:2px;text-align:center}
+  h1{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--accent);margin-bottom:2px;text-align:center}
   .sub{font-size:13px;color:var(--accent-soft);text-align:center;margin-bottom:1rem}
   .divider{width:36px;height:1px;background:var(--chip-border);margin:.75rem auto}
 
@@ -164,7 +169,8 @@
   .lang-option.active{background:var(--accent);color:var(--card)}
 
   /* ---------- Hero / intro ---------- */
-  .hero-card{padding:0;overflow:hidden}
+  .hero-card{padding:0;overflow:hidden;border-radius:var(--radius-section)}
+  #calendar-card{border-radius:var(--radius-section)}
   .hero-photo{
     height:220px;
     position:relative;
@@ -223,7 +229,7 @@
   }
   .cal-nav-btn:disabled{opacity:.3;cursor:default}
   .cal-nav-btn:not(:disabled):active{transform:scale(.9)}
-  .cal-month-label{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.005em;color:var(--accent);text-transform:capitalize}
+  .cal-month-label{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.015em;color:var(--accent);text-transform:capitalize}
 
   .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px}
   .cal-weekdays span{
@@ -304,7 +310,7 @@
     display:block;
     width:100%;
     padding:13px;
-    border-radius:12px;
+    border-radius:var(--radius-pill);
     font-size:14px;
     font-weight:600;
     text-align:center;
@@ -334,9 +340,9 @@
   .directions-row .btn{flex:1;margin-top:0;display:flex;align-items:center;justify-content:center;gap:7px}
   .directions-row svg{width:16px;height:16px;flex:none}
   .location-buildings{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
-  .location-buildings img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;box-shadow:var(--shadow-md);cursor:zoom-in;transition:transform .3s var(--ease)}
+  .location-buildings img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-image);display:block;box-shadow:var(--shadow-md);cursor:zoom-in;transition:transform .3s var(--ease)}
   .location-photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0 4px}
-  .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;cursor:zoom-in;transition:transform .3s var(--ease)}
+  .location-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius-image);display:block;cursor:zoom-in;transition:transform .3s var(--ease)}
 
   /* ---------- Photo lightbox ---------- */
   .photo-lightbox-backdrop{
@@ -345,9 +351,10 @@
     display:flex;align-items:center;justify-content:center;
     padding:32px 20px;
     opacity:0;pointer-events:none;
-    transition:opacity .25s ease;
+    visibility:hidden;
+    transition:opacity .25s ease,visibility 0s linear .25s;
   }
-  .photo-lightbox-backdrop.open{opacity:1;pointer-events:auto}
+  .photo-lightbox-backdrop.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .25s ease,visibility 0s linear 0s}
   .photo-lightbox-img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
   .photo-lightbox-close{
     position:fixed;top:18px;right:18px;
@@ -364,7 +371,7 @@
   .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
   .product-tile{display:flex;flex-direction:column;height:100%;gap:6px;background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer}
   .product-tile:nth-child(n+4){border-top:1px solid var(--chip-border);padding-top:14px}
-  .product-thumb{width:100%;aspect-ratio:1;border-radius:12px;background-size:cover;background-position:center;background-color:var(--chip-bg);transition:transform .25s var(--ease)}
+  .product-thumb{width:100%;aspect-ratio:1;border-radius:var(--radius-image);background-size:cover;background-position:center;background-color:var(--chip-bg);transition:transform .25s var(--ease)}
   .product-tile:active .product-thumb{transform:scale(.98)}
   .product-tile-name{font-size:12px;font-weight:600;color:var(--accent);line-height:1.3}
   .product-tile-price{
@@ -372,7 +379,7 @@
     font-size:13px;font-weight:700;color:var(--card);
     background:var(--accent);border-radius:8px;padding:3px 9px;
   }
-  .product-sheet-photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;margin-bottom:12px;box-shadow:var(--shadow-md)}
+  .product-sheet-photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius-image);margin-bottom:12px;box-shadow:var(--shadow-md)}
   .product-sheet-price{font-size:17px;font-weight:700;color:var(--accent);margin-bottom:2px}
   .product-sheet-sizes{font-size:12px;color:var(--text-soft);margin-bottom:10px}
   .product-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -390,6 +397,24 @@
   .product-tab-panel li::before{content:'•';position:absolute;left:2px;color:var(--accent-soft)}
   .product-tab-panel .ingredient-name{font-weight:600;color:var(--accent)}
   .product-availability{font-size:12px;line-height:1.5;color:var(--text-soft);background:var(--chip-bg);border-radius:10px;padding:10px 12px;margin-top:14px}
+
+  /* ---------- iOS 26 Safari toolbar tint anchor ----------
+     Safari 26 tints its own top/bottom chrome by sampling the background-color of a
+     position:fixed/sticky element that hugs the viewport edge, instead of reading <body>.
+     Our real fixed elements (sheet backdrops, lightbox) are dark and were getting sampled
+     even while closed, turning the toolbar black. This dedicated, always-present strip
+     gives Safari an unambiguous, correctly-colored edge to read instead. */
+  #ios-toolbar-tint-bottom{
+    position:fixed;bottom:-8px;left:0;width:100%;min-height:12px;
+    background:var(--bg);
+    display:none;
+    pointer-events:none;
+  }
+  @supports (-webkit-text-size-adjust:none) and (font:-apple-system-body) and (-webkit-touch-callout:none){
+    @media (max-width:767px){
+      #ios-toolbar-tint-bottom{display:block}
+    }
+  }
 
   /* ---------- Floating contact button ---------- */
   .fab-contact{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:9;display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -424,7 +449,7 @@
     background:var(--chip-bg);
     border:1px solid var(--chip-border);
     color:var(--accent);
-    border-radius:10px;
+    border-radius:var(--radius-tag);
     padding:9px 16px;
     font-size:13px;
     font-weight:600;
@@ -438,18 +463,17 @@
     position:fixed;inset:0;
     background:rgba(20,19,18,.4);
     opacity:0;pointer-events:none;
-    transition:opacity .25s var(--ease);
+    visibility:hidden;
+    transition:opacity .25s var(--ease),visibility 0s linear .25s;
     z-index:10;
   }
-  .sheet-backdrop.open{opacity:1;pointer-events:auto}
+  .sheet-backdrop.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .25s var(--ease),visibility 0s linear 0s}
 
   .sheet{
     position:fixed;left:0;right:0;bottom:0;
     max-width:440px;margin:0 auto;
     background:var(--card);
-    border-radius:22px 22px 0 0;
-    border:1px solid var(--border);
-    border-bottom:none;
+    border-radius:26px 26px 0 0;
     box-shadow:0 -16px 40px rgba(20,19,18,.16);
     padding:10px 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
     transform:translateY(100%);
@@ -470,7 +494,7 @@
     -webkit-backdrop-filter:blur(16px) saturate(160%);
     padding-bottom:10px;
   }
-  .sheet-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600;color:var(--accent);text-transform:capitalize}
+  .sheet-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--accent);text-transform:capitalize}
   .sheet-close{
     width:28px;height:28px;border-radius:50%;border:none;background:var(--chip-bg);
     color:var(--accent-soft);font-size:15px;cursor:pointer;
@@ -505,7 +529,7 @@
   .service-thumb{
     flex:none;
     width:80px;height:80px;
-    border-radius:14px;
+    border-radius:var(--radius-image);
     background-size:cover;
     background-position:center;
     transition:transform .25s var(--ease);
@@ -548,7 +572,7 @@
   .service-body-inner{overflow:hidden}
   .service-body-content{padding:0 2px 18px 2px}
   .service-body-content .service-thumb-lg{
-    width:100%;height:315px;border-radius:14px;margin-bottom:12px;
+    width:100%;height:315px;border-radius:var(--radius-image);margin-bottom:12px;
   }
   .service-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
   .service-effects-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
@@ -566,7 +590,7 @@
     width:100%;
     aspect-ratio:16/10;
     object-fit:cover;
-    border-radius:16px;
+    border-radius:var(--radius-image);
     display:block;
     margin-bottom:14px;
     box-shadow:var(--shadow-md);
@@ -574,7 +598,7 @@
   .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
   .gift-details-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
 
-  .rsvp-building-photo{width:100%;border-radius:14px;display:block;margin:10px 0;box-shadow:var(--shadow-md)}
+  .rsvp-building-photo{width:100%;border-radius:var(--radius-image);display:block;margin:10px 0;box-shadow:var(--shadow-md)}
 
   /* ---------- Reviews ---------- */
   .reviews-section{
@@ -593,7 +617,7 @@
   .reviews-scroll::-webkit-scrollbar{display:none}
   .reviews-scroll{scrollbar-width:none}
   .review-photo{
-    flex:none;width:132px;border-radius:16px;
+    flex:none;width:132px;border-radius:var(--radius-image);
     box-shadow:var(--shadow-md);
     cursor:zoom-in;display:block;
     scroll-snap-align:center;
@@ -617,8 +641,8 @@
   }
 
   /* ---------- RSVP merged card ---------- */
-  .hero-card.rsvp-merged{margin-bottom:0;border-radius:20px 20px 0 0;border-bottom:none}
-  #rsvp-card.rsvp-merged{border-radius:0 0 20px 20px;border-top:none;margin-top:0}
+  .hero-card.rsvp-merged{margin-bottom:0;border-radius:var(--radius-section) var(--radius-section) 0 0}
+  #rsvp-card.rsvp-merged{border-radius:0 0 var(--radius-card) var(--radius-card);margin-top:0}
 
   /* ---------- Confirmation popup ---------- */
   #sheet-step-success{min-height:50vh;display:flex;flex-direction:column;position:relative}
@@ -999,6 +1023,8 @@
   </div>
 
 </div>
+
+<div id="ios-toolbar-tint-bottom" aria-hidden="true"></div>
 
 <div class="fab-contact" id="fab-contact">
   <a class="fab-option fab-whatsapp" id="fab-whatsapp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
