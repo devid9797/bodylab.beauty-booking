@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F4ECE2">
 <title>BodyLab.Beauty - Ķermeņa modelēšanas studija Rīgā | Online pieraksts</title>
 <meta name="description" content="BodyLab.Beauty - ķermeņa modelēšanas studija Rīgā. Rezervē R-Sleek, B-Flexy, EMS Zero un Presoterapijas procedūras online, apskati Arosha kosmētikas produktus.">
 <link rel="canonical" href="https://bodylab-beauty.lv/">
@@ -114,7 +115,9 @@
     padding:6px 10px;
     border-radius:8px;
     border:1px solid rgba(255,255,255,.5);
-    background:rgba(255,254,250,.92);
+    background:rgba(255,254,250,.78);
+    backdrop-filter:blur(12px) saturate(160%);
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
     color:var(--accent);
     font-size:12px;font-weight:700;letter-spacing:.02em;
     cursor:pointer;font-family:inherit;
@@ -453,11 +456,15 @@
     overflow-y:auto;
   }
   .sheet.open{transform:translateY(0);transition:transform .4s var(--ease-drawer)}
-  .sheet-handle{width:36px;height:4px;background:var(--chip-border);border-radius:2px;margin:0 auto 14px}
+  .sheet-handle{width:36px;height:4px;background:var(--chip-border);border-radius:2px;margin:0 auto 14px;position:relative;touch-action:none;cursor:grab}
+  .sheet-handle::before{content:'';position:absolute;inset:-16px -40px}
+  .sheet-handle:active{cursor:grabbing}
   .sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   #product-sheet .sheet-header{
     position:sticky;top:0;z-index:2;
-    background:var(--card);
+    background:rgba(255,254,250,.85);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
     padding-bottom:10px;
   }
   .sheet-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:600;color:var(--accent);text-transform:capitalize}
@@ -573,13 +580,9 @@
   }
   .reviews-scroll{
     display:flex;gap:26px;
-    width:100vw;
-    position:relative;
-    left:50%;
-    right:50%;
-    margin-left:-50vw;
-    margin-right:-50vw;
-    padding:14px 24px 22px;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    padding:14px calc(50vw - 50% + 24px) 22px;
     overflow-x:auto;
     scroll-snap-type:x proximity;
     -webkit-overflow-scrolling:touch;
@@ -655,6 +658,12 @@
     .product-tab-btn:not(.active):hover{background:var(--chip-hover);color:var(--accent)}
   }
 
+  /* ---------- Reduced transparency: frost the floating materials into solid surfaces ---------- */
+  @media (prefers-reduced-transparency:reduce){
+    .lang-toggle{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none}
+    #product-sheet .sheet-header{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none}
+  }
+
   /* ---------- Desktop / tablet layout ---------- */
   /* Below this width the site stays the single-column mobile layout above. */
   @media (min-width:900px){
@@ -672,9 +681,6 @@
       margin-bottom:24px;
     }
     .reviews-scroll{
-      width:auto;
-      position:static;
-      left:auto;right:auto;
       margin-left:0;margin-right:0;
       padding:14px 0 22px;
     }
@@ -806,8 +812,8 @@
                 <li data-i18n="rsleek_eff4"></li>
               </ul>
               <div class="service-prices">
-                <div class="service-price-row"><span data-i18n="rsleek_price1_label"></span><span>33€</span></div>
-                <div class="service-price-row"><span data-i18n="rsleek_price2_label"></span><span>300€</span></div>
+                <div class="service-price-row"><span data-i18n="rsleek_price1_label"></span><span>35€</span></div>
+                <div class="service-price-row"><span data-i18n="rsleek_price2_label"></span><span>330€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="R-Sleek (45 min)" data-i18n="book_btn"></button>
             </div>
@@ -1873,6 +1879,101 @@
     currentSheetDateKey = null;
   }
 
+  // ---------- Sheet drag-to-dismiss: 1:1 tracking, rubber-band boundary, velocity-projected commit, spring settle ----------
+  function rubberband(overshoot, dimension, constant = 0.55){
+    return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
+  }
+
+  function makeSheetDraggable(handle, sheetEl, backdropEl, dismiss){
+    if(!handle) return;
+    let dragging = false, startY = 0, dragY = 0, history = [], raf = null;
+
+    function setPos(y, opacity){
+      sheetEl.style.transform = `translateY(${y}px)`;
+      backdropEl.style.opacity = opacity;
+    }
+
+    function onDown(e){
+      if(e.pointerType === 'mouse' && e.button !== 0) return;
+      dragging = true;
+      startY = e.clientY;
+      dragY = 0;
+      history = [{t: e.timeStamp, y: e.clientY}];
+      try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+      sheetEl.style.transition = 'none';
+      backdropEl.style.transition = 'none';
+      if(raf){ cancelAnimationFrame(raf); raf = null; }
+    }
+
+    function onMove(e){
+      if(!dragging) return;
+      if(e.cancelable) e.preventDefault();
+      let delta = e.clientY - startY;
+      if(delta < 0) delta = rubberband(delta, 120);
+      dragY = delta;
+      history.push({t: e.timeStamp, y: e.clientY});
+      if(history.length > 6) history.shift();
+      const h = sheetEl.offsetHeight || 400;
+      setPos(dragY, Math.max(0, Math.min(1, 1 - dragY / h)));
+    }
+
+    function velocity(){
+      if(history.length < 2) return 0;
+      const first = history[0], last = history[history.length - 1];
+      const dt = Math.max(last.t - first.t, 8);
+      const v = ((last.y - first.y) / dt) * 1000;
+      return Math.max(-6000, Math.min(6000, v));
+    }
+
+    function settle(target, v, closing){
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const damping = reduced ? 1 : (closing ? 1 : 0.8);
+      const response = reduced ? 0.22 : (closing ? 0.35 : 0.32);
+      const k = Math.pow(2 * Math.PI / response, 2);
+      const c = 2 * damping * Math.sqrt(k);
+      let pos = dragY, vel = v;
+      const h = sheetEl.offsetHeight || 400;
+      let last = performance.now();
+
+      function frame(now){
+        const dt = Math.min((now - last) / 1000, 0.032);
+        last = now;
+        const force = -k * (pos - target) - c * vel;
+        vel += force * dt;
+        pos += vel * dt;
+        setPos(pos, Math.max(0, Math.min(1, 1 - pos / h)));
+        if(Math.abs(vel) < 24 && Math.abs(pos - target) < 0.5){
+          sheetEl.style.transition = '';
+          backdropEl.style.transition = '';
+          sheetEl.style.transform = '';
+          backdropEl.style.opacity = '';
+          raf = null;
+          if(closing) dismiss();
+          return;
+        }
+        raf = requestAnimationFrame(frame);
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function onUp(e){
+      if(!dragging) return;
+      dragging = false;
+      try{ handle.releasePointerCapture(e.pointerId); }catch(err){}
+      const v = velocity();
+      const h = sheetEl.offsetHeight || 400;
+      const shouldClose = dragY > Math.min(120, h * 0.35) || v > 500;
+      settle(shouldClose ? h + 60 : 0, v, shouldClose);
+    }
+
+    handle.addEventListener('pointerdown', onDown);
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+    handle.addEventListener('pointercancel', onUp);
+  }
+
+  makeSheetDraggable(sheet.querySelector('.sheet-handle'), sheet, sheetBackdrop, closeSheet);
+
   sheetBackdrop.addEventListener('click', closeSheet);
   document.getElementById('sheet-close-1').addEventListener('click', closeSheet);
   document.getElementById('sheet-close-2').addEventListener('click', closeSheet);
@@ -2241,6 +2342,8 @@
     productSheet.classList.remove('open');
     currentProductId = null;
   }
+  makeSheetDraggable(productSheet.querySelector('.sheet-handle'), productSheet, productSheetBackdrop, closeProductSheet);
+
   productSheetBackdrop.addEventListener('click', closeProductSheet);
   document.getElementById('product-sheet-close').addEventListener('click', closeProductSheet);
 
