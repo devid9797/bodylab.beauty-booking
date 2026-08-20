@@ -1157,7 +1157,7 @@
   const LANG_KEY = 'bb_lang';
   const SLOTS_CACHE_KEY = 'bb_slots_cache_v1';
   const BOOKED_IDS_KEY = 'bb_booked_ids_v1';
-  const BOOKED_SUPPRESS_MS = 90 * 1000; // safety-net floor beneath the fast-poll burst below, not a permanent block
+  const BOOKED_SUPPRESS_MS = 20 * 1000; // short safety-net only - the backend now self-invalidates on any calendar change
   const FAST_POLL_MS = 8000;
   const FAST_POLL_DURATION_MS = BOOKED_SUPPRESS_MS;
 
