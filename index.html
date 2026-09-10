@@ -1787,21 +1787,50 @@
     }catch(e){ /* corrupt cache, ignore */ }
   }
 
-  async function loadSlots(){
+  // Slots fetch is slow and occasionally times out on the Apps Script backend, and this
+  // function is called from several places (initial load, 60s poll, fast-poll after a
+  // booking). Without a guard, an in-flight request that's still pending when the next
+  // trigger fires would pile a second concurrent request onto an already-struggling
+  // backend, making things worse - so concurrent callers just await the same request.
+  let slotsLoadPromise = null;
+  function loadSlots(){
+    if(slotsLoadPromise) return slotsLoadPromise;
+    slotsLoadPromise = loadSlotsInner().finally(() => { slotsLoadPromise = null; });
+    return slotsLoadPromise;
+  }
+
+  async function fetchSlotsOnce(){
+    const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+    try{
+      const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store', signal: controller.signal });
+      if(!res.ok) throw new Error('bad response');
+      return await res.json();
+    }finally{
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function loadSlotsInner(){
     const currentMonthKey = monthKeys[monthIndex];
     showCachedSlotsPreview();
     try{
-      const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000);
-      let res;
-      try{
-        res = await fetch(bustUrl, { method: 'GET', cache: 'no-store', signal: controller.signal });
-      }finally{
-        clearTimeout(timeoutId);
+      // The backend is a Google Apps Script exec URL, which is slow to begin with and
+      // slows down further (sometimes past our own timeout) under concurrent load - a
+      // short retry gives a request a couple more chances to land outside that window
+      // before we give up and show the user an error.
+      const RETRY_DELAYS_MS = [1500, 3000];
+      let slots;
+      for(let attempt = 0; ; attempt++){
+        try{
+          slots = await fetchSlotsOnce();
+          break;
+        }catch(fetchErr){
+          if(attempt >= RETRY_DELAYS_MS.length) throw fetchErr;
+          await new Promise(r => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+        }
       }
-      if(!res.ok) throw new Error('bad response');
-      const slots = await res.json();
 
       if(!Array.isArray(slots) || slots.length === 0){
         slotsByDate = {};
