@@ -279,7 +279,7 @@
 
   label{display:block;font-size:12px;font-weight:600;color:var(--accent);margin:12px 0 5px}
   label:first-of-type{margin-top:0}
-  input,select{
+  input,select,textarea{
     width:100%;
     padding:10px 12px;
     border-radius:10px;
@@ -290,7 +290,8 @@
     font-family:inherit;
     transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
   }
-  input:focus,select:focus{outline:none;border-color:var(--accent-soft);box-shadow:0 0 0 3px var(--glow-soft)}
+  textarea{resize:vertical;min-height:72px;line-height:1.4}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent-soft);box-shadow:0 0 0 3px var(--glow-soft)}
 
   .phone-row{display:flex;gap:8px}
   .phone-code{width:96px;flex:none;padding-left:8px;padding-right:4px}
@@ -1071,6 +1072,9 @@
       <option value="Presoterapija (45 min)">Presoterapija (45 min)</option>
     </select>
 
+    <label for="comment" data-i18n="label_comment"></label>
+    <textarea id="comment" rows="3" maxlength="500" data-i18n="comment_placeholder" data-i18n-attr="placeholder"></textarea>
+
     <button class="btn btn-primary" id="submit-btn" type="button" data-i18n="submit_btn"></button>
     <div class="hint" id="form-error" style="color:#b03030"></div>
   </div>
@@ -1279,6 +1283,8 @@
       label_instagram:'Instagram (nav obligāti)',
       label_service:'Pakalpojums *',
       service_placeholder:'Izvēlies pakalpojumu',
+      label_comment:'Komentārs (nav obligāti)',
+      comment_placeholder:'Jautājumi, vēlmes vai cita informācija',
       submit_btn:'Apstiprināt pierakstu',
       submit_sending:'Sūta...',
       err_required:'Lūdzu, aizpildiet visus obligātos laukus.',
@@ -1409,6 +1415,8 @@
       label_instagram:'Instagram (optional)',
       label_service:'Service *',
       service_placeholder:'Choose a service',
+      label_comment:'Comment (optional)',
+      comment_placeholder:'Questions, wishes or anything else',
       submit_btn:'Confirm booking',
       submit_sending:'Sending...',
       err_required:'Please fill in all required fields.',
@@ -1539,6 +1547,8 @@
       label_instagram:'Instagram (необязательно)',
       label_service:'Услуга *',
       service_placeholder:'Выберите услугу',
+      label_comment:'Комментарий (необязательно)',
+      comment_placeholder:'Вопросы, пожелания или другая информация',
       submit_btn:'Подтвердить запись',
       submit_sending:'Отправка...',
       err_required:'Пожалуйста, заполните все обязательные поля.',
@@ -2551,6 +2561,7 @@
     const phone       = phoneNumber ? `${phoneCode} ${phoneNumber}` : '';
     const instagram   = document.getElementById('instagram').value.trim();
     const service     = document.getElementById('service').value.trim();
+    const comment     = document.getElementById('comment').value.trim();
 
     if(!first_name || !last_name || !phoneNumber || !service){
       formError.textContent = t('err_required');
@@ -2582,7 +2593,7 @@
         body: JSON.stringify({
           event_id: selectedSlot.event_id,
           calendar_id: selectedSlot.calendar_id,
-          first_name, last_name, phone, instagram, service
+          first_name, last_name, phone, instagram, service, comment
         })
       });
       const bookingStatus = res.headers.get('X-Booking-Status');
