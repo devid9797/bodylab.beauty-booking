@@ -1115,7 +1115,12 @@
 
 <script>
   const SLOTS_URL = "https://script.google.com/macros/s/AKfycbyUN_pLo0v-laLE7NDLfAZ8bKmyEQt2-jZNyfAX4Wc3fd2PVzq5JxfT8SkUORIcdFiR/exec";
-  const BOOK_URL  = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
+  // Edge-cached copy of SLOTS_URL (Cloudflare Worker, see cloudflare-worker/slots-proxy.js).
+  // Apps Script takes 2-6s per request even on a cache hit and caps out at ~30
+  // concurrent executions, so under real traffic every visitor must read from this
+  // proxy instead. Leave empty to read SLOTS_URL directly (it's also the fallback).
+  const SLOTS_PROXY_URL = "";
+  const BOOK_URL = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
   // Same Apps Script Web App as SLOTS_URL: GET -> doGet (slots), POST -> doPost (RSVP confirm/decline).
   const RSVP_URL  = SLOTS_URL;
 
@@ -1809,10 +1814,20 @@
     return slotsLoadPromise;
   }
 
-  async function fetchSlotsOnce(){
-    const bustUrl = `${SLOTS_URL}${SLOTS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+  // The proxy is tried first; the direct Apps Script URL is the fallback for retries.
+  const SLOTS_SOURCES = [SLOTS_PROXY_URL, SLOTS_URL].filter(Boolean);
+  let lastSlotsSuccessAt = 0;
+  let slotsErrorRetryMs = 5000;
+  let slotsErrorRetryTimer = null;
+
+  async function fetchSlotsOnce(attempt){
+    const url = SLOTS_SOURCES[Math.min(attempt, SLOTS_SOURCES.length - 1)];
+    // Only the direct Apps Script URL needs cache-busting; the proxy manages its own freshness.
+    const bustUrl = url === SLOTS_URL ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` : url;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000);
+    // A healthy response arrives in well under 10s; waiting longer just leaves the
+    // visitor staring at a frozen calendar, so fail fast and retry instead.
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
     try{
       const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store', signal: controller.signal });
       if(!res.ok) throw new Error('bad response');
@@ -1830,11 +1845,12 @@
       // slows down further (sometimes past our own timeout) under concurrent load - a
       // short retry gives a request a couple more chances to land outside that window
       // before we give up and show the user an error.
-      const RETRY_DELAYS_MS = [1500, 3000];
+      const RETRY_DELAYS_MS = [1000, 2500];
       let slots;
       for(let attempt = 0; ; attempt++){
         try{
-          slots = await fetchSlotsOnce();
+          slots = await fetchSlotsOnce(attempt);
+          if(!Array.isArray(slots)) throw new Error('bad payload');
           break;
         }catch(fetchErr){
           if(attempt >= RETRY_DELAYS_MS.length) throw fetchErr;
@@ -1842,7 +1858,10 @@
         }
       }
 
-      if(!Array.isArray(slots) || slots.length === 0){
+      lastSlotsSuccessAt = Date.now();
+      slotsErrorRetryMs = 5000;
+
+      if(slots.length === 0){
         slotsByDate = {};
         monthKeys = [];
         slotsVerified = false;
@@ -1864,13 +1883,33 @@
       try{ localStorage.setItem(SLOTS_CACHE_KEY, JSON.stringify({ slots })); }catch(e){ /* storage full/unavailable, ignore */ }
 
     }catch(err){
-      slotsByDate = {};
-      monthKeys = [];
-      slotsVerified = false;
-      calArea.innerHTML = '<div class="error" data-i18n="cal_error" data-i18n-html></div>';
-      applyTranslations();
+      // A failed background refresh must not wipe a calendar the visitor is already
+      // using - keep the last verified slots (a stale one is caught at submit time
+      // by the "taken" response) and only show the error when there's nothing real.
+      if(!slotsVerified){
+        slotsByDate = {};
+        monthKeys = [];
+        calArea.innerHTML = '<div class="error" data-i18n="cal_error" data-i18n-html></div>';
+        applyTranslations();
+      }
+      // Recover on its own instead of making the visitor reload the page, backing
+      // off so a struggling backend isn't hammered by every open tab at once.
+      clearTimeout(slotsErrorRetryTimer);
+      slotsErrorRetryTimer = setTimeout(loadSlots, slotsErrorRetryMs);
+      slotsErrorRetryMs = Math.min(slotsErrorRetryMs * 2, 60000);
     }
   }
+
+  // Background tabs don't poll (100 idle tabs were 100 requests a minute); a tab
+  // that comes back into view refreshes right away if its data is getting old.
+  const SLOTS_POLL_MS = 60000;
+  function pollSlots(){
+    if(document.hidden) return;
+    loadSlots();
+  }
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden && Date.now() - lastSlotsSuccessAt > 30000) loadSlots();
+  });
 
   function renderCalendar(interactive = true){
     const monthKey = monthKeys[monthIndex];
@@ -2553,6 +2592,95 @@
     loadSlots();
   }
 
+  // ---------- Traffic source attribution ----------
+  // Works out where a visitor came from (UTM tags, ad click IDs, referrer, in-app
+  // browser) and sends it along with the booking, so every booking record says
+  // "instagram", "chatgpt", "google" etc. First touch is kept for 90 days; last
+  // touch is the most recent non-direct visit.
+  const ATTR_FIRST_KEY = 'bb_attr_first_v1';
+  const ATTR_LAST_KEY  = 'bb_attr_last_v1';
+  const ATTR_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+
+  const REFERRER_SOURCES = [
+    [/(^|\.)(chatgpt\.com|chat\.openai\.com|openai\.com)$/, 'chatgpt'],
+    [/(^|\.)perplexity\.ai$/, 'perplexity'],
+    [/^gemini\.google\.com$/, 'gemini'],
+    [/(^|\.)copilot\.microsoft\.com$/, 'copilot'],
+    [/(^|\.)claude\.ai$/, 'claude'],
+    [/(^|\.)instagram\.com$/, 'instagram'],
+    [/(^|\.)(facebook\.com|fb\.com|messenger\.com)$/, 'facebook'],
+    [/(^|\.)tiktok\.com$/, 'tiktok'],
+    [/(^|\.)google\.[a-z.]+$/, 'google'],
+    [/(^|\.)bing\.com$/, 'bing'],
+    [/(^|\.)(yandex\.[a-z.]+|ya\.ru)$/, 'yandex'],
+    [/(^|\.)(ss\.lv|ss\.com)$/, 'ss.lv'],
+  ];
+
+  function detectVisitSource(){
+    const p = new URLSearchParams(window.location.search);
+    const ua = navigator.userAgent || '';
+    let refHost = '';
+    try{ refHost = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; }catch(e){}
+    if(refHost && refHost === window.location.hostname.replace(/^www\./, '')) refHost = '';
+
+    const touch = {
+      source: '', medium: p.get('utm_medium') || '', campaign: p.get('utm_campaign') || '',
+      content: p.get('utm_content') || '', referrer: refHost,
+      landing: window.location.pathname + window.location.search, ts: Date.now()
+    };
+    const utmSource = (p.get('utm_source') || '').trim().toLowerCase();
+    if(utmSource){
+      touch.source = utmSource.replace(/^chatgpt\.com$/, 'chatgpt');
+    } else if(p.get('gclid') || p.get('gbraid') || p.get('wbraid')){
+      touch.source = 'google'; touch.medium = touch.medium || 'cpc';
+    } else if(p.get('fbclid')){
+      touch.source = /Instagram/i.test(ua) || /instagram/.test(refHost) ? 'instagram' : 'facebook';
+      touch.medium = touch.medium || 'social';
+    } else if(p.get('ttclid')){
+      touch.source = 'tiktok'; touch.medium = touch.medium || 'cpc';
+    } else if(refHost){
+      const match = REFERRER_SOURCES.find(([re]) => re.test(refHost));
+      touch.source = match ? match[1] : refHost;
+      touch.medium = touch.medium || (match && ['google','bing','yandex'].includes(match[1]) ? 'organic' : 'referral');
+    } else if(/Instagram/i.test(ua)){
+      // Instagram's in-app browser often strips the referrer (e.g. bio links).
+      touch.source = 'instagram'; touch.medium = 'social';
+    } else if(/FBAN|FBAV/i.test(ua)){
+      touch.source = 'facebook'; touch.medium = 'social';
+    }
+    return touch;
+  }
+
+  function readAttr(key){
+    try{
+      const v = JSON.parse(localStorage.getItem(key) || 'null');
+      return v && Date.now() - v.ts < ATTR_TTL_MS ? v : null;
+    }catch(e){ return null; }
+  }
+
+  (function recordVisitSource(){
+    const touch = detectVisitSource();
+    if(!touch.source) return; // direct visit - keep whatever we already know
+    try{
+      if(!readAttr(ATTR_FIRST_KEY)) localStorage.setItem(ATTR_FIRST_KEY, JSON.stringify(touch));
+      localStorage.setItem(ATTR_LAST_KEY, JSON.stringify(touch));
+    }catch(e){ /* storage unavailable, ignore */ }
+  })();
+
+  function bookingAttribution(){
+    const last = readAttr(ATTR_LAST_KEY) || {};
+    const first = readAttr(ATTR_FIRST_KEY) || {};
+    return {
+      source: last.source || 'direct',
+      source_medium: last.medium || '',
+      source_campaign: last.campaign || '',
+      source_content: last.content || '',
+      source_referrer: last.referrer || '',
+      source_landing: last.landing || '',
+      first_source: first.source || last.source || 'direct',
+    };
+  }
+
   submitBtn.addEventListener('click', async () => {
     const first_name  = document.getElementById('first_name').value.trim();
     const last_name   = document.getElementById('last_name').value.trim();
@@ -2593,7 +2721,8 @@
         body: JSON.stringify({
           event_id: selectedSlot.event_id,
           calendar_id: selectedSlot.calendar_id,
-          first_name, last_name, phone, instagram, service, comment
+          first_name, last_name, phone, instagram, service, comment,
+          ...bookingAttribution()
         })
       });
       const bookingStatus = res.headers.get('X-Booking-Status');
@@ -2775,7 +2904,7 @@
     initRsvpMode(rsvpParams);
   } else {
     loadSlots();
-    setInterval(loadSlots, 60000);
+    setInterval(pollSlots, SLOTS_POLL_MS);
     if(bookedEventIds.size) startFastPolling();
   }
 </script>
