@@ -1119,7 +1119,7 @@
   // Apps Script takes 2-6s per request even on a cache hit and caps out at ~30
   // concurrent executions, so under real traffic every visitor must read from this
   // proxy instead. Leave empty to read SLOTS_URL directly (it's also the fallback).
-  const SLOTS_PROXY_URL = "";
+  const SLOTS_PROXY_URL = "https://bodylab-slots.bodylab-beauty-riga.workers.dev/";
   const BOOK_URL = "https://hook.eu1.make.com/8kymhypc72w5aw0o7qi6kzabgjh8bajy";
   // Same Apps Script Web App as SLOTS_URL: GET -> doGet (slots), POST -> doPost (RSVP confirm/decline).
   const RSVP_URL  = SLOTS_URL;
