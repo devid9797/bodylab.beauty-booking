@@ -71,6 +71,11 @@ for (const p of pages) {
   if (/2700#/.test(text)) fail(label, 'parking gate code visible in page text');
   if (/\{\{|TODO|lorem/i.test(text)) fail(label, 'template placeholder in text');
 
+  const pageBody = html.replace(/<!-- prerender:skip:start -->[\s\S]*?<!-- prerender:skip:end -->/g, '');
+  const emptyLinks = [...pageBody.matchAll(/<a\b([^>]*)>\s*<\/a>/g)].filter(m => !/aria-label=/.test(m[1]));
+  if (emptyLinks.length) fail(label, `${emptyLinks.length} link(s) without text, e.g. ${emptyLinks[0][0].slice(0, 90)}`);
+  const emptyI18n = [...pageBody.matchAll(/<([a-z0-9]+)\b(?:(?!data-i18n-attr)[^>])*\sdata-i18n="([^"]+)"(?:(?!data-i18n-attr)[^>])*>\s*<\/\1>/g)];
+  if (emptyI18n.length) fail(label, `untranslated: ${emptyI18n.map(m => m[2]).join(', ')}`);
   const hrefs = [...html.matchAll(/<a\b[^>]*\shref="([^"]+)"/g)].map(m => m[1]);
   if (p.kind === 'home') {
     for (const svc of SERVICES) if (!hrefs.includes(`/${p.lang}/${svc.slug[p.lang]}/`)) fail(label, `no link to ${svc.id} page`);

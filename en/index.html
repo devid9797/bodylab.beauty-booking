@@ -698,22 +698,46 @@
   .service-price-row + .service-price-row{border-top:1px dashed var(--chip-border)}
   .service-price-row span:last-child{font-weight:600;color:var(--accent)}
   .service-book-btn{margin-top:14px}
-  .service-more-link{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .service-more-link{margin-top:8px}
 
-  /* ---------- Footer: contacts + plain links to every service page ---------- */
-  .site-footer{font-size:13px;line-height:1.6;color:var(--text);text-align:center}
-  .site-footer .footer-about{margin-bottom:12px}
-  .site-footer address{font-style:normal;margin-bottom:12px}
-  .site-footer a{color:var(--accent);font-weight:600}
-  .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px}
+  /* ---------- Footer: graphite card with tappable contact rows + links to every service page ---------- */
+  .site-footer{background:var(--accent);color:rgba(255,254,250,.78);font-size:13px;line-height:1.5;text-align:left}
+  .footer-brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .footer-brand img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px rgba(255,254,250,.12)}
+  .site-footer .footer-brand h2{color:var(--card);font-size:17px;text-align:left;margin:0 0 2px}
+  .footer-brand p{font-size:12.5px;color:rgba(255,254,250,.68)}
+  .footer-contacts{font-style:normal;display:grid;gap:8px}
+  .footer-contact{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:16px;background:rgba(255,254,250,.07);color:var(--card);text-decoration:none;transition:background .2s var(--ease),transform .15s var(--ease)}
+  .footer-contact:active{transform:scale(.98)}
+  .footer-contact small{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,254,250,.55)}
+  .footer-contact > span:last-child{font-weight:600;font-size:13.5px;min-width:0}
+  .footer-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,254,250,.12);display:flex;align-items:center;justify-content:center;flex:none}
+  .footer-icon svg{width:17px;height:17px}
+  .footer-services-label{margin:18px 0 8px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,254,250,.55)}
+  .footer-services{display:flex;flex-wrap:wrap;gap:8px}
+  .footer-services a{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid rgba(255,254,250,.22);color:var(--card);font-weight:600;font-size:12.5px;text-decoration:none;transition:background .2s var(--ease)}
+  .site-footer .footer-cta{background:var(--card);color:var(--accent);margin-top:18px}
+  .footer-bottom{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,254,250,.12);font-size:11.5px;text-align:center;color:rgba(255,254,250,.5)}
+  @media (hover:hover){
+    .footer-contact:hover{background:rgba(255,254,250,.13)}
+    .footer-services a:hover{background:rgba(255,254,250,.1)}
+  }
 
   /* ---------- Service pages (/lv/r-sleek/ etc.) ---------- */
-  .page-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 2px 14px}
-  .page-top .brand{display:flex;align-items:center;gap:10px;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;letter-spacing:.02em}
-  .page-top .brand img{width:36px;height:36px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-sm)}
+  .page-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px}
   .page-top .lang-switch{position:relative;top:auto;right:auto}
-  .breadcrumbs{font-size:12px;color:var(--text-soft);margin:0 2px 10px}
-  .breadcrumbs a{color:var(--accent-soft)}
+  .back-pill{
+    display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 10px;border-radius:var(--radius-pill);
+    background:var(--card);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);
+    color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;
+    transition:transform .15s var(--ease),box-shadow .2s var(--ease);
+  }
+  .back-pill:active{transform:scale(.97)}
+  .back-pill img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+  .back-pill svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
+  .service-page .location-buildings img,.service-page .location-photos img{cursor:default}
+  .home-btn{display:flex;align-items:center;justify-content:center;gap:8px}
+  .home-btn svg{width:16px;height:16px;flex:none}
   .service-hero{padding:0;overflow:hidden}
   .service-hero-photo{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block}
   .service-hero-body{padding:20px 20px 22px}
@@ -980,7 +1004,7 @@
                 <div class="service-price-row"><span data-i18n="rsleek_price2_label">10 sessions</span><span>330€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="R-Sleek (45 min)" data-i18n="book_btn">Book now</button>
-              <a class="service-more-link" data-page="r-sleek" href="/en/r-sleek/" data-i18n="service_more_link">More about this treatment →</a>
+              <a class="btn btn-outline service-more-link" data-page="r-sleek" href="/en/r-sleek/" data-i18n="service_more_link">More about this treatment</a>
             </div>
           </div>
         </div>
@@ -1013,7 +1037,7 @@
                 <div class="service-price-row"><span data-i18n="bflexy_price2_label">10 sessions</span><span>280€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="B-Flexy (45 min)" data-i18n="book_btn">Book now</button>
-              <a class="service-more-link" data-page="b-flexy" href="/en/b-flexy/" data-i18n="service_more_link">More about this treatment →</a>
+              <a class="btn btn-outline service-more-link" data-page="b-flexy" href="/en/b-flexy/" data-i18n="service_more_link">More about this treatment</a>
             </div>
           </div>
         </div>
@@ -1047,7 +1071,7 @@
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="EMS Zero - 1 procedūra (30 min)" data-i18n="emszero_book1">Book 1 session</button>
               <button class="btn btn-primary service-book-btn" type="button" data-service="EMS Zero - 2 procedūras (60 min)" style="margin-top:8px" data-i18n="emszero_book2">Book 2 sessions</button>
-              <a class="service-more-link" data-page="ems-zero" href="/en/ems-zero/" data-i18n="service_more_link">More about this treatment →</a>
+              <a class="btn btn-outline service-more-link" data-page="ems-zero" href="/en/ems-zero/" data-i18n="service_more_link">More about this treatment</a>
             </div>
           </div>
         </div>
@@ -1079,7 +1103,7 @@
                 <div class="service-price-row"><span data-i18n="preso_price1_label">1 session (45 min)</span><span>25€</span></div>
               </div>
               <button class="btn btn-primary service-book-btn" type="button" data-service="Presoterapija (45 min)" data-i18n="book_btn">Book now</button>
-              <a class="service-more-link" data-page="presoterapija" href="/en/pressotherapy/" data-i18n="service_more_link">More about this treatment →</a>
+              <a class="btn btn-outline service-more-link" data-page="presoterapija" href="/en/pressotherapy/" data-i18n="service_more_link">More about this treatment</a>
             </div>
           </div>
         </div>
@@ -1088,6 +1112,7 @@
     </div>
   </div>
 
+  <!-- partial:directions:start -->
   <div class="card directions-card">
     <h2 data-i18n="location_title">Where to find us</h2>
     <div class="divider"></div>
@@ -1112,6 +1137,7 @@
       <img src="/images/studio-3.jpg" alt="BodyLab.Beauty studija" loading="lazy" decoding="async">
     </div>
   </div>
+  <!-- partial:directions:end -->
 
   <div class="card products-card">
     <h2 data-i18n="products_title">Products</h2>
@@ -1163,24 +1189,44 @@
     <a class="btn btn-primary" href="https://app.stebby.eu/group/bodylab.beauty" target="_blank" rel="noopener" style="text-decoration:none;display:block" data-i18n="stebby_btn">Open Stebby</a>
   </div>
 
+  <!-- partial:footer:start -->
   <footer class="card site-footer" id="kontakti">
-    <h2 data-i18n="footer_title">Contacts</h2>
-    <div class="divider"></div>
-    <p class="footer-about" data-i18n="footer_about">BodyLab.Beauty is a body contouring studio in Riga offering R-Sleek, B-Flexy, EMS Zero and pressotherapy treatments with online booking.</p>
-    <address class="footer-nap">
-      <strong>BodyLab.Beauty</strong><br>
-      <span data-i18n="footer_address">Augusta Deglava iela 66, &quot;Deglava Biroji&quot;, 5th floor, room 506, Riga, Latvia</span><br>
-      <span data-i18n="footer_phone_label">Phone / WhatsApp:</span> <a href="tel:+37120888805">+371 20888805</a><br>
-      Instagram: <a href="https://www.instagram.com/bodylab.beauty" target="_blank" rel="noopener">@bodylab.beauty</a>
+    <div class="footer-brand">
+      <img src="/images/logo.jpg" alt="" width="52" height="52" loading="lazy" decoding="async">
+      <div>
+        <h2 data-i18n="footer_title">BodyLab.Beauty</h2>
+        <p data-i18n="footer_about">BodyLab.Beauty is a body contouring studio in Riga offering R-Sleek, B-Flexy, EMS Zero and pressotherapy treatments with online booking.</p>
+      </div>
+    </div>
+    <address class="footer-contacts">
+      <a class="footer-contact" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener">
+        <span class="footer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <span><small data-i18n="footer_address_label">Address</small><span data-i18n="footer_address">Augusta Deglava iela 66, &quot;Deglava Biroji&quot;, 5th floor, room 506, Riga, Latvia</span></span>
+      </a>
+      <a class="footer-contact" href="tel:+37120888805">
+        <span class="footer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+        <span><small data-i18n="footer_phone_label">Phone</small>+371 20888805</span>
+      </a>
+      <a class="footer-contact" href="https://api.whatsapp.com/send?phone=37120888805" target="_blank" rel="noopener">
+        <span class="footer-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
+        <span><small>WhatsApp</small><span data-i18n="footer_whatsapp_text">Message us</span></span>
+      </a>
+      <a class="footer-contact" href="https://www.instagram.com/bodylab.beauty" target="_blank" rel="noopener">
+        <span class="footer-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></span>
+        <span><small>Instagram</small>@bodylab.beauty</span>
+      </a>
     </address>
-    <nav class="footer-links" data-i18n="footer_services_label" data-i18n-attr="aria-label" aria-label="Treatments">
+    <div class="footer-services-label" data-i18n="footer_services_label">Treatments</div>
+    <nav class="footer-services" data-i18n="footer_services_label" data-i18n-attr="aria-label" aria-label="Treatments">
       <a data-page="r-sleek" href="/en/r-sleek/">R-Sleek</a>
       <a data-page="b-flexy" href="/en/b-flexy/">B-Flexy</a>
       <a data-page="ems-zero" href="/en/ems-zero/">EMS Zero</a>
-      <a data-page="presoterapija" href="/en/pressotherapy/" data-i18n="footer_preso_name"></a>
-      <a href="#calendar-card" data-i18n="footer_book_link"></a>
+      <a data-page="presoterapija" href="/en/pressotherapy/" data-i18n="footer_preso_name">Pressotherapy</a>
     </nav>
+    <a class="btn footer-cta" href="#calendar-card" data-i18n="footer_book_link">Book online</a>
+    <div class="footer-bottom">© BodyLab.Beauty · <span data-i18n="footer_city">Body contouring studio in Riga</span></div>
   </footer>
+  <!-- partial:footer:end -->
 
 </div>
 
@@ -1382,14 +1428,17 @@
     lv: {
       title_suffix:'Pieraksts',
       hero_title:'Ķermeņa modelēšanas studija Rīgā',
-      service_more_link:'Vairāk par procedūru →',
-      footer_title:'Kontakti',
+      service_more_link:'Vairāk par procedūru',
+      footer_title:'BodyLab.Beauty',
+      footer_address_label:'Adrese',
+      footer_whatsapp_text:'Rakstīt mums',
+      footer_city:'Ķermeņa modelēšanas studija Rīgā',
       footer_about:'BodyLab.Beauty ir ķermeņa modelēšanas studija Rīgā: R-Sleek, B-Flexy, EMS Zero un presoterapijas procedūras ar online pierakstu.',
       footer_address:'Augusta Deglava iela 66, "Deglava Biroji", 5. stāvs, 506. kabinets, Rīga',
-      footer_phone_label:'Tālrunis / WhatsApp:',
+      footer_phone_label:'Tālrunis',
       footer_services_label:'Procedūras',
       footer_preso_name:'Presoterapija',
-      footer_book_link:'Pierakstīties',
+      footer_book_link:'Pierakstīties online',
       hero_tagline:'Skaists ķermenis ir pašparliecības atslēga!<br>Sper pirmo soli pretī sapņu figūrai jau šodien!',
       cal_title:'Izvēlies pieejamu datumu',
       cal_loading:'Ielāde...',
@@ -1522,11 +1571,14 @@
     en: {
       title_suffix:'Booking',
       hero_title:'Body Contouring Studio in Riga',
-      service_more_link:'More about this treatment →',
-      footer_title:'Contacts',
+      service_more_link:'More about this treatment',
+      footer_title:'BodyLab.Beauty',
+      footer_address_label:'Address',
+      footer_whatsapp_text:'Message us',
+      footer_city:'Body contouring studio in Riga',
       footer_about:'BodyLab.Beauty is a body contouring studio in Riga offering R-Sleek, B-Flexy, EMS Zero and pressotherapy treatments with online booking.',
       footer_address:'Augusta Deglava iela 66, "Deglava Biroji", 5th floor, room 506, Riga, Latvia',
-      footer_phone_label:'Phone / WhatsApp:',
+      footer_phone_label:'Phone',
       footer_services_label:'Treatments',
       footer_preso_name:'Pressotherapy',
       footer_book_link:'Book online',
@@ -1662,11 +1714,14 @@
     ru: {
       title_suffix:'Запись',
       hero_title:'Студия моделирования тела в Риге',
-      service_more_link:'Подробнее о процедуре →',
-      footer_title:'Контакты',
+      service_more_link:'Подробнее о процедуре',
+      footer_title:'BodyLab.Beauty',
+      footer_address_label:'Адрес',
+      footer_whatsapp_text:'Написать нам',
+      footer_city:'Студия моделирования тела в Риге',
       footer_about:'BodyLab.Beauty — студия моделирования тела в Риге: процедуры R-Sleek, B-Flexy, EMS Zero и прессотерапия с онлайн-записью.',
       footer_address:'Augusta Deglava iela 66, "Deglava Biroji", 5-й этаж, кабинет 506, Рига',
-      footer_phone_label:'Телефон / WhatsApp:',
+      footer_phone_label:'Телефон',
       footer_services_label:'Процедуры',
       footer_preso_name:'Прессотерапия',
       footer_book_link:'Записаться онлайн',

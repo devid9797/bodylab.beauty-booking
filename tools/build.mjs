@@ -147,9 +147,11 @@ function fillI18n(html, dict) {
       return `<${tag}${attrs}>`;
     });
   // element content (data-i18n-html keeps markup such as <br>)
-  return html.replace(/<([a-z][a-z0-9]*)\b([^>]*\sdata-i18n="([^"]+)"[^>]*)>([\s\S]*?)<\/\1>/g,
+  // (opening tags carrying data-i18n-attr are excluded from the match itself, so
+  // their children - e.g. links inside a <nav aria-label> - still get filled)
+  return html.replace(/<([a-z][a-z0-9]*)\b((?:(?!data-i18n-attr)[^>])*\sdata-i18n="([^"]+)"(?:(?!data-i18n-attr)[^>])*)>([\s\S]*?)<\/\1>/g,
     (m, tag, attrs, key, inner) => {
-      if (/data-i18n-attr=/.test(attrs) || dict[key] == null) return m;
+      if (dict[key] == null) return m;
       if (new RegExp(`<${tag}\\b`).test(inner)) throw new Error(`nested <${tag}> inside data-i18n="${key}"`);
       const val = /\sdata-i18n-html\b/.test(attrs) ? dict[key] : esc(dict[key]);
       return `<${tag}${attrs}>${val}</${tag}>`;
@@ -190,6 +192,18 @@ function renderHome(lang) {
 }
 
 // ---------- service pages ----------
+const homes = Object.fromEntries(LANGS.map(l => [l, renderHome(l)]));
+function partial(lang, name) {
+  const html = homes[lang];
+  const a = html.indexOf(`<!-- partial:${name}:start -->`);
+  const b = html.indexOf(`<!-- partial:${name}:end -->`);
+  if (a === -1 || b === -1) throw new Error(`partial ${name} not found`);
+  // in-page anchors of the home page must point back to it
+  return html.slice(a, b + `<!-- partial:${name}:end -->`.length).replace(/href="#/g, `href="${HOME_PATH[lang]}#`);
+}
+const CHEVRON_LEFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+const GRID_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>';
+
 const ICONS = template.match(/<link rel="icon"[^>]*>\n<link rel="apple-touch-icon"[^>]*>/)[0];
 const FONTS = template.match(/<link rel="preconnect" href="https:\/\/fonts.googleapis.com">[\s\S]*?rel="stylesheet">/)[0];
 const LANG_SWITCH_TOGGLE = template.match(/<button class="lang-toggle"[\s\S]*?<\/button>/)[0];
@@ -203,12 +217,10 @@ function renderService(svc, lang) {
   const bookHref = key => `${home}?book=${key}#calendar-card`;
   const faq = [...svc.faq[lang], ui.faqBook, ui.faqCancel, ui.faqPay, ui.faqWhere];
   const others = SERVICES.filter(s => s !== svc);
-  const crumbs = [{ name: ui.home, path: home }, { name, path }];
 
   const ld = { '@context': 'https://schema.org', '@graph': [
     serviceNode(svc, lang),
     salonNode(lang),
-    { '@type': 'BreadcrumbList', itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: abs(c.path) })) },
     { '@type': 'FAQPage', mainEntity: faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
   ] };
 
@@ -233,10 +245,10 @@ ${ICONS}
 ${FONTS}
 ${css}
 </head>
-<body>
+<body class="service-page">
 <div class="wrap">
   <header class="page-top">
-    <a class="brand" href="${home}"><img src="/images/logo.jpg" alt="" width="36" height="36">BodyLab.Beauty</a>
+    <a class="back-pill" href="${home}">${CHEVRON_LEFT}<img src="/images/logo.jpg" alt="BodyLab.Beauty" width="30" height="30"><span>${esc(ui.allTreatments)}</span></a>
     <div class="lang-switch" id="lang-switch">
       ${LANG_SWITCH_TOGGLE.replace(/(<span id="lang-current">)[^<]*/, `$1${lang.toUpperCase()}`)}
       <div class="lang-menu" id="lang-menu" aria-label="${esc(ui.langLabel)}">
@@ -244,8 +256,6 @@ ${css}
       </div>
     </div>
   </header>
-
-  <nav class="breadcrumbs" aria-label="breadcrumb"><a href="${home}">${esc(ui.home)}</a> › <span aria-current="page">${esc(name)}</span></nav>
 
   <main>
   <section class="card service-hero">
@@ -292,13 +302,7 @@ ${css}
     ${faq.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join('\n    ')}
   </section>
 
-  <section class="card content-card">
-    <h2>${esc(ui.whereTitle)}</h2>
-    <p><strong>${BUSINESS.name}</strong><br>${esc(ui.address)}</p>
-    <p>${esc(ui.parking)}</p>
-    <p>${esc(ui.phoneLabel)} <a href="tel:${BUSINESS.phone}">${BUSINESS.phoneDisplay}</a> · Instagram: <a href="${BUSINESS.instagram}" target="_blank" rel="noopener">@bodylab.beauty</a></p>
-    <a class="btn btn-outline" href="${BUSINESS.mapsUrl}" target="_blank" rel="noopener">${esc(ui.mapLink)}</a>
-  </section>
+  ${partial(lang, 'directions')}
   </main>
 
   <nav class="card content-card" aria-label="${esc(ui.otherTitle)}">
@@ -306,8 +310,10 @@ ${css}
     <div class="related-links">
       ${others.map(o => `<a href="${servicePath(o, lang)}">${esc(o.name[lang])}</a>`).join('\n      ')}
     </div>
-    <a class="service-more-link" href="${home}">${esc(ui.backHome)}</a>
+    <a class="btn btn-outline home-btn" href="${home}">${GRID_ICON}${esc(ui.backHome)}</a>
   </nav>
+
+  ${partial(lang, 'footer')}
 </div>
 <script src="/assets/site.js"></script>
 </body>
