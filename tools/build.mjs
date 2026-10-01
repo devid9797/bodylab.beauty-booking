@@ -159,7 +159,7 @@ function fillI18n(html, dict) {
 }
 
 function prerender(html, dict) {
-  // Booking sheet / RSVP views are app state, not page content: left for the JS.
+  // The booking sheet is app state, not page content: left for the JS.
   const parts = html.split(/(<!-- prerender:skip:start -->[\s\S]*?<!-- prerender:skip:end -->)/);
   return parts.map(p => p.startsWith('<!-- prerender:skip:start -->') ? p : fillI18n(p, dict)).join('');
 }

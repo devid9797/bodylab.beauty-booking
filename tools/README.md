@@ -22,5 +22,5 @@ Local preview (bookings are simulated on localhost – nothing reaches Make.com)
     node tools/check-seo.mjs                          # crawler's-eye checks
     node tools/check-seo.mjs https://bodylab-beauty.lv  # same checks on the live site
 
-URLs: `/` = Latvian home (also serves `?rsvp=1` and UTM links), `/ru/`, `/en/`,
+URLs: `/` = Latvian home (also serves existing UTM links), `/ru/`, `/en/`,
 `/<lang>/<service>/` service pages, `/lv/` redirects to `/`.

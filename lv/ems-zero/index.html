@@ -838,7 +838,6 @@
   .gift-desc{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px}
   .gift-details-label{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
 
-  .rsvp-building-photo{width:100%;border-radius:var(--radius-image);display:block;margin:10px 0;box-shadow:var(--shadow-md)}
 
   /* ---------- Reviews ---------- */
   .reviews-section{
@@ -865,24 +864,6 @@
     transition:transform .25s var(--ease),box-shadow .25s var(--ease);
   }
   .review-photo:active{transform:scale(1.08) rotate(0deg);box-shadow:var(--shadow-lift)}
-
-  #rsvp-result{
-    font-size:17px;
-    font-weight:700;
-    color:var(--accent);
-    text-align:center;
-    line-height:1.4;
-  }
-  #rsvp-result:not(:empty){
-    background:var(--chip-bg);
-    border-radius:12px;
-    padding:14px;
-    margin-top:14px;
-  }
-
-  /* ---------- RSVP merged card ---------- */
-  .hero-card.rsvp-merged{margin-bottom:0;border-radius:var(--radius-section) var(--radius-section) 0 0}
-  #rsvp-card.rsvp-merged{border-radius:0 0 var(--radius-card) var(--radius-card);margin-top:0}
 
   /* ---------- Confirmation popup ---------- */
   #sheet-step-success{min-height:50vh;display:flex;flex-direction:column;position:relative}
@@ -1020,7 +1001,7 @@
   <div class="card directions-card">
     <h2 data-i18n="location_title">Kur mūs atrast</h2>
     <div class="divider"></div>
-    <div class="gift-desc" data-i18n="rsvp_address_text">Augusta Deglava iela 66, &quot;Deglava Biroji&quot;, 5. stāvs, 506. kabinets.</div>
+    <div class="gift-desc" data-i18n="location_address_text">Augusta Deglava iela 66, &quot;Deglava Biroji&quot;, 5. stāvs, 506. kabinets.</div>
     <div class="location-buildings">
       <img src="/images/building-1.jpg" alt="BodyLab.Beauty ēka" loading="lazy" decoding="async">
       <img src="/images/building-2.jpg" alt="BodyLab.Beauty ēka" loading="lazy" decoding="async">

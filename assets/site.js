@@ -10,8 +10,16 @@
 // Google Ads tracking is ever needed.
 const GOOGLE_TAG_IDS = ['G-6S1QVMTQFZ'];
 
-// Local preview (localhost / *.localhost / *.test): bookings and RSVP answers are
-// simulated instead of being sent to Make.com / Apps Script, so testing can never
+// Google Ads booking conversion, e.g. 'AW-XXXXXXXXXX/AbCdEfGhIjK'. Optional - the
+// URL change to BOOKING_CONFIRMED_PATH below already lets Ads count bookings by URL.
+const ADS_BOOKING_CONVERSION = '';
+// Shown in the address bar after a successful booking so Google Ads can count it
+// as a conversion ("page URL contains pieraksts-apstiprinats"). A real page exists
+// at this path that sends a reload back to the home page.
+const BOOKING_CONFIRMED_PATH = '/pieraksts-apstiprinats';
+
+// Local preview (localhost / *.localhost / *.test): bookings are
+// simulated instead of being sent to Make.com, so testing can never
 // create a real booking, touch the studio calendar or message anyone. Reading the
 // public slot list stays real (read-only).
 const BB_TEST_MODE = /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$|\.test$/.test(location.hostname);
@@ -189,6 +197,23 @@ function showConsentBanner(){
 function trackBookingConversion(service){
   if(!GOOGLE_TAG_IDS.length || BB_TEST_MODE) return;
   gtag('event', 'generate_lead', { service, traffic_source: bookingAttribution().source });
+  if(ADS_BOOKING_CONVERSION) gtag('event', 'conversion', { send_to: ADS_BOOKING_CONVERSION });
+}
+
+// Swaps the address bar to BOOKING_CONFIRMED_PATH while the confirmation is open
+// and puts the original URL back when it closes. replaceState keeps the Back
+// button behaving as before; the page itself never reloads.
+let urlBeforeBooking = null;
+function setBookingConfirmedUrl(on){
+  try{
+    if(on){
+      if(urlBeforeBooking === null) urlBeforeBooking = location.pathname + location.search + location.hash;
+      history.replaceState(history.state, '', BOOKING_CONFIRMED_PATH);
+    } else if(urlBeforeBooking !== null){
+      history.replaceState(history.state, '', urlBeforeBooking);
+      urlBeforeBooking = null;
+    }
+  }catch(e){ /* e.g. file:// previews disallow path changes - not critical */ }
 }
 
 // ---------- Language switch ----------
@@ -213,7 +238,7 @@ function trackBookingConversion(service){
   langSwitch.querySelectorAll('.lang-option[data-lang]').forEach(a => {
     a.addEventListener('click', () => {
       try{ localStorage.setItem(LANG_KEY, a.dataset.lang); }catch(e){}
-      // Carry tracking/booking parameters (utm_*, ?rsvp=1...) over to the other language.
+      // Carry tracking/booking parameters (utm_* etc.) over to the other language.
       if(location.search && a.getAttribute('href').indexOf('?') === -1){
         a.setAttribute('href', a.getAttribute('href') + location.search);
       }

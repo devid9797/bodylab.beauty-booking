@@ -27,7 +27,7 @@ export const BUSINESS = {
 };
 
 // Home page path per language. "/" is the Latvian page (it also serves the
-// existing ?rsvp=1 and UTM links); "/lv/" only redirects to it.
+// existing UTM links); "/lv/" only redirects to it.
 export const HOME_PATH = { lv: '/', ru: '/ru/', en: '/en/' };
 
 export const HOME_META = {
