@@ -616,9 +616,15 @@
   }
   .sheet-close:active{transform:scale(.9)}
   .sheet-back{
-    font-size:12px;color:var(--text-soft);background:none;border:none;
-    cursor:pointer;text-decoration:underline;font-family:inherit;padding:0;margin-bottom:10px;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px 7px 10px;margin-bottom:12px;
+    border-radius:var(--radius-pill);border:1px solid var(--chip-border);background:var(--chip-bg);
+    color:var(--accent);font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;
+    transition:background .2s var(--ease),transform .15s var(--ease);
   }
+  .sheet-back svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
+  .sheet-back:active{transform:scale(.97)}
+  @media (hover:hover){ .sheet-back:hover{background:var(--chip-hover)} }
 
   /* ---------- Services list ---------- */
   .services-card h2{margin-bottom:2px}
@@ -726,13 +732,12 @@
   .page-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px}
   .page-top .lang-switch{position:relative;top:auto;right:auto}
   .back-pill{
-    display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 10px;border-radius:var(--radius-pill);
+    display:inline-flex;align-items:center;gap:6px;padding:9px 16px 9px 12px;border-radius:var(--radius-pill);
     background:var(--card);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);
     color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;
     transition:transform .15s var(--ease),box-shadow .2s var(--ease);
   }
   .back-pill:active{transform:scale(.97)}
-  .back-pill img{width:30px;height:30px;border-radius:50%;object-fit:cover}
   .back-pill svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
   .service-page .location-buildings img,.service-page .location-photos img{cursor:default}
   .home-btn{display:flex;align-items:center;justify-content:center;gap:8px}
@@ -1195,7 +1200,7 @@
   </div>
 
   <div id="sheet-step-form" style="display:none">
-    <button class="sheet-back" id="sheet-back" type="button" data-i18n="sheet_back"></button>
+    <button class="sheet-back" id="sheet-back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span data-i18n="sheet_back"></span></button>
     <div class="sheet-header">
       <div class="selected-slot" id="selected-slot-label" style="margin-bottom:0"></div>
       <button class="sheet-close" id="sheet-close-2" type="button" data-i18n="close_aria" data-i18n-attr="aria-label">✕</button>
@@ -1427,7 +1432,7 @@
       product_availability_note:'Šis produkts pieejams mūsu salonā - vari to iegādāties uz vietas vai iepriekš pasūtīt un pārbaudīt pieejamību, sazinoties ar mums.',
       product_order_btn:'Pasūtīt',
       product_wa_message:'Sveiki! Es vēlos pasūtīt: {product}.',
-      sheet_back:'← Izvēlēties citu laiku',
+      sheet_back:'Izvēlēties citu laiku',
       close_aria:'Aizvērt',
       label_first_name:'Vārds *',
       label_last_name:'Uzvārds *',
@@ -1554,7 +1559,7 @@
       product_availability_note:'This product is available in our salon - you can buy it on the spot or pre-order and check availability by contacting us.',
       product_order_btn:'Order',
       product_wa_message:'Hello! I would like to order: {product}.',
-      sheet_back:'← Choose another time',
+      sheet_back:'Choose another time',
       close_aria:'Close',
       label_first_name:'First name *',
       label_last_name:'Last name *',
@@ -1681,7 +1686,7 @@
       product_availability_note:'Этот продукт доступен у нас в салоне - можно купить на месте или заранее заказать и проверить наличие, связавшись с нами.',
       product_order_btn:'Заказать',
       product_wa_message:'Здравствуйте! Я хочу заказать: {product}.',
-      sheet_back:'← Выбрать другое время',
+      sheet_back:'Выбрать другое время',
       close_aria:'Закрыть',
       label_first_name:'Имя *',
       label_last_name:'Фамилия *',

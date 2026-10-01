@@ -666,9 +666,15 @@
   }
   .sheet-close:active{transform:scale(.9)}
   .sheet-back{
-    font-size:12px;color:var(--text-soft);background:none;border:none;
-    cursor:pointer;text-decoration:underline;font-family:inherit;padding:0;margin-bottom:10px;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px 7px 10px;margin-bottom:12px;
+    border-radius:var(--radius-pill);border:1px solid var(--chip-border);background:var(--chip-bg);
+    color:var(--accent);font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;
+    transition:background .2s var(--ease),transform .15s var(--ease);
   }
+  .sheet-back svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
+  .sheet-back:active{transform:scale(.97)}
+  @media (hover:hover){ .sheet-back:hover{background:var(--chip-hover)} }
 
   /* ---------- Services list ---------- */
   .services-card h2{margin-bottom:2px}
@@ -776,13 +782,12 @@
   .page-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px}
   .page-top .lang-switch{position:relative;top:auto;right:auto}
   .back-pill{
-    display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 10px;border-radius:var(--radius-pill);
+    display:inline-flex;align-items:center;gap:6px;padding:9px 16px 9px 12px;border-radius:var(--radius-pill);
     background:var(--card);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);
     color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;
     transition:transform .15s var(--ease),box-shadow .2s var(--ease);
   }
   .back-pill:active{transform:scale(.97)}
-  .back-pill img{width:30px;height:30px;border-radius:50%;object-fit:cover}
   .back-pill svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
   .service-page .location-buildings img,.service-page .location-photos img{cursor:default}
   .home-btn{display:flex;align-items:center;justify-content:center;gap:8px}
@@ -910,7 +915,7 @@
 <body class="service-page">
 <div class="wrap">
   <header class="page-top">
-    <a class="back-pill" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><img src="/images/logo.jpg" alt="BodyLab.Beauty" width="30" height="30"><span>Visas procedūras</span></a>
+    <a class="back-pill" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>Visas procedūras</span></a>
     <div class="lang-switch" id="lang-switch">
       <button class="lang-toggle" id="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
           <span id="lang-current">LV</span>

@@ -248,7 +248,7 @@ ${css}
 <body class="service-page">
 <div class="wrap">
   <header class="page-top">
-    <a class="back-pill" href="${home}">${CHEVRON_LEFT}<img src="/images/logo.jpg" alt="BodyLab.Beauty" width="30" height="30"><span>${esc(ui.allTreatments)}</span></a>
+    <a class="back-pill" href="${home}">${CHEVRON_LEFT}<span>${esc(ui.allTreatments)}</span></a>
     <div class="lang-switch" id="lang-switch">
       ${LANG_SWITCH_TOGGLE.replace(/(<span id="lang-current">)[^<]*/, `$1${lang.toUpperCase()}`)}
       <div class="lang-menu" id="lang-menu" aria-label="${esc(ui.langLabel)}">
