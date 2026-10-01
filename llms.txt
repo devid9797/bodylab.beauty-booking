@@ -1,18 +1,32 @@
 # BodyLab.Beauty
 
-> Body-contouring beauty studio in Riga, Latvia (Ķermeņa modelēšanas studija Rīgā). Online appointment booking, treatment info, and Arosha cosmetic products.
+> Body contouring studio in Riga, Latvia (ķermeņa modelēšanas studija Rīgā). Treatments: R-Sleek, B-Flexy, EMS Zero, pressotherapy. Online booking with live availability.
 
-BodyLab.Beauty offers non-invasive body-contouring treatments in Riga:
-- R-Sleek - body-contouring roller massage
-- B-Flexy - vacuum-roller anti-cellulite massage
-- EMS Zero - EMS muscle stimulation
-- Presoterapija - lymphatic-drainage pressotherapy
-
-Visitors can book an appointment directly on the website (real-time availability from Google Calendar), browse and order Arosha Aesthetic Science skincare/cosmetic products (creams and compression garments), buy a gift card, and find the studio's location and directions.
-
-## Key facts
-- Website: https://bodylab-beauty.lv
+- Address: Augusta Deglava iela 66, "Deglava Biroji", 5th floor, room 506, Rīga, Latvia
+- Phone / WhatsApp: +371 20888805
 - Instagram: https://www.instagram.com/bodylab.beauty
-- WhatsApp: https://api.whatsapp.com/send?phone=37120888805
-- Address: Augusta Deglava iela 66, "Deglava Biroji", 5th floor, office 506, Rīga, Latvia
-- Languages available on site: Latvian (default), English, Russian
+- Payment with Stebby wellness benefits is accepted; gift cards are available (valid 3 months).
+- Cancellation less than 24 hours before the appointment: the full price applies.
+
+## Treatments (English)
+- [R-Sleek](https://bodylab-beauty.lv/en/r-sleek/): 1 session, 45 min – €35; 10-session package, 45 min – €330
+- [B-Flexy](https://bodylab-beauty.lv/en/b-flexy/): 1 session, 45 min – €30; 10-session package, 45 min – €280
+- [EMS Zero](https://bodylab-beauty.lv/en/ems-zero/): 1 session, 30 min – €20; 2 sessions in a row, 60 min – €35
+- [Pressotherapy](https://bodylab-beauty.lv/en/pressotherapy/): 1 session, 45 min – €25
+
+## Procedūras (latviski)
+- [R-Sleek](https://bodylab-beauty.lv/lv/r-sleek/): 1 procedūra, 45 min – 35 €; 10 procedūru abonements, 45 min – 330 €
+- [B-Flexy](https://bodylab-beauty.lv/lv/b-flexy/): 1 procedūra, 45 min – 30 €; 10 procedūru abonements, 45 min – 280 €
+- [EMS Zero](https://bodylab-beauty.lv/lv/ems-zero/): 1 procedūra, 30 min – 20 €; 2 procedūras pēc kārtas, 60 min – 35 €
+- [Presoterapija](https://bodylab-beauty.lv/lv/presoterapija/): 1 procedūra, 45 min – 25 €
+
+## Процедуры (по-русски)
+- [R-Sleek](https://bodylab-beauty.lv/ru/r-sleek/): 1 процедура, 45 мин – 35 €; Абонемент на 10 процедур, 45 мин – 330 €
+- [B-Flexy](https://bodylab-beauty.lv/ru/b-flexy/): 1 процедура, 45 мин – 30 €; Абонемент на 10 процедур, 45 мин – 280 €
+- [EMS Zero](https://bodylab-beauty.lv/ru/ems-zero/): 1 процедура, 30 мин – 20 €; 2 процедуры подряд, 60 мин – 35 €
+- [Прессотерапия](https://bodylab-beauty.lv/ru/presoterapija/): 1 процедура, 45 мин – 25 €
+
+## Pages
+- [Home, booking (LV)](https://bodylab-beauty.lv/)
+- [Home, booking (RU)](https://bodylab-beauty.lv/ru/)
+- [Home, booking (EN)](https://bodylab-beauty.lv/en/)

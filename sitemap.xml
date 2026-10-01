@@ -1,8 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://bodylab-beauty.lv/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/ru/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/en/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/lv/r-sleek/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/ru/r-sleek/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/en/r-sleek/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/r-sleek/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/r-sleek/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/lv/b-flexy/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/ru/b-flexy/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/en/b-flexy/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/b-flexy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/b-flexy/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/lv/ems-zero/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/ru/ems-zero/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/en/ems-zero/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/ems-zero/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/ems-zero/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/lv/presoterapija/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/pressotherapy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/ru/presoterapija/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/pressotherapy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
+  </url>
+  <url>
+    <loc>https://bodylab-beauty.lv/en/pressotherapy/</loc>
+    <xhtml:link rel="alternate" hreflang="lv" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://bodylab-beauty.lv/ru/presoterapija/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bodylab-beauty.lv/en/pressotherapy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bodylab-beauty.lv/lv/presoterapija/"/>
   </url>
 </urlset>
