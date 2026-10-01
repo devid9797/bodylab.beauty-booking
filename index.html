@@ -2243,7 +2243,6 @@
     sheet.classList.remove('open');
     selectedSlot = null;
     currentSheetDateKey = null;
-    if(wasSuccess) setBookingConfirmedUrl(false);
     // Closing the booking-confirmed screen is a natural moment to re-sync with the
     // backend - more time has passed since the booking than the initial re-fetch got,
     // so this catches cases where the server was still lagging right after submit.
@@ -2808,7 +2807,6 @@
     openSheet();
 
     removeSlotLocally(slot);
-    setBookingConfirmedUrl(true);
     trackBookingConversion(service);
 
     selectedSlot = null;

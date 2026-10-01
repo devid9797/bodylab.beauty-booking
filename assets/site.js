@@ -5,16 +5,10 @@
  * globals the home page's booking code can call.
  */
 
-// Google tag IDs, e.g. ['G-XXXXXXXXXX', 'AW-XXXXXXXXXX']. While empty, no Google
-// script is loaded and no cookie banner is shown.
-const GOOGLE_TAG_IDS = [];
-// Google Ads booking conversion, e.g. 'AW-XXXXXXXXXX/AbCdEfGhIjK'. Optional - the
-// URL change to BOOKING_CONFIRMED_PATH below already lets Ads count bookings by URL.
-const ADS_BOOKING_CONVERSION = '';
-// Shown in the address bar after a successful booking so Google Ads can count it
-// as a conversion ("page URL contains pieraksts-apstiprinats"). A real page exists
-// at this path that sends a reload back to the home page.
-const BOOKING_CONFIRMED_PATH = '/pieraksts-apstiprinats';
+// Google Analytics 4 (BodyLab.Beauty property). Cookies are set only after the
+// visitor accepts the banner (Consent Mode v2). Add an 'AW-...' ID here too if
+// Google Ads tracking is ever needed.
+const GOOGLE_TAG_IDS = ['G-6S1QVMTQFZ'];
 
 // Local preview (localhost / *.localhost / *.test): bookings and RSVP answers are
 // simulated instead of being sent to Make.com / Apps Script, so testing can never
@@ -195,23 +189,6 @@ function showConsentBanner(){
 function trackBookingConversion(service){
   if(!GOOGLE_TAG_IDS.length || BB_TEST_MODE) return;
   gtag('event', 'generate_lead', { service, traffic_source: bookingAttribution().source });
-  if(ADS_BOOKING_CONVERSION) gtag('event', 'conversion', { send_to: ADS_BOOKING_CONVERSION });
-}
-
-// Swaps the address bar to BOOKING_CONFIRMED_PATH while the confirmation is open
-// and puts the original URL back when it closes. replaceState keeps the Back
-// button behaving as before; the page itself never reloads.
-let urlBeforeBooking = null;
-function setBookingConfirmedUrl(on){
-  try{
-    if(on){
-      if(urlBeforeBooking === null) urlBeforeBooking = location.pathname + location.search + location.hash;
-      history.replaceState(history.state, '', BOOKING_CONFIRMED_PATH);
-    } else if(urlBeforeBooking !== null){
-      history.replaceState(history.state, '', urlBeforeBooking);
-      urlBeforeBooking = null;
-    }
-  }catch(e){ /* e.g. file:// previews disallow path changes - not critical */ }
 }
 
 // ---------- Language switch ----------

@@ -114,7 +114,7 @@ const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]).sort();
 const expected = pages.map(p => SITE + p.path).sort();
 if (JSON.stringify(locs) !== JSON.stringify(expected)) fail('/sitemap.xml', `locs differ from canonical pages\n${locs.join('\n')}`);
 const smUrls = [...sm.matchAll(/(?:<loc>|href=")([^<"]+)/g)].map(m => m[1]);
-if (smUrls.some(u => /rsvp|pieraksts-apstiprinats|\?/.test(u))) fail('/sitemap.xml', 'contains a private/service URL');
+if (smUrls.some(u => /rsvp|\?/.test(u))) fail('/sitemap.xml', 'contains a private/service URL');
 
 // robots.txt keeps search + AI search crawlers allowed
 const robots = (await get('/robots.txt')).html;
@@ -124,8 +124,6 @@ if (!robots.includes(`Sitemap: ${SITE}/sitemap.xml`)) fail('/robots.txt', 'sitem
 // service routes
 const lvRoot = await get('/lv/');
 if (!lvRoot.html.includes('url=/"') && !lvRoot.html.includes('content="0; url=/"')) fail('/lv/', 'does not redirect to /');
-const confirmed = await get('/pieraksts-apstiprinats/');
-if (!/noindex/.test(confirmed.html)) fail('/pieraksts-apstiprinats/', 'missing noindex');
 const missing = await get('/no-such-page/');
 if (missing.status !== 404) fail('/no-such-page/', `expected 404, got ${missing.status}`);
 
