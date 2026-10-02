@@ -1947,9 +1947,10 @@
     // Only the direct Apps Script URL needs cache-busting; the proxy manages its own freshness.
     const bustUrl = url === SLOTS_URL ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` : url;
     const controller = new AbortController();
-    // A healthy response arrives in well under 10s; waiting longer just leaves the
-    // visitor staring at a frozen calendar, so fail fast and retry instead.
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    // The proxy answers from cache in well under a second, so if it hasn't
+    // answered in 6s something is wrong - move on to the direct Apps Script URL,
+    // which is legitimately slow and gets more time.
+    const timeoutId = setTimeout(() => controller.abort(), url === SLOTS_URL ? 15000 : 6000);
     try{
       const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store', signal: controller.signal });
       if(!res.ok) throw new Error('bad response');
