@@ -10,6 +10,11 @@
 // Google Ads tracking is ever needed.
 const GOOGLE_TAG_IDS = ['G-6S1QVMTQFZ'];
 
+// Meta (Instagram/Facebook) Pixel. Loaded only once the visitor accepts the cookie
+// banner - Meta has no cookieless mode, so nothing is sent before that. Reports
+// PageView on every page and Schedule when a booking is confirmed.
+const META_PIXEL_ID = '1396153806065123';
+
 // Google Ads booking conversion, e.g. 'AW-XXXXXXXXXX/AbCdEfGhIjK'. Optional - the
 // URL change to BOOKING_CONFIRMED_PATH below already lets Ads count bookings by URL.
 const ADS_BOOKING_CONVERSION = '';
@@ -145,6 +150,22 @@ function gtag(){ window.dataLayer.push(arguments); }
 function applyConsent(granted){
   const v = granted ? 'granted' : 'denied';
   gtag('consent', 'update', { ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v });
+  if(granted) loadMetaPixel();
+}
+
+// Meta's standard base code, run only after consent (see applyConsent).
+function loadMetaPixel(){
+  if(!META_PIXEL_ID || BB_TEST_MODE || window.fbq) return;
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', META_PIXEL_ID);
+  fbq('track', 'PageView');
 }
 
 function showConsentBanner(){
@@ -174,8 +195,8 @@ function showConsentBanner(){
   decline.addEventListener('click', () => choose(false));
 }
 
-(function initGoogleTag(){
-  if(!GOOGLE_TAG_IDS.length || BB_TEST_MODE) return; // keep test traffic out of real analytics
+(function initTracking(){
+  if((!GOOGLE_TAG_IDS.length && !META_PIXEL_ID) || BB_TEST_MODE) return; // keep test traffic out of real analytics
   gtag('consent', 'default', {
     ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
     analytics_storage: 'denied', wait_for_update: 500
@@ -184,20 +205,26 @@ function showConsentBanner(){
   try{ saved = localStorage.getItem(CONSENT_KEY); }catch(e){}
   if(saved) applyConsent(saved === 'granted');
 
-  const s = document.createElement('script');
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_TAG_IDS[0])}`;
-  document.head.appendChild(s);
-  gtag('js', new Date());
-  GOOGLE_TAG_IDS.forEach(id => gtag('config', id));
+  if(GOOGLE_TAG_IDS.length){
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_TAG_IDS[0])}`;
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    GOOGLE_TAG_IDS.forEach(id => gtag('config', id));
+  }
 
   if(!saved) showConsentBanner();
 })();
 
 function trackBookingConversion(service){
-  if(!GOOGLE_TAG_IDS.length || BB_TEST_MODE) return;
-  gtag('event', 'generate_lead', { service, traffic_source: bookingAttribution().source });
-  if(ADS_BOOKING_CONVERSION) gtag('event', 'conversion', { send_to: ADS_BOOKING_CONVERSION });
+  if(BB_TEST_MODE) return;
+  if(GOOGLE_TAG_IDS.length){
+    gtag('event', 'generate_lead', { service, traffic_source: bookingAttribution().source });
+    if(ADS_BOOKING_CONVERSION) gtag('event', 'conversion', { send_to: ADS_BOOKING_CONVERSION });
+  }
+  // Only defined when the visitor accepted cookies.
+  if(window.fbq) fbq('track', 'Schedule', { content_name: service });
 }
 
 // Swaps the address bar to BOOKING_CONFIRMED_PATH while the confirmation is open
