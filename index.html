@@ -560,6 +560,8 @@
   .stebby-logo{width:100%;max-width:260px;height:auto;display:block;margin:0 auto 14px}
 
   .hint{font-size:11px;color:var(--text-soft);margin-top:4px}
+  .terms-note{font-size:11.5px;line-height:1.5;color:var(--text-soft);text-align:center;margin-top:14px}
+  .terms-note + .btn{margin-top:10px}
 
   .times{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
   .time-chip{
@@ -1244,6 +1246,7 @@
     <label for="comment" data-i18n="label_comment"></label>
     <textarea id="comment" rows="3" maxlength="500" data-i18n="comment_placeholder" data-i18n-attr="placeholder"></textarea>
 
+    <p class="terms-note" id="booking-terms" data-i18n="booking_terms"></p>
     <button class="btn btn-primary" id="submit-btn" type="button" data-i18n="submit_btn"></button>
     <div class="hint" id="form-error" style="color:#b03030"></div>
   </div>
@@ -1455,6 +1458,7 @@
       label_comment:'Komentārs (nav obligāti)',
       comment_placeholder:'Jautājumi, vēlmes vai cita informācija',
       submit_btn:'Apstiprināt pierakstu',
+      booking_terms:'Apstiprinot pierakstu, Jūs piekrītat, ka gadījumā, ja pieraksts tiek atcelts vai pārcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.',
       submit_sending:'Sūta...',
       err_required:'Lūdzu, aizpildiet visus obligātos laukus.',
       err_no_slot:'Lūdzu, izvēlieties laiku.',
@@ -1583,6 +1587,7 @@
       label_comment:'Comment (optional)',
       comment_placeholder:'Questions, wishes or anything else',
       submit_btn:'Confirm booking',
+      booking_terms:'By confirming your booking, you agree that if it is cancelled or rescheduled less than 24 hours before the treatment, the full price of the treatment is charged.',
       submit_sending:'Sending...',
       err_required:'Please fill in all required fields.',
       err_no_slot:'Please choose a time.',
@@ -1711,6 +1716,7 @@
       label_comment:'Комментарий (необязательно)',
       comment_placeholder:'Вопросы, пожелания или другая информация',
       submit_btn:'Подтвердить запись',
+      booking_terms:'Подтверждая запись, вы соглашаетесь, что если запись отменена или перенесена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.',
       submit_sending:'Отправка...',
       err_required:'Пожалуйста, заполните все обязательные поля.',
       err_no_slot:'Пожалуйста, выберите время.',
