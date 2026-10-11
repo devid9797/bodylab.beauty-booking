@@ -58,7 +58,10 @@
   .hero-logo{
     position:relative;
     aspect-ratio:4/3;
-    background:#fff url('/images/logo.jpg') no-repeat 50% 43% / 74% auto;
+    /* logo.jpg has a pure-white backdrop; multiplying it onto the card colour makes the
+       white vanish, so this block matches the other cards exactly */
+    background:var(--card) url('/images/logo.jpg') no-repeat 50% 43% / 74% auto;
+    background-blend-mode:multiply;
   }
   .langs{
     position:absolute;top:12px;right:12px;
@@ -72,7 +75,7 @@
     transition:background .2s var(--ease),color .2s var(--ease);
   }
   .langs button[aria-pressed="true"]{background:var(--accent);color:var(--card)}
-  .hero-text{padding:2px 1.25rem 1.5rem;text-align:center;background:#fff}
+  .hero-text{padding:2px 1.25rem 1.5rem;text-align:center}
   h1{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1.25}
   .sub{font-size:13px;color:var(--accent-soft);margin-top:6px;line-height:1.5}
 
@@ -88,6 +91,15 @@
   .code-box small{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
   .code-box b{display:block;font-size:34px;font-weight:700;letter-spacing:.12em;color:var(--accent);line-height:1.15}
 
+  /* Highlighted block: graphite, like the site footer */
+  .card-dark{background:var(--accent);color:rgba(255,254,250,.78)}
+  .card-dark h2{color:var(--card)}
+  .card-dark .ico{background:rgba(255,254,250,.12);color:var(--card)}
+  .card-dark p{color:rgba(255,254,250,.78)}
+  .card-dark strong{color:var(--card)}
+  .card-dark .btn-primary{background:var(--card);color:var(--accent);box-shadow:none}
+  .card-dark .btn-outline{background:transparent;color:var(--card);border:1px solid rgba(255,254,250,.3)}
+
   /* Buttons */
   .btn{
     display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--radius-pill);
@@ -102,6 +114,8 @@
   .row .btn{flex:1;margin-top:12px}
   @media (hover:hover) and (pointer:fine){
     .btn-primary:hover{box-shadow:var(--shadow-md)}
+    .card-dark .btn-primary:hover{box-shadow:none;background:#fff}
+    .card-dark .btn-outline:hover{background:rgba(255,254,250,.1);border-color:rgba(255,254,250,.5)}
     .btn-outline:hover{background:var(--chip-bg);border-color:var(--accent-soft)}
     .langs button:not([aria-pressed="true"]):hover{background:var(--chip-bg)}
   }
@@ -169,7 +183,7 @@
       <img class="photo-tall" src="/images/info-parking-placeholder.svg" data-k-alt="park_alt" alt="Reģistrācijas automāts" width="600" height="800" decoding="async">
     </section>
 
-    <section class="card">
+    <section class="card card-dark">
       <h2>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
         <span data-k="cancel_h">Pieraksta atcelšana</span>
@@ -185,6 +199,11 @@
         <span data-k="ig">Rakstīt Instagram</span>
       </a>
     </section>
+
+    <a class="btn btn-outline home-btn" id="home-link" href="/" style="margin-top:0;margin-bottom:1rem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+      <span data-k="home">Visas procedūras un pieraksts</span>
+    </a>
   </main>
 
   <div class="foot">© BodyLab.Beauty</div>
@@ -209,7 +228,8 @@
         cancel_p1: 'Ja nevarat ierasties, lūdzu, informējiet mūs iepriekš.',
         cancel_p2: '<strong>Ja pieraksts tiek atcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.</strong>',
         wa: 'Rakstīt WhatsApp',
-        ig: 'Rakstīt Instagram'
+        ig: 'Rakstīt Instagram',
+        home: 'Visas procedūras un pieraksts'
       },
       ru: {
         title: 'Информация перед визитом',
@@ -227,7 +247,8 @@
         cancel_p1: 'Если вы не можете прийти, пожалуйста, сообщите нам заранее.',
         cancel_p2: '<strong>Если запись отменена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</strong>',
         wa: 'Написать в WhatsApp',
-        ig: 'Написать в Instagram'
+        ig: 'Написать в Instagram',
+        home: 'Все процедуры и запись'
       },
       en: {
         title: 'Information before your visit',
@@ -245,7 +266,8 @@
         cancel_p1: 'If you cannot make it, please let us know in advance.',
         cancel_p2: '<strong>If an appointment is cancelled less than 24 hours before the treatment, the full price of the treatment is charged.</strong>',
         wa: 'Message on WhatsApp',
-        ig: 'Message on Instagram'
+        ig: 'Message on Instagram',
+        home: 'All treatments and booking'
       }
     };
 
@@ -262,6 +284,8 @@
         var v = T[lang][el.getAttribute('data-k-alt')];
         if (v != null) el.setAttribute('alt', v);
       });
+      var home = document.getElementById('home-link');
+      if (home) home.setAttribute('href', lang === 'lv' ? '/' : '/' + lang + '/');
       buttons.forEach(function (b) {
         b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
       });
