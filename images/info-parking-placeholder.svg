@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="Placeholder">
+  <rect width="600" height="800" fill="#EFE6D8"/>
+  <!-- ticket / parking machine pictogram -->
+  <g transform="translate(300 400)" fill="none" stroke="#B9AE9F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-95" y="-190" width="190" height="330" rx="26" fill="#F4ECE2"/>
+    <rect x="-62" y="-158" width="124" height="74" rx="10"/>
+    <path d="M-62 -52h124M-62 -20h124"/>
+    <rect x="-40" y="22" width="80" height="20" rx="10"/>
+    <path d="M0 140v70"/>
+    <path d="M-60 210h120"/>
+  </g>
+  <g fill="#B9AE9F" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="44" text-anchor="middle">
+    <text x="300" y="705">P</text>
+  </g>
+</svg>
