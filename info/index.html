@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- Private visit-info page: reachable only by its link (sent to clients by SMS).
-     Deliberately NOT linked from any page, NOT in sitemap.xml / llms.txt, no canonical,
-     no hreflang, and kept out of robots.txt (a Disallow line would publish the path).
-     Self-contained: no site.js, so no analytics / cookie banner loads here. -->
+<!-- Visit-info page for clients (address, entrance code, parking, cancellation).
+     Lives at /info but is deliberately NOT linked from any page of the site and NOT in
+     sitemap.xml / llms.txt, with noindex so search engines do not surface it - it is only
+     opened from the link we send to clients (SMS, WhatsApp, social media). No canonical,
+     no hreflang. Self-contained: no site.js, so no analytics / cookie banner loads here. -->
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#F4ECE2">
