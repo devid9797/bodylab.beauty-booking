@@ -50,24 +50,32 @@
   }
   .wrap{max-width:440px;width:100%}
 
-  /* Top bar: brand + language pills */
-  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 16px}
-  .brand{display:flex;align-items:center;gap:10px;min-width:0}
-  .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px rgba(75,71,67,.08)}
-  .brand span{font-weight:700;font-size:15px;letter-spacing:.03em;color:var(--accent)}
-  .langs{display:flex;gap:2px;padding:3px;border-radius:var(--radius-pill);background:var(--card);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);flex:none}
+  /* Cards */
+  .card{background:var(--card);border-radius:var(--radius-card);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow-dual)}
+
+  /* Header: the logo is the card background, language pills sit inside it */
+  .hero{padding:0;overflow:hidden}
+  .hero-logo{
+    position:relative;
+    aspect-ratio:4/3;
+    background:#fff url('/images/logo.jpg') no-repeat 50% 43% / 74% auto;
+  }
+  .langs{
+    position:absolute;top:12px;right:12px;
+    display:flex;gap:2px;padding:3px;border-radius:var(--radius-pill);
+    background:rgba(255,254,250,.9);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  }
   .langs button{
     border:none;background:none;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.02em;
     color:var(--text);padding:6px 11px;border-radius:var(--radius-pill);cursor:pointer;
     transition:background .2s var(--ease),color .2s var(--ease);
   }
   .langs button[aria-pressed="true"]{background:var(--accent);color:var(--card)}
-
-  /* Cards */
-  .card{background:var(--card);border-radius:var(--radius-card);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow-dual)}
-  .intro{text-align:center;padding:1.5rem 1.25rem 1.35rem}
+  .hero-text{padding:2px 1.25rem 1.5rem;text-align:center;background:#fff}
   h1{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1.25}
-  .sub{font-size:13px;color:var(--accent-soft);margin-top:6px}
+  .sub{font-size:13px;color:var(--accent-soft);margin-top:6px;line-height:1.5}
+
   h2{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--accent);margin-bottom:10px}
   .ico{width:34px;height:34px;border-radius:50%;background:var(--chip-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--accent)}
   .ico svg{width:17px;height:17px}
@@ -98,33 +106,33 @@
     .langs button:not([aria-pressed="true"]):hover{background:var(--chip-bg)}
   }
 
-  /* Building photos */
-  .photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 2px}
-  .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-image);display:block;box-shadow:var(--shadow-md)}
+  /* Photos: building shots run the full width of the card, landscape, one under the other */
+  .photos{display:grid;gap:10px;margin:12px 0 2px}
+  .photos img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius-image);display:block;box-shadow:var(--shadow-md)}
+
+  /* Parking machine photo (vertical). Placeholder until the real photo is added. */
+  .photo-tall{display:block;width:72%;max-width:300px;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--radius-image);margin:14px auto 2px;box-shadow:var(--shadow-md)}
 
   .foot{margin-top:6px;text-align:center;font-size:11.5px;color:var(--text-soft)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <img src="/images/logo.jpg" alt="" width="40" height="40">
-      <span>BodyLab.Beauty</span>
+  <header class="card hero">
+    <div class="hero-logo" role="img" aria-label="BodyLab.Beauty">
+      <div class="langs" role="group" aria-label="Language">
+        <button type="button" data-lang="lv" aria-pressed="true">LV</button>
+        <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
     </div>
-    <div class="langs" role="group" aria-label="Language">
-      <button type="button" data-lang="lv" aria-pressed="true">LV</button>
-      <button type="button" data-lang="ru" aria-pressed="false">RU</button>
-      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    <div class="hero-text">
+      <h1 data-k="title">Informācija pirms vizītes</h1>
+      <p class="sub" data-k="sub">Adrese, ieeja, autostāvvieta un atcelšana</p>
     </div>
   </header>
 
   <main>
-    <section class="card intro">
-      <h1 data-k="title">Kā mūs atrast un ierasties</h1>
-      <p class="sub" data-k="sub">Informācija pirms vizītes</p>
-    </section>
-
     <section class="card">
       <h2>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
@@ -132,8 +140,8 @@
       </h2>
       <p data-k="addr_p"><strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5.&nbsp;stāvs, 506.&nbsp;kabinets, Rīga.</p>
       <div class="photos">
-        <img src="/images/building-1.jpg" alt="" width="400" height="300" decoding="async">
-        <img src="/images/building-2.jpg" alt="" width="400" height="300" decoding="async">
+        <img src="/images/building-1.jpg" alt="" width="1280" height="852" decoding="async">
+        <img src="/images/building-2.jpg" alt="" width="1280" height="852" decoding="async">
       </div>
       <div class="row">
         <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener noreferrer">Google Maps</a>
@@ -157,6 +165,8 @@
       </h2>
       <p data-k="park_p1">Ja braucat ar auto, turpat ir autostāvvieta: <strong>1 stunda bez maksas</strong>.</p>
       <p data-k="park_p2">Reģistrācijas automāts atrodas 1. stāvā pie lifta, vai reģistrējiet auto Mobilly lietotnē (zona LDB).</p>
+      <!-- TODO: replace with the real photo of the registration machine (vertical, 3:4), e.g. /images/info-parking.jpg -->
+      <img class="photo-tall" src="/images/info-parking-placeholder.svg" data-k-alt="park_alt" alt="Reģistrācijas automāts" width="600" height="800" decoding="async">
     </section>
 
     <section class="card">
@@ -184,8 +194,8 @@
   (function () {
     var T = {
       lv: {
-        title: 'Kā mūs atrast un ierasties',
-        sub: 'Informācija pirms vizītes',
+        title: 'Informācija pirms vizītes',
+        sub: 'Adrese, ieeja, autostāvvieta un atcelšana',
         addr_h: 'Adrese',
         addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5.&nbsp;stāvs, 506.&nbsp;kabinets, Rīga.',
         door_h: 'Ieeja',
@@ -194,6 +204,7 @@
         park_h: 'Autostāvvieta',
         park_p1: 'Ja braucat ar auto, turpat ir autostāvvieta: <strong>1 stunda bez maksas</strong>.',
         park_p2: 'Reģistrācijas automāts atrodas 1. stāvā pie lifta, vai reģistrējiet auto Mobilly lietotnē (zona LDB).',
+        park_alt: 'Reģistrācijas automāts',
         cancel_h: 'Pieraksta atcelšana',
         cancel_p1: 'Ja nevarat ierasties, lūdzu, informējiet mūs iepriekš.',
         cancel_p2: '<strong>Ja pieraksts tiek atcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.</strong>',
@@ -201,8 +212,8 @@
         call: 'Zvanīt'
       },
       ru: {
-        title: 'Как нас найти и добраться',
-        sub: 'Информация перед визитом',
+        title: 'Информация перед визитом',
+        sub: 'Адрес, вход, парковка и отмена записи',
         addr_h: 'Адрес',
         addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5-й&nbsp;этаж, кабинет&nbsp;506, Рига.',
         door_h: 'Вход',
@@ -211,6 +222,7 @@
         park_h: 'Парковка',
         park_p1: 'Если вы приедете на машине, рядом есть парковка: <strong>1 час бесплатно</strong>.',
         park_p2: 'Автомат регистрации находится на 1-м этаже у лифта, или зарегистрируйте машину в приложении Mobilly (зона LDB).',
+        park_alt: 'Автомат регистрации парковки',
         cancel_h: 'Отмена записи',
         cancel_p1: 'Если вы не можете прийти, пожалуйста, сообщите нам заранее.',
         cancel_p2: '<strong>Если запись отменена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</strong>',
@@ -218,8 +230,8 @@
         call: 'Позвонить'
       },
       en: {
-        title: 'How to find us',
-        sub: 'Information before your visit',
+        title: 'Information before your visit',
+        sub: 'Address, entrance, parking and cancellation',
         addr_h: 'Address',
         addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5th&nbsp;floor, room&nbsp;506, Riga.',
         door_h: 'Entrance',
@@ -228,6 +240,7 @@
         park_h: 'Parking',
         park_p1: 'If you come by car, there is parking right next to the building: <strong>1 hour free</strong>.',
         park_p2: 'The registration machine is on the 1st floor by the lift, or register your car in the Mobilly app (zone LDB).',
+        park_alt: 'Parking registration machine',
         cancel_h: 'Cancelling your appointment',
         cancel_p1: 'If you cannot make it, please let us know in advance.',
         cancel_p2: '<strong>If an appointment is cancelled less than 24 hours before the treatment, the full price of the treatment is charged.</strong>',
@@ -244,6 +257,10 @@
       document.querySelectorAll('[data-k]').forEach(function (el) {
         var v = T[lang][el.getAttribute('data-k')];
         if (v != null) el.innerHTML = v;
+      });
+      document.querySelectorAll('[data-k-alt]').forEach(function (el) {
+        var v = T[lang][el.getAttribute('data-k-alt')];
+        if (v != null) el.setAttribute('alt', v);
       });
       buttons.forEach(function (b) {
         b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
