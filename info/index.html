@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- Visit-info page for clients (address, entrance code, parking, cancellation).
+     Lives at /info but is deliberately NOT linked from any page of the site and NOT in
+     sitemap.xml / llms.txt, with noindex so search engines do not surface it - it is only
+     opened from the link we send to clients (SMS, WhatsApp, social media). No canonical,
+     no hreflang. Self-contained: no site.js, so no analytics / cookie banner loads here. -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#F4ECE2">
+<title>BodyLab.Beauty</title>
+<link rel="icon" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4ECE2;
+    --card:#FFFEFA;
+    --border:#EFE3D2;
+    --accent:#4B4743;
+    --accent-soft:#847F79;
+    --text:#5C5854;
+    --text-soft:#9C968E;
+    --chip-bg:#F4ECE2;
+    --chip-border:#E6DBCB;
+    --shadow-sm:0 2px 10px rgba(75,71,67,.07);
+    --shadow-md:0 10px 30px rgba(75,71,67,.1);
+    --shadow-dual:0 8px 28px rgba(75,71,67,.09),0 1px 2px rgba(75,71,67,.08);
+    --ease:cubic-bezier(.16,1,.3,1);
+    --radius-card:24px;
+    --radius-pill:999px;
+    --radius-image:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:1.5rem 1rem calc(3rem + env(safe-area-inset-bottom));
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:440px;width:100%}
+
+  /* Top bar: brand + language pills */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 16px}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px rgba(75,71,67,.08)}
+  .brand span{font-weight:700;font-size:15px;letter-spacing:.03em;color:var(--accent)}
+  .langs{display:flex;gap:2px;padding:3px;border-radius:var(--radius-pill);background:var(--card);border:1px solid var(--chip-border);box-shadow:var(--shadow-sm);flex:none}
+  .langs button{
+    border:none;background:none;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.02em;
+    color:var(--text);padding:6px 11px;border-radius:var(--radius-pill);cursor:pointer;
+    transition:background .2s var(--ease),color .2s var(--ease);
+  }
+  .langs button[aria-pressed="true"]{background:var(--accent);color:var(--card)}
+
+  /* Cards */
+  .card{background:var(--card);border-radius:var(--radius-card);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow-dual)}
+  .intro{text-align:center;padding:1.5rem 1.25rem 1.35rem}
+  h1{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1.25}
+  .sub{font-size:13px;color:var(--accent-soft);margin-top:6px}
+  h2{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--accent);margin-bottom:10px}
+  .ico{width:34px;height:34px;border-radius:50%;background:var(--chip-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--accent)}
+  .ico svg{width:17px;height:17px}
+  p{font-size:14px;line-height:1.6;color:var(--text)}
+  p + p{margin-top:8px}
+  strong{color:var(--accent);font-weight:700}
+
+  /* Door code */
+  .code-box{margin-top:12px;padding:14px 16px;border-radius:16px;background:var(--chip-bg);text-align:center}
+  .code-box small{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
+  .code-box b{display:block;font-size:34px;font-weight:700;letter-spacing:.12em;color:var(--accent);line-height:1.15}
+
+  /* Buttons */
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--radius-pill);
+    font-family:inherit;font-size:14px;font-weight:600;text-align:center;text-decoration:none;border:none;cursor:pointer;margin-top:12px;
+    transition:transform .15s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+  }
+  .btn:active{transform:scale(.98)}
+  .btn svg{width:17px;height:17px;flex:none}
+  .btn-primary{background:var(--accent);color:var(--card);box-shadow:var(--shadow-sm)}
+  .btn-outline{background:var(--card);color:var(--accent);border:1px solid var(--chip-border)}
+  .row{display:flex;gap:10px}
+  .row .btn{flex:1;margin-top:12px}
+  @media (hover:hover) and (pointer:fine){
+    .btn-primary:hover{box-shadow:var(--shadow-md)}
+    .btn-outline:hover{background:var(--chip-bg);border-color:var(--accent-soft)}
+    .langs button:not([aria-pressed="true"]):hover{background:var(--chip-bg)}
+  }
+
+  /* Building photos */
+  .photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 2px}
+  .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius-image);display:block;box-shadow:var(--shadow-md)}
+
+  .foot{margin-top:6px;text-align:center;font-size:11.5px;color:var(--text-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <img src="/images/logo.jpg" alt="" width="40" height="40">
+      <span>BodyLab.Beauty</span>
+    </div>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="lv" aria-pressed="true">LV</button>
+      <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card intro">
+      <h1 data-k="title">Kā mūs atrast un ierasties</h1>
+      <p class="sub" data-k="sub">Informācija pirms vizītes</p>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.5 7-11.5a7 7 0 1 0-14 0C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <span data-k="addr_h">Adrese</span>
+      </h2>
+      <p data-k="addr_p"><strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5.&nbsp;stāvs, 506.&nbsp;kabinets, Rīga.</p>
+      <div class="photos">
+        <img src="/images/building-1.jpg" alt="" width="400" height="300" decoding="async">
+        <img src="/images/building-2.jpg" alt="" width="400" height="300" decoding="async">
+      </div>
+      <div class="row">
+        <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga" target="_blank" rel="noopener noreferrer">Google Maps</a>
+        <a class="btn btn-outline" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener noreferrer">Waze</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+        <span data-k="door_h">Ieeja</span>
+      </h2>
+      <p data-k="door_p">Pēc plkst. 17:00 un brīvdienās ieejā jāievada kods.</p>
+      <div class="code-box"><small data-k="door_code">Ieejas kods</small><b>2700#</b></div>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M9.5 16.5v-9h3.2a2.9 2.9 0 0 1 0 5.8H9.5"/></svg></span>
+        <span data-k="park_h">Autostāvvieta</span>
+      </h2>
+      <p data-k="park_p1">Ja braucat ar auto, turpat ir autostāvvieta: <strong>1 stunda bez maksas</strong>.</p>
+      <p data-k="park_p2">Reģistrācijas automāts atrodas 1. stāvā pie lifta, vai reģistrējiet auto Mobilly lietotnē (zona LDB).</p>
+    </section>
+
+    <section class="card">
+      <h2>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <span data-k="cancel_h">Pieraksta atcelšana</span>
+      </h2>
+      <p data-k="cancel_p1">Ja nevarat ierasties, lūdzu, informējiet mūs iepriekš.</p>
+      <p data-k="cancel_p2"><strong>Ja pieraksts tiek atcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.</strong></p>
+      <a class="btn btn-primary" href="https://api.whatsapp.com/send?phone=37120888805" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        <span data-k="wa">Rakstīt WhatsApp</span>
+      </a>
+      <a class="btn btn-outline" href="tel:+37120888805">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+        <span><span data-k="call">Zvanīt</span> +371 20888805</span>
+      </a>
+    </section>
+  </main>
+
+  <div class="foot">© BodyLab.Beauty</div>
+</div>
+
+<script>
+  (function () {
+    var T = {
+      lv: {
+        title: 'Kā mūs atrast un ierasties',
+        sub: 'Informācija pirms vizītes',
+        addr_h: 'Adrese',
+        addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5.&nbsp;stāvs, 506.&nbsp;kabinets, Rīga.',
+        door_h: 'Ieeja',
+        door_p: 'Pēc plkst. 17:00 un brīvdienās ieejā jāievada kods.',
+        door_code: 'Ieejas kods',
+        park_h: 'Autostāvvieta',
+        park_p1: 'Ja braucat ar auto, turpat ir autostāvvieta: <strong>1 stunda bez maksas</strong>.',
+        park_p2: 'Reģistrācijas automāts atrodas 1. stāvā pie lifta, vai reģistrējiet auto Mobilly lietotnē (zona LDB).',
+        cancel_h: 'Pieraksta atcelšana',
+        cancel_p1: 'Ja nevarat ierasties, lūdzu, informējiet mūs iepriekš.',
+        cancel_p2: '<strong>Ja pieraksts tiek atcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.</strong>',
+        wa: 'Rakstīt WhatsApp',
+        call: 'Zvanīt'
+      },
+      ru: {
+        title: 'Как нас найти и добраться',
+        sub: 'Информация перед визитом',
+        addr_h: 'Адрес',
+        addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5-й&nbsp;этаж, кабинет&nbsp;506, Рига.',
+        door_h: 'Вход',
+        door_p: 'После 17:00 и в выходные при входе нужно ввести код.',
+        door_code: 'Код входа',
+        park_h: 'Парковка',
+        park_p1: 'Если вы приедете на машине, рядом есть парковка: <strong>1 час бесплатно</strong>.',
+        park_p2: 'Автомат регистрации находится на 1-м этаже у лифта, или зарегистрируйте машину в приложении Mobilly (зона LDB).',
+        cancel_h: 'Отмена записи',
+        cancel_p1: 'Если вы не можете прийти, пожалуйста, сообщите нам заранее.',
+        cancel_p2: '<strong>Если запись отменена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</strong>',
+        wa: 'Написать в WhatsApp',
+        call: 'Позвонить'
+      },
+      en: {
+        title: 'How to find us',
+        sub: 'Information before your visit',
+        addr_h: 'Address',
+        addr_p: '<strong>Augusta Deglava iela 66</strong>, "Deglava Biroji", 5th&nbsp;floor, room&nbsp;506, Riga.',
+        door_h: 'Entrance',
+        door_p: 'After 5 pm and on weekends you need to enter a code at the entrance.',
+        door_code: 'Entrance code',
+        park_h: 'Parking',
+        park_p1: 'If you come by car, there is parking right next to the building: <strong>1 hour free</strong>.',
+        park_p2: 'The registration machine is on the 1st floor by the lift, or register your car in the Mobilly app (zone LDB).',
+        cancel_h: 'Cancelling your appointment',
+        cancel_p1: 'If you cannot make it, please let us know in advance.',
+        cancel_p2: '<strong>If an appointment is cancelled less than 24 hours before the treatment, the full price of the treatment is charged.</strong>',
+        wa: 'Message on WhatsApp',
+        call: 'Call'
+      }
+    };
+
+    var buttons = document.querySelectorAll('.langs button');
+
+    function setLang(lang) {
+      if (!T[lang]) lang = 'lv';
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-k]').forEach(function (el) {
+        var v = T[lang][el.getAttribute('data-k')];
+        if (v != null) el.innerHTML = v;
+      });
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
+      });
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
+    });
+
+    // Latvian by default (the SMS is Latvian); ?lang=ru / ?lang=en opens another language directly.
+    var m = /[?&]lang=(lv|ru|en)\b/.exec(location.search);
+    if (m && m[1] !== 'lv') setLang(m[1]);
+  })();
+</script>
+</body>
+</html>
