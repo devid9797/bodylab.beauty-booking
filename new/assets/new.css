@@ -375,7 +375,8 @@ footer.f a:hover{color:var(--accent)}
   background-size:300% 100%;animation:pearl 6s linear infinite;
 }
 /* подсветка карточки за курсором */
-.glow{position:relative}
+/* .glow ставится на карточки, у которых position уже задан (relative/sticky/absolute); его самого не переопределяем */
+.ocard,.gcard{position:relative}
 .glow::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
   background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(205,184,160,.30),transparent 62%);opacity:0;transition:opacity .5s var(--ease)}
 @media (hover:hover) and (pointer:fine){.glow:hover::before{opacity:1}}
@@ -572,3 +573,5 @@ footer.f a:hover{color:var(--accent)}
 .toast{position:fixed;z-index:60;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;max-width:calc(100% - 32px);
   background:var(--night);color:var(--card);font-size:13px;font-weight:600;padding:14px 22px;border-radius:var(--r-pill);box-shadow:0 20px 40px -16px rgba(0,0,0,.5);transition:opacity .5s var(--ease),transform .6s var(--ease)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.em,.amt,.pearl,.big{background:none;color:var(--pb,var(--card));animation:none}.big{color:#fff}}

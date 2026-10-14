@@ -67,8 +67,17 @@
     });
   });
 
+  /* ---- страховка появления: всё, что уже в зоне видимости или выше неё, показываем,
+          даже если наблюдатель пропустил элемент (быстрый скролл, переход по якорю, End/Page Down) ---- */
+  function sweepReveal(){
+    $$('.rv:not(.in),.mask:not(.in),.line-grow:not(.in)').forEach(function(el){
+      if(el.getBoundingClientRect().top < innerHeight*0.96){ el.classList.add('in'); if(io) io.unobserve(el); }
+    });
+  }
+  addEventListener('load',sweepReveal); addEventListener('hashchange',function(){ setTimeout(sweepReveal,50); });
+
   /* ---- общий цикл на rAF ---- */
-  var ticking = false, hooks = [onScroll,heroPar];
+  var ticking = false, hooks = [onScroll,heroPar,sweepReveal];
   window.BL.onFrame = function(fn){ hooks.push(fn); fn(); };
   function frame(){ ticking = false; hooks.forEach(function(f){ f(); }); }
   addEventListener('scroll',function(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } },{passive:true});
