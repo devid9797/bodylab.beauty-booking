@@ -51,6 +51,23 @@ const NAV = `
 
 const AURORA = '<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>';
 
+
+// Пути делаем относительными, чтобы страницы открывались и с сервера, и просто из скачанной папки (file://).
+const up = '../../../';
+function rel(h) {
+  return h
+    .replace(/\/new\/assets\//g, '../../assets/')
+    .replace(/href="\/new\/ru\/zapis\//g, 'href="../zapis/index.html')
+    .replace(/href="\/new\/ru\/([a-z-]+)\/"/g, 'href="../$1/index.html"')
+    .replace(/href="\/new\/ru\/#/g, 'href="../index.html#')
+    .replace(/href="\/new\/ru\/"/g, 'href="../index.html"')
+    .replace(/"\/images\//g, `"${up}images/`)
+    .replace(/href="\/(ru|en|info)\/([a-z-]+)\/"/g, `href="${up}$1/$2/index.html"`)
+    .replace(/href="\/(ru|en|info)\/"/g, `href="${up}$1/index.html"`)
+    .replace(/href="\/"/g, `href="${up}index.html"`)
+    .replace('<html lang="ru">', `<html lang="ru" data-root="${up}">`);
+}
+
 function page(s) {
   const name = s.name[L], slug = s.slug[L], tag = TAGLINE[s.id];
   const offers = s.offers;
@@ -259,6 +276,6 @@ ${NAV}
 for (const s of SERVICES) {
   const dir = join(root, 'ru', s.slug[L]);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'index.html'), page(s));
+  writeFileSync(join(dir, 'index.html'), rel(page(s)));
   console.log('wrote new/ru/' + s.slug[L] + '/index.html');
 }

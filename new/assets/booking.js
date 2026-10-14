@@ -3,13 +3,14 @@
    Когда дизайн утвердим, этот интерфейс подключится к настоящему календарю. */
 (function(){
   var B = window.BL, $ = B.$, $$ = B.$$;
+  var ROOT = document.documentElement.dataset.root || '/';
 
   var OPTIONS = [
-    {id:'r-sleek',      name:'R-Sleek',       tag:'Массаж моделирования тела', min:45, price:35, img:'/images/service-rsleek.jpg'},
-    {id:'b-flexy',      name:'B-Flexy',       tag:'Вакуумно-роликовый массаж', min:45, price:30, img:'/images/service-bflexy.jpg'},
-    {id:'ems-zero-1',   name:'EMS Zero',      tag:'1 процедура',               min:30, price:20, img:'/images/service-emszero.jpg'},
-    {id:'ems-zero-2',   name:'EMS Zero',      tag:'2 процедуры подряд',        min:60, price:35, img:'/images/service-emszero.jpg'},
-    {id:'presoterapija',name:'Прессотерапия', tag:'Лимфодренаж',               min:45, price:25, img:'/images/service-presoterapija.jpg'}
+    {id:'r-sleek',      name:'R-Sleek',       tag:'Массаж моделирования тела', min:45, price:35, img:'images/service-rsleek.jpg'},
+    {id:'b-flexy',      name:'B-Flexy',       tag:'Вакуумно-роликовый массаж', min:45, price:30, img:'images/service-bflexy.jpg'},
+    {id:'ems-zero-1',   name:'EMS Zero',      tag:'1 процедура',               min:30, price:20, img:'images/service-emszero.jpg'},
+    {id:'ems-zero-2',   name:'EMS Zero',      tag:'2 процедуры подряд',        min:60, price:35, img:'images/service-emszero.jpg'},
+    {id:'presoterapija',name:'Прессотерапия', tag:'Лимфодренаж',               min:45, price:25, img:'images/service-presoterapija.jpg'}
   ];
   var MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
   var MONTHS_G = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -49,7 +50,7 @@
   /* шаг 1 */
   var grid = $('#optgrid');
   grid.innerHTML = OPTIONS.map(function(o){
-    return '<button type="button" class="opt" data-id="'+o.id+'" aria-pressed="false"><img src="'+o.img+'" alt="" loading="lazy">'+
+    return '<button type="button" class="opt" data-id="'+o.id+'" aria-pressed="false"><img src="'+ROOT+o.img+'" alt="" loading="lazy">'+
       '<div><h3>'+o.name+'</h3><p>'+o.tag+'</p><div class="pr2">'+o.min+' мин · '+o.price+' €</div></div>'+
       '<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>';
   }).join('');
