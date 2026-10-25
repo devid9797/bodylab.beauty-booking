@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru" data-root="../../../">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4ECE2">
+<meta name="robots" content="noindex">
+<title>Онлайн-запись – BodyLab.Beauty (новый дизайн, демо)</title>
+<link rel="icon" href="../../../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/new.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="../index.html" aria-label="BodyLab.Beauty">BodyLab<sup>/beauty</sup></a>
+    <div class="nav-r">
+      <div class="langs" aria-label="Язык"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="index.html" class="on" aria-current="true" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></div>
+      <a class="btn btn-ghost btn-sm" href="../index.html">Назад на сайт</a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i></button>
+    </div>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Меню">
+  <a class="m-link" href="../index.html#uslugi">Процедуры <small>01</small></a>
+  <a class="m-link" href="../index.html#vizit">Как проходит визит <small>02</small></a>
+  <a class="m-link" href="../index.html#ceny">Цены <small>03</small></a>
+  <a class="m-link" href="../index.html#otzyvy">Отзывы <small>04</small></a>
+  <a class="m-link" href="../index.html#podarok">Подарочная карта <small>05</small></a>
+  <a class="m-link" href="../index.html#kontakty">Контакты <small>06</small></a>
+  <div class="m-foot">
+    <a class="btn btn-main" href="index.html">Записаться онлайн</a>
+    <a class="btn btn-ghost" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>
+    <span class="m-langs"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="index.html" class="on" aria-current="true" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></span>
+  </div>
+</nav>
+
+<main class="bk">
+  <div class="demo-bar"><i></i>Демо-страница: так будет выглядеть запись. Данные никуда не отправляются, а время сгенерировано.</div>
+  <div class="bk-grid">
+
+    <section class="bk-main" id="bk-main">
+      <div class="bk-top">
+        <span class="eyebrow rv">Онлайн-запись</span>
+        <div class="steps rv" style="--d:1" id="steps">
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>Процедура</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Дата и время</span></button>
+          <button class="stp" type="button" data-s="3" disabled><b>3</b><span>Ваши данные</span></button>
+        </div>
+      </div>
+
+      <div class="pane show" id="p1">
+        <h2>Что вам подходит?</h2>
+        <p class="lead">Выберите процедуру. Время и цену подтвердим на следующих шагах.</p>
+        <div class="optgrid" id="optgrid"></div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Выбрать дату <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>Выберите доступную дату</h2>
+        <p class="lead">Свободные дни отмечены точкой. Затем выберите время.</p>
+        <div class="cal">
+          <div class="cal-h"><h3 id="cal-title"></h3>
+            <div class="cal-nav">
+              <button type="button" id="cal-prev" aria-label="Предыдущий месяц"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button type="button" id="cal-next" aria-label="Следующий месяц"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="wd"><span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span></div>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="times-box" id="times-box" hidden>
+          <h4 id="times-title"></h4>
+          <div class="tg2" id="times"></div>
+        </div>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="1">Назад</button>
+          <button class="btn btn-main" type="button" id="go3" disabled>Ваши данные <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p3">
+        <h2>Почти готово</h2>
+        <p class="lead">Оставьте контакты, регистрация не нужна.</p>
+        <form class="form" id="form" novalidate>
+          <div class="fld"><label for="fn">Имя *</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
+          <div class="fld"><label for="ln">Фамилия *</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
+          <div class="fld"><label for="ph">Телефон *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <div class="fld"><label for="ig">Instagram (необязательно)</label><input id="ig" placeholder="@username"></div>
+          <div class="fld full"><label for="cm">Комментарий (необязательно)</label><textarea id="cm" maxlength="500" placeholder="Вопросы, пожелания или другая информация"></textarea></div>
+          <p class="terms">Подтверждая запись, вы соглашаетесь, что если запись отменена или перенесена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</p>
+          <div class="form-err" id="form-err" role="alert"></div>
+        </form>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="2">Назад</button>
+          <button class="btn btn-main" type="button" id="submit">Подтвердить запись <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p4">
+        <div class="done-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>Спасибо! Ваша запись подтверждена.</h2>
+        <p class="lead">Примерно за сутки до визита вам придёт напоминание. Если не сможете прийти, пожалуйста, сообщите нам для отмены записи.</p>
+        <div class="confirm" id="confirm"></div>
+        <div class="pane-foot">
+          <button class="btn btn-main" type="button" data-demo>+ Google Календарь</button>
+          <button class="btn btn-ghost" type="button" data-demo>+ Календарь телефона</button>
+          <a class="btn btn-ghost" href="../index.html">На главную</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sum" id="sum" aria-live="polite">
+      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h3>Ваша запись</h3>
+      <div class="srow"><span>Процедура</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Длительность</span><span id="s-min"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Дата</span><span id="s-date"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Время</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="total"><span>Итого</span><div class="big" id="s-total">0 €</div></div>
+      <p class="help">Augusta Deglava iela 66, «Deglava Biroji», 5-й этаж, кабинет 506, Рига. Вопросы – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="f">
+  <span>© BodyLab.Beauty · Рига</span>
+  <span><a href="../../../ru/index.html">Рабочая запись на текущем сайте</a> · <a href="../../../info/index.html">Информация для клиентов</a></span>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя"}</script>
+<script src="../../assets/new.js" defer></script>
+<script src="../../assets/booking.js" defer></script>
+</body>
+</html>
