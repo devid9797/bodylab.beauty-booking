@@ -52,8 +52,8 @@
   /* отзывы – лента, продублированная для бесшовности */
   var track = $('#rev-track');
   if(track){
-    var html = '';
-    for(var n=1;n<=10;n++) html += '<div class="rev"><img src="'+ROOT+'images/review-'+n+'.jpg" alt="Отзыв клиента '+n+'" loading="lazy" width="324" height="640"></div>';
+    var html = '', alt = track.dataset.alt || '';
+    for(var n=1;n<=10;n++) html += '<div class="rev"><img src="'+ROOT+'images/review-'+n+'.jpg" alt="'+alt+' '+n+'" loading="lazy" width="324" height="640"></div>';
     track.innerHTML = html + html;
   }
 })();

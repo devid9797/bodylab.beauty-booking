@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="lv" data-root="../../../">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4ECE2">
+<meta name="robots" content="noindex">
+<title>Tiešsaistes pieraksts – BodyLab.Beauty (jaunais dizains, demo)</title>
+<link rel="icon" href="../../../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/new.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="../index.html" aria-label="BodyLab.Beauty">BodyLab<sup>/beauty</sup></a>
+    <div class="nav-r">
+      <div class="langs" aria-label="Valoda"><a href="index.html" class="on" aria-current="true" hreflang="lv">LV</a><a href="../../ru/zapis/index.html" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></div>
+      <a class="btn btn-ghost btn-sm" href="../index.html">Atpakaļ uz vietni</a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Izvēlne" aria-expanded="false" aria-controls="menu"><i></i></button>
+    </div>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Izvēlne">
+  <a class="m-link" href="../index.html#uslugi">Procedūras <small>01</small></a>
+  <a class="m-link" href="../index.html#vizit">Kā norit vizīte <small>02</small></a>
+  <a class="m-link" href="../index.html#ceny">Cenas <small>03</small></a>
+  <a class="m-link" href="../index.html#otzyvy">Atsauksmes <small>04</small></a>
+  <a class="m-link" href="../index.html#podarok">Dāvanu karte <small>05</small></a>
+  <a class="m-link" href="../index.html#kontakty">Kontakti <small>06</small></a>
+  <div class="m-foot">
+    <a class="btn btn-main" href="index.html">Pierakstīties online</a>
+    <a class="btn btn-ghost" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>
+    <span class="m-langs"><a href="index.html" class="on" aria-current="true" hreflang="lv">LV</a><a href="../../ru/zapis/index.html" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></span>
+  </div>
+</nav>
+
+<main class="bk">
+  <div class="demo-bar"><i></i>Demo lapa: šādi izskatīsies pieraksts. Dati netiek nosūtīti, bet laiki ir ģenerēti.</div>
+  <div class="bk-grid">
+
+    <section class="bk-main" id="bk-main">
+      <div class="bk-top">
+        <span class="eyebrow rv">Tiešsaistes pieraksts</span>
+        <div class="steps rv" style="--d:1" id="steps">
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>Procedūra</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Datums un laiks</span></button>
+          <button class="stp" type="button" data-s="3" disabled><b>3</b><span>Jūsu dati</span></button>
+        </div>
+      </div>
+
+      <div class="pane show" id="p1">
+        <h2>Kas jums der?</h2>
+        <p class="lead">Izvēlieties procedūru. Laiku un cenu apstiprināsim nākamajos soļos.</p>
+        <div class="optgrid" id="optgrid"></div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Izvēlēties datumu <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>Izvēlies pieejamu datumu</h2>
+        <p class="lead">Brīvās dienas atzīmētas ar punktu. Pēc tam izvēlieties laiku.</p>
+        <div class="cal">
+          <div class="cal-h"><h3 id="cal-title"></h3>
+            <div class="cal-nav">
+              <button type="button" id="cal-prev" aria-label="Iepriekšējais mēnesis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button type="button" id="cal-next" aria-label="Nākamais mēnesis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="wd"><span>PR</span><span>OT</span><span>TR</span><span>CE</span><span>PK</span><span>SE</span><span>SV</span></div>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="times-box" id="times-box" hidden>
+          <h4 id="times-title"></h4>
+          <div class="tg2" id="times"></div>
+        </div>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="1">Atpakaļ</button>
+          <button class="btn btn-main" type="button" id="go3" disabled>Jūsu dati <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p3">
+        <h2>Gandrīz gatavs</h2>
+        <p class="lead">Atstājiet kontaktus – reģistrācija nav nepieciešama.</p>
+        <form class="form" id="form" novalidate>
+          <div class="fld"><label for="fn">Vārds *</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
+          <div class="fld"><label for="ln">Uzvārds *</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
+          <div class="fld"><label for="ph">Telefons *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <div class="fld"><label for="ig">Instagram (nav obligāti)</label><input id="ig" placeholder="@username"></div>
+          <div class="fld full"><label for="cm">Komentārs (nav obligāti)</label><textarea id="cm" maxlength="500" placeholder="Jautājumi, vēlmes vai cita informācija"></textarea></div>
+          <p class="terms">Apstiprinot pierakstu, Jūs piekrītat, ka gadījumā, ja pieraksts tiek atcelts vai pārcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.</p>
+          <div class="form-err" id="form-err" role="alert"></div>
+        </form>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="2">Atpakaļ</button>
+          <button class="btn btn-main" type="button" id="submit">Apstiprināt pierakstu <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p4">
+        <div class="done-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>Paldies! Jūsu pieraksts ir apstiprināts.</h2>
+        <p class="lead">Vienu dienu pirms tikšanās jums pienāks atgādinājums. Ja nevarēsiet ierasties, lūdzu, informējiet mūs par pieraksta atcelšanu.</p>
+        <div class="confirm" id="confirm"></div>
+        <div class="pane-foot">
+          <button class="btn btn-main" type="button" data-demo>+ Google Kalendārs</button>
+          <button class="btn btn-ghost" type="button" data-demo>+ Tālruņa kalendārs</button>
+          <a class="btn btn-ghost" href="../index.html">Uz sākumu</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sum" id="sum" aria-live="polite">
+      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h3>Jūsu pieraksts</h3>
+      <div class="srow"><span>Procedūra</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Ilgums</span><span id="s-min"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Datums</span><span id="s-date"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Laiks</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="total"><span>Kopā</span><div class="big" id="s-total">0 €</div></div>
+      <p class="help">Augusta Deglava iela 66, «Deglava Biroji», 5. stāvs, 506. kabinets, Rīga. Jautājumi – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="f">
+  <span>© BodyLab.Beauty · Rīga</span>
+  <span><a href="../../../index.html">Darbojošais pieraksts pašreizējā vietnē</a> · <a href="../../../info/index.html">Informācija klientiem</a></span>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Ķermeņa modelēšanas masāža","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Vakuuma rullīšu masāža","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 procedūra","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 procedūras pēc kārtas","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Presoterapija","tag":"Limfodrenāža","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["janvāris","februāris","marts","aprīlis","maijs","jūnijs","jūlijs","augusts","septembris","oktobris","novembris","decembris"],"monthsDate":["janvāris","februāris","marts","aprīlis","maijs","jūnijs","jūlijs","augusts","septembris","oktobris","novembris","decembris"],"wdShort":["Sv","Pr","Ot","Tr","Ce","Pk","Se"],"wdFull":["svētdiena","pirmdiena","otrdiena","trešdiena","ceturtdiena","piektdiena","sestdiena"],"dateFmt":"{wd}, {d}. {m}","min":"min","freeTime":"Brīvie laiki","errReq":"Lūdzu, aizpildiet visus obligātos laukus.","errPhone":"Lūdzu, ievadiet derīgu tālruņa numuru izvēlētajai valstij.","toast":"Demo: darba versijā šeit tiks pievienots notikums kalendārā","sumDate":"Datums","sumTime":"Laiks","sumSvc":"Pakalpojums","sumName":"Vārds"}</script>
+<script src="../../assets/new.js" defer></script>
+<script src="../../assets/booking.js" defer></script>
+</body>
+</html>

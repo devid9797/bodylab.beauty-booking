@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../../../">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4ECE2">
+<meta name="robots" content="noindex">
+<title>Online booking – BodyLab.Beauty (new design, demo)</title>
+<link rel="icon" href="../../../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/new.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="../index.html" aria-label="BodyLab.Beauty">BodyLab<sup>/beauty</sup></a>
+    <div class="nav-r">
+      <div class="langs" aria-label="Language"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="../../ru/zapis/index.html" hreflang="ru">RU</a><a href="index.html" class="on" aria-current="true" hreflang="en">EN</a></div>
+      <a class="btn btn-ghost btn-sm" href="../index.html">Back to site</a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i></button>
+    </div>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Menu">
+  <a class="m-link" href="../index.html#uslugi">Treatments <small>01</small></a>
+  <a class="m-link" href="../index.html#vizit">How a visit works <small>02</small></a>
+  <a class="m-link" href="../index.html#ceny">Prices <small>03</small></a>
+  <a class="m-link" href="../index.html#otzyvy">Reviews <small>04</small></a>
+  <a class="m-link" href="../index.html#podarok">Gift card <small>05</small></a>
+  <a class="m-link" href="../index.html#kontakty">Contact <small>06</small></a>
+  <div class="m-foot">
+    <a class="btn btn-main" href="index.html">Book online</a>
+    <a class="btn btn-ghost" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>
+    <span class="m-langs"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="../../ru/zapis/index.html" hreflang="ru">RU</a><a href="index.html" class="on" aria-current="true" hreflang="en">EN</a></span>
+  </div>
+</nav>
+
+<main class="bk">
+  <div class="demo-bar"><i></i>Demo page: this is how booking will look. Nothing is sent, and the available times are generated.</div>
+  <div class="bk-grid">
+
+    <section class="bk-main" id="bk-main">
+      <div class="bk-top">
+        <span class="eyebrow rv">Online booking</span>
+        <div class="steps rv" style="--d:1" id="steps">
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>Treatment</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Date &amp; time</span></button>
+          <button class="stp" type="button" data-s="3" disabled><b>3</b><span>Your details</span></button>
+        </div>
+      </div>
+
+      <div class="pane show" id="p1">
+        <h2>What suits you?</h2>
+        <p class="lead">Choose a treatment. We confirm the time and price in the next steps.</p>
+        <div class="optgrid" id="optgrid"></div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Choose a date <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>Choose an available date</h2>
+        <p class="lead">Free days are marked with a dot. Then pick a time.</p>
+        <div class="cal">
+          <div class="cal-h"><h3 id="cal-title"></h3>
+            <div class="cal-nav">
+              <button type="button" id="cal-prev" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button type="button" id="cal-next" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="wd"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="times-box" id="times-box" hidden>
+          <h4 id="times-title"></h4>
+          <div class="tg2" id="times"></div>
+        </div>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="1">Back</button>
+          <button class="btn btn-main" type="button" id="go3" disabled>Your details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p3">
+        <h2>Almost done</h2>
+        <p class="lead">Leave your contact details – no account needed.</p>
+        <form class="form" id="form" novalidate>
+          <div class="fld"><label for="fn">First name *</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
+          <div class="fld"><label for="ln">Last name *</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
+          <div class="fld"><label for="ph">Phone *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <div class="fld"><label for="ig">Instagram (optional)</label><input id="ig" placeholder="@username"></div>
+          <div class="fld full"><label for="cm">Comment (optional)</label><textarea id="cm" maxlength="500" placeholder="Questions, wishes or anything else"></textarea></div>
+          <p class="terms">By confirming your booking, you agree that if it is cancelled or rescheduled less than 24 hours before the treatment, the full price of the treatment is charged.</p>
+          <div class="form-err" id="form-err" role="alert"></div>
+        </form>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="2">Back</button>
+          <button class="btn btn-main" type="button" id="submit">Confirm booking <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="pane" id="p4">
+        <div class="done-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>Thank you! Your booking is confirmed.</h2>
+        <p class="lead">You'll receive a reminder about a day before your appointment. If you can't make it, please let us know so we can cancel your booking.</p>
+        <div class="confirm" id="confirm"></div>
+        <div class="pane-foot">
+          <button class="btn btn-main" type="button" data-demo>+ Google Calendar</button>
+          <button class="btn btn-ghost" type="button" data-demo>+ Phone Calendar</button>
+          <a class="btn btn-ghost" href="../index.html">Home</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sum" id="sum" aria-live="polite">
+      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h3>Your booking</h3>
+      <div class="srow"><span>Treatment</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Duration</span><span id="s-min"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Date</span><span id="s-date"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Time</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="total"><span>Total</span><div class="big" id="s-total">€0</div></div>
+      <p class="help">Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, room 506, Riga. Questions – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="f">
+  <span>© BodyLab.Beauty · Riga</span>
+  <span><a href="../../../en/index.html">Working booking on the current site</a> · <a href="../../../info/index.html">Client information</a></span>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Body contouring massage","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Vacuum roller massage","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 session","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 sessions in a row","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Pressotherapy","tag":"Lymphatic drainage","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"€","suf":""},"months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsDate":["January","February","March","April","May","June","July","August","September","October","November","December"],"wdShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"wdFull":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"dateFmt":"{wd}, {d} {m}","min":"min","freeTime":"Available times","errReq":"Please fill in all required fields.","errPhone":"Please enter a valid phone number for the selected country.","toast":"Demo: in the live version this adds the event to your calendar","sumDate":"Date","sumTime":"Time","sumSvc":"Service","sumName":"Name"}</script>
+<script src="../../assets/new.js" defer></script>
+<script src="../../assets/booking.js" defer></script>
+</body>
+</html>

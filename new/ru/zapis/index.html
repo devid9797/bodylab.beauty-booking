@@ -18,6 +18,7 @@
   <div class="nav-in">
     <a class="logo" href="../index.html" aria-label="BodyLab.Beauty">BodyLab<sup>/beauty</sup></a>
     <div class="nav-r">
+      <div class="langs" aria-label="Язык"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="index.html" class="on" aria-current="true" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></div>
       <a class="btn btn-ghost btn-sm" href="../index.html">Назад на сайт</a>
       <button class="menu-btn" id="menu-btn" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i></button>
     </div>
@@ -30,6 +31,11 @@
   <a class="m-link" href="../index.html#otzyvy">Отзывы <small>04</small></a>
   <a class="m-link" href="../index.html#podarok">Подарочная карта <small>05</small></a>
   <a class="m-link" href="../index.html#kontakty">Контакты <small>06</small></a>
+  <div class="m-foot">
+    <a class="btn btn-main" href="index.html">Записаться онлайн</a>
+    <a class="btn btn-ghost" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>
+    <span class="m-langs"><a href="../../lv/zapis/index.html" hreflang="lv">LV</a><a href="index.html" class="on" aria-current="true" hreflang="ru">RU</a><a href="../../en/zapis/index.html" hreflang="en">EN</a></span>
+  </div>
 </nav>
 
 <main class="bk">
@@ -46,7 +52,6 @@
         </div>
       </div>
 
-      <!-- ШАГ 1 -->
       <div class="pane show" id="p1">
         <h2>Что вам подходит?</h2>
         <p class="lead">Выберите процедуру. Время и цену подтвердим на следующих шагах.</p>
@@ -54,7 +59,6 @@
         <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Выбрать дату <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       </div>
 
-      <!-- ШАГ 2 -->
       <div class="pane" id="p2">
         <h2>Выберите доступную дату</h2>
         <p class="lead">Свободные дни отмечены точкой. Затем выберите время.</p>
@@ -78,7 +82,6 @@
         </div>
       </div>
 
-      <!-- ШАГ 3 -->
       <div class="pane" id="p3">
         <h2>Почти готово</h2>
         <p class="lead">Оставьте контакты, регистрация не нужна.</p>
@@ -97,7 +100,6 @@
         </div>
       </div>
 
-      <!-- УСПЕХ -->
       <div class="pane" id="p4">
         <div class="done-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
         <h2>Спасибо! Ваша запись подтверждена.</h2>
@@ -130,6 +132,7 @@
 </footer>
 <div class="toast" id="toast" role="status"></div>
 
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя"}</script>
 <script src="../../assets/new.js" defer></script>
 <script src="../../assets/booking.js" defer></script>
 </body>

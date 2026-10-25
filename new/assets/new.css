@@ -575,3 +575,16 @@ footer.f a:hover{color:var(--accent)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){.em,.amt,.pearl,.big{background:none;color:var(--pb,var(--card));animation:none}.big{color:#fff}}
+
+/* переключатель языка */
+.langs{display:flex;gap:2px;padding:3px;border-radius:var(--r-pill);background:rgba(75,71,67,.07)}
+.langs a{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text-soft);padding:7px 11px;border-radius:var(--r-pill);transition:background .3s var(--ease),color .3s var(--ease)}
+.langs a:hover{color:var(--accent)}
+.langs a.on{background:var(--accent);color:var(--card)}
+.nav.dark .langs{background:rgba(255,254,250,.1)}
+.nav.dark .langs a{color:#BDB3A8}.nav.dark .langs a.on{background:var(--card);color:var(--accent)}
+.m-langs{display:flex;gap:6px;margin-left:auto;align-items:center}
+.m-langs a{font-size:13px;font-weight:700;padding:10px 16px;border-radius:var(--r-pill);background:var(--chip-bg);color:var(--text-soft)}
+.m-langs a.on{background:var(--accent);color:var(--card)}
+@media (max-width:760px){.langs{display:none}}
+@media (min-width:761px){.m-langs{display:none}}
