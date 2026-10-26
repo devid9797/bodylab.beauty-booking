@@ -16,7 +16,7 @@
 
 <header class="nav" id="nav">
   <div class="nav-in">
-    <a class="logo" href="index.html" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="../../images/logo-mark.png" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span><sup>Рига</sup></a>
+    <a class="logo" href="index.html" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="../../images/logo-mark.png" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
     <div class="nav-r">
       <div class="langs" aria-label="Язык"><a href="../lv/index.html" hreflang="lv">LV</a><a href="index.html" class="on" aria-current="true" hreflang="ru">RU</a><a href="../en/index.html" hreflang="en">EN</a></div>
       <a class="btn btn-main btn-sm" href="#zapis">Записаться</a>
@@ -66,31 +66,25 @@
   </div>
 </section>
 
-<!-- ЗАПИСЬ -->
+<!-- ЗАПИСЬ: сначала дата и время, потом процедура, потом данные -->
 <section class="bk inline" id="zapis" data-dock-hide>
-  <div class="demo-bar"><i></i>Демо-страница: так будет выглядеть запись. Данные никуда не отправляются, а время сгенерировано.</div>
   <div class="bk-grid">
 
     <div class="bk-main" id="bk-main">
+      <div class="demo-bar"><i></i>Демо-страница: так будет выглядеть запись. Данные никуда не отправляются, а время сгенерировано.</div>
       <div class="bk-top">
         <span class="eyebrow rv">Онлайн-запись</span>
         <div class="steps rv" style="--d:1" id="steps">
-          <button class="stp on" type="button" data-s="1"><b>1</b><span>Процедура</span></button>
-          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Дата и время</span></button>
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>Дата и время</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Процедура</span></button>
           <button class="stp" type="button" data-s="3" disabled><b>3</b><span>Ваши данные</span></button>
         </div>
       </div>
 
       <div class="pane show" id="p1">
-        <h2>Что вам подходит?</h2>
-        <p class="lead">Выберите процедуру. Время и цену подтвердим на следующих шагах. <a class="link-u" href="#podbor">Не знаете, что выбрать? Подберите процедуру</a></p>
-        <div class="optgrid" id="optgrid"></div>
-        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Выбрать дату <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      </div>
-
-      <div class="pane" id="p2">
-        <h2>Выберите доступную дату</h2>
-        <p class="lead">Свободные дни отмечены точкой. Затем выберите время.</p>
+        <h2>Выберите дату и время</h2>
+        <p class="lead">Свободные дни отмечены цветом. Затем выберите время.</p>
+        <div class="picked" id="picked" hidden><span id="picked-t"></span><button type="button" id="picked-x" aria-label="Убрать выбор">✕</button></div>
         <div class="cal">
           <div class="cal-h"><h3 id="cal-title"></h3>
             <div class="cal-nav">
@@ -105,6 +99,13 @@
           <h4 id="times-title"></h4>
           <div class="tg2" id="times"></div>
         </div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Выбрать процедуру <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>Что вам подходит?</h2>
+        <p class="lead">Показаны процедуры, которые помещаются в выбранное время. <a class="link-u" href="#podbor" data-open-quiz>Не знаете, что выбрать? Подберите процедуру</a></p>
+        <div class="optgrid" id="optgrid"></div>
         <div class="pane-foot">
           <button class="btn btn-ghost" type="button" data-back="1">Назад</button>
           <button class="btn btn-main" type="button" id="go3" disabled>Ваши данные <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -117,13 +118,17 @@
         <form class="form" id="form" novalidate>
           <div class="fld"><label for="fn">Имя *</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
           <div class="fld"><label for="ln">Фамилия *</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
-          <div class="fld"><label for="ph">Телефон *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
-          <div class="fld"><label for="ig">Instagram (необязательно)</label><input id="ig" placeholder="@username"></div>
-          <div class="fld full"><label for="cm">Комментарий (необязательно)</label><textarea id="cm" maxlength="500" placeholder="Вопросы, пожелания или другая информация"></textarea></div>
-          <p class="terms">Подтверждая запись, вы соглашаетесь, что если запись отменена или перенесена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</p>
+          <div class="fld full"><label for="ph">Телефон *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <details class="more full"><summary>Дополнительно (необязательно)</summary>
+            <div class="more-in">
+              <div class="fld"><label for="ig">Instagram (необязательно)</label><input id="ig" placeholder="@username"></div>
+              <div class="fld"><label for="cm">Комментарий (необязательно)</label><textarea id="cm" maxlength="500" placeholder="Вопросы, пожелания или другая информация"></textarea></div>
+            </div>
+          </details>
           <div class="form-err" id="form-err" role="alert"></div>
+          <p class="terms">Подтверждая запись, вы соглашаетесь, что если запись отменена или перенесена менее чем за 24 часа до процедуры, взимается полная стоимость процедуры.</p>
         </form>
-        <div class="pane-foot">
+        <div class="pane-foot pane-foot-form">
           <button class="btn btn-ghost" type="button" data-back="2">Назад</button>
           <button class="btn btn-main" type="button" id="submit">Подтвердить запись <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
@@ -144,38 +149,16 @@
     <aside class="sum" id="sum" aria-live="polite">
       <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
       <h3>Ваша запись</h3>
-      <div class="srow"><span>Процедура</span><span id="s-name"><b class="dash">—</b></span></div>
-      <div class="srow"><span>Длительность</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="srow"><span>Дата</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>Время</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Процедура</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Длительность</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="total"><span>Итого</span><div class="big" id="s-total">0 €</div></div>
       <p class="help">Augusta Deglava iela 66, «Deglava Biroji», 5-й этаж, кабинет 506, Рига. Вопросы – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </aside>
   </div>
 </section>
 <div class="toast" id="toast" role="status"></div>
-
-<!-- ПОДБОР ПРОЦЕДУРЫ -->
-<section class="sec" id="podbor">
-  <div class="wrap quiz-wrap">
-    <div class="sec-head">
-      <span class="eyebrow rv">Подбор процедуры</span>
-      <h2 class="h-l rv" style="--d:1">Не знаете, <span class="em">что выбрать?</span></h2>
-      <p class="lead rv" style="--d:2">Ответьте на 10 коротких вопросов – подскажем, какая процедура подойдёт вам больше всего.</p>
-    </div>
-    <div class="quiz rv" style="--d:3" id="quiz">
-      <div class="quiz-start" id="quiz-start"><button class="btn btn-main" type="button" id="quiz-go">Пройти тест <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      <div class="quiz-run" id="quiz-run" hidden>
-        <div class="quiz-bar" id="quiz-bar"></div>
-        <div class="quiz-count" id="quiz-count"></div>
-        <h3 class="quiz-q" id="quiz-q"></h3>
-        <div class="quiz-opts" id="quiz-opts"></div>
-        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">Назад</button>
-      </div>
-      <div class="quiz-res" id="quiz-res" hidden></div>
-    </div>
-  </div>
-</section>
 
 <div class="strip" aria-hidden="true"><div class="strip-track">
   <span>R-Sleek</span><span>B-Flexy</span><span>EMS Zero</span><span>Прессотерапия</span><span>Лимфодренаж</span><span>Моделирование тела</span><span>R-Sleek</span><span>B-Flexy</span><span>EMS Zero</span><span>Прессотерапия</span><span>Лимфодренаж</span><span>Моделирование тела</span>
@@ -273,6 +256,21 @@
       <div class="fcard" style="--i:2"><div class="fnum">03</div><div><h3>Приходите в студию</h3><p>Deglava Biroji, 5 этаж, кабинет 506. За сутки до визита придёт напоминание.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div></div>
       <div class="fcard" style="--i:3"><div class="fnum">04</div><div><h3>Сама процедура</h3><p>Одна процедура длится от 30 до 45 минут, две процедуры EMS Zero подряд – 60.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
     </div>
+  </div>
+</section>
+
+
+<!-- ПОДБОР ПРОЦЕДУРЫ: приглашение (сам тест открывается в отдельном окне) -->
+<section class="sec" id="podbor">
+  <div class="wrap quiz-teaser">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="qt-text">
+      <span class="eyebrow rv">Подбор процедуры</span>
+      <h2 class="h-l rv" style="--d:1">Не знаете, <span class="em">что выбрать?</span></h2>
+      <p class="lead rv" style="--d:2">Ответьте на 10 коротких вопросов – подскажем, какая процедура подойдёт вам больше всего.</p>
+      <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>Пройти тест <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    </div>
+    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">10</div><span>вопросов</span></div>
   </div>
 </section>
 
@@ -389,13 +387,35 @@
 
 <footer class="f">
   <span>© BodyLab.Beauty · Рига</span>
-  <span><a href="../../ru/index.html">Текущий сайт</a> · <a href="../../info/index.html">Информация для клиентов</a></span>
+  <span><a href="../../ru/index.html">Текущий сайт</a> · <a href="info/index.html">Информация для клиентов</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">Записаться онлайн <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
 
-<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя"}</script>
-<script type="application/json" id="quiz-data">{"ids":["r-sleek","b-flexy","ems-zero","presoterapija"],"w":[[[3,1,1,0],[1,3,0,0],[0,0,3,0],[0,0,0,3],[1,0,0,2]],[[2,2,1,0],[2,1,2,0],[1,1,0,2],[1,0,2,0],[2,1,1,1]],[[1,0,1,0],[0,0,3,0],[0,1,1,0]],[[3,1,0,0],[1,3,0,0],[0,0,0,3],[0,0,3,0]],[[0,0,2,0],[1,1,0,1],[0,0,1,0]],[[0,0,0,3],[0,0,0,1],[0,0,0,0]],[[1,3,0,0],[1,1,0,0],[0,0,0,0]],[[0,0,0,0],[1,1,0,0]],[[0,0,0,2],[0,0,0,2],[1,0,1,0]],[[2,1,1,0],[1,2,0,0],[0,0,3,0],[0,0,0,3]]],"q":[["Что для вас сейчас главное?",["Уменьшить объёмы и подчеркнуть контуры","Заняться целлюлитом и неровной кожей","Подтянуть мышцы без тренировок","Убрать отёки и тяжесть в ногах","Просто расслабиться"]],["С какой зоной хотите поработать?",["Бёдра и ягодицы","Живот и талия","Ноги","Руки и спина","Всё тело"]],["Как вы относитесь к физической нагрузке?",["Люблю тренироваться","Хочу результат без нагрузки","Иногда занимаюсь"]],["Какое воздействие вам комфортнее?",["Глубокий, интенсивный массаж","Вакуум и ролики","Мягкое расслабляющее","Стимуляция мышц"]],["Сколько времени у вас есть на визит?",["Около 30 минут","До 45 минут","Час и больше"]],["Беспокоят ли вас отёки или тяжесть в ногах?",["Да, часто","Иногда","Нет"]],["Беспокоит ли вас целлюлит или неровность кожи?",["Да, заметно","Немного","Нет"]],["Как вам удобнее?",["Попробовать один раз","Пройти курс процедур"]],["Какой у вас образ жизни?",["Сидячая работа","Много на ногах","Активный"]],["Что для вас важнее всего?",["Форма и объёмы","Состояние кожи","Тонус мышц","Самочувствие и лёгкость"]]],"results":{"r-sleek":{"name":"R-Sleek","tag":"Массаж моделирования тела","img":"images/service-rsleek.jpg","key":"r-sleek","why":["Уменьшение объёма тела","Глубокий лимфодренаж","Улучшение тонуса и эластичности кожи"],"from":true,"price":"35 €","pkg":true,"href":"r-sleek/index.html"},"b-flexy":{"name":"B-Flexy","tag":"Вакуумно-роликовый массаж","img":"images/service-bflexy.jpg","key":"b-flexy","why":["Уменьшение проявлений целлюлита","Улучшение микроциркуляции тканей","Коррекция контуров тела"],"from":true,"price":"30 €","pkg":true,"href":"b-flexy/index.html"},"ems-zero":{"name":"EMS Zero","tag":"EMS-стимуляция мышц","img":"images/service-emszero.jpg","key":"ems-zero-1","why":["Улучшение мышечного тонуса","Ускорение сжигания жира","Результат без физической нагрузки"],"from":true,"price":"20 €","pkg":false,"href":"ems-zero/index.html"},"presoterapija":{"name":"Прессотерапия","tag":"Прессотерапия / лимфодренаж","img":"images/service-presoterapija.jpg","key":"presoterapija","why":["Уменьшение отёчности","Улучшение оттока лимфы","Уменьшение чувства тяжести в ногах"],"from":false,"price":"25 €","pkg":false,"href":"presoterapija/index.html"}},"ui":{"eyebrow":"Подбор процедуры","h2a":"Не знаете, ","h2em":"что выбрать?","lead":"Ответьте на 10 коротких вопросов – подскажем, какая процедура подойдёт вам больше всего.","start":"Пройти тест","of":"из","back":"Назад","resultEyebrow":"Лучше всего подойдёт","alt":"Также стоит посмотреть","why":"Почему","book":"Записаться","more":"Подробнее о процедуре","again":"Пройти заново","package":"Для регулярных процедур есть абонемент на 10 процедур","note":"Это подсказка на основе ваших ответов, а не рекомендация врача. Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом.","from":"от ","noteExtra":"Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом и сообщите нам об этом."},"cur":{"pre":"","suf":"€"}}</script>
+<div class="qm" id="quiz-modal" role="dialog" aria-modal="true" aria-label="Подбор процедуры" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="quiz-close" aria-label="Закрыть"><i></i></button>
+    <div class="quiz" id="quiz">
+      <div class="quiz-run" id="quiz-run">
+        <div class="quiz-bar" id="quiz-bar"></div>
+        <div class="quiz-count" id="quiz-count"></div>
+        <h3 class="quiz-q" id="quiz-q"></h3>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">Назад</button>
+      </div>
+      <div class="quiz-res" id="quiz-res" hidden></div>
+    </div>
+  </div>
+</div>
+
+<div class="fab" id="fab">
+  <a class="fab-o fab-wa" href="https://wa.me/37120888805?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A3%20%D0%BC%D0%B5%D0%BD%D1%8F%20%D0%B5%D1%81%D1%82%D1%8C%20%D0%B2%D0%BE%D0%BF%D1%80%D0%BE%D1%81." target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  <a class="fab-o fab-ig" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></a>
+  <button class="fab-t" id="fab-t" type="button" aria-label="Написать" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+</div>
+
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя","chosen":"Процедура","noFit":"не помещается в это время"}</script>
+<script type="application/json" id="quiz-data">{"ids":["r-sleek","b-flexy","ems-zero","presoterapija"],"w":[[[3,1,1,0],[1,3,0,0],[0,0,3,0],[0,0,0,3],[1,0,0,2]],[[2,2,1,0],[2,1,2,0],[1,1,0,2],[1,0,2,0],[2,1,1,1]],[[1,0,1,0],[0,0,3,0],[0,1,1,0]],[[3,1,0,0],[1,3,0,0],[0,0,0,3],[0,0,3,0]],[[0,0,2,0],[1,1,0,1],[0,0,1,0]],[[0,0,0,3],[0,0,0,1],[0,0,0,0]],[[1,3,0,0],[1,1,0,0],[0,0,0,0]],[[0,0,0,0],[1,1,0,0]],[[0,0,0,2],[0,0,0,2],[1,0,1,0]],[[2,1,1,0],[1,2,0,0],[0,0,3,0],[0,0,0,3]]],"q":[["Что для вас сейчас главное?",["Уменьшить объёмы и подчеркнуть контуры","Заняться целлюлитом и неровной кожей","Подтянуть мышцы без тренировок","Убрать отёки и тяжесть в ногах","Просто расслабиться"]],["С какой зоной хотите поработать?",["Бёдра и ягодицы","Живот и талия","Ноги","Руки и спина","Всё тело"]],["Как вы относитесь к физической нагрузке?",["Люблю тренироваться","Хочу результат без нагрузки","Иногда занимаюсь"]],["Какое воздействие вам комфортнее?",["Глубокий, интенсивный массаж","Вакуум и ролики","Мягкое расслабляющее","Стимуляция мышц"]],["Сколько времени у вас есть на визит?",["Около 30 минут","До 45 минут","Час и больше"]],["Беспокоят ли вас отёки или тяжесть в ногах?",["Да, часто","Иногда","Нет"]],["Беспокоит ли вас целлюлит или неровность кожи?",["Да, заметно","Немного","Нет"]],["Как вам удобнее?",["Попробовать один раз","Пройти курс процедур"]],["Какой у вас образ жизни?",["Сидячая работа","Много на ногах","Активный"]],["Что для вас важнее всего?",["Форма и объёмы","Состояние кожи","Тонус мышц","Самочувствие и лёгкость"]]],"results":{"r-sleek":{"name":"R-Sleek","tag":"Массаж моделирования тела","img":"images/service-rsleek.jpg","key":"r-sleek","why":["Уменьшение объёма тела","Глубокий лимфодренаж","Улучшение тонуса и эластичности кожи"],"from":true,"price":"35 €","pkg":true,"href":"r-sleek/index.html"},"b-flexy":{"name":"B-Flexy","tag":"Вакуумно-роликовый массаж","img":"images/service-bflexy.jpg","key":"b-flexy","why":["Уменьшение проявлений целлюлита","Улучшение микроциркуляции тканей","Коррекция контуров тела"],"from":true,"price":"30 €","pkg":true,"href":"b-flexy/index.html"},"ems-zero":{"name":"EMS Zero","tag":"EMS-стимуляция мышц","img":"images/service-emszero.jpg","key":"ems-zero-1","why":["Улучшение мышечного тонуса","Ускорение сжигания жира","Результат без физической нагрузки"],"from":true,"price":"20 €","pkg":false,"href":"ems-zero/index.html"},"presoterapija":{"name":"Прессотерапия","tag":"Прессотерапия / лимфодренаж","img":"images/service-presoterapija.jpg","key":"presoterapija","why":["Уменьшение отёчности","Улучшение оттока лимфы","Уменьшение чувства тяжести в ногах"],"from":false,"price":"25 €","pkg":false,"href":"presoterapija/index.html"}},"ui":{"questionsWord":"вопросов","eyebrow":"Подбор процедуры","h2a":"Не знаете, ","h2em":"что выбрать?","lead":"Ответьте на 10 коротких вопросов – подскажем, какая процедура подойдёт вам больше всего.","start":"Пройти тест","of":"из","back":"Назад","resultEyebrow":"Лучше всего подойдёт","alt":"Также стоит посмотреть","why":"Почему","book":"Записаться","more":"Подробнее о процедуре","again":"Пройти заново","package":"Для регулярных процедур есть абонемент на 10 процедур","note":"Это подсказка на основе ваших ответов, а не рекомендация врача. Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом.","from":"от ","noteExtra":"Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом и сообщите нам об этом."},"cur":{"pre":"","suf":"€"}}</script>
 <script src="../assets/new.js" defer></script>
 <script src="../assets/booking.js" defer></script>
 <script src="../assets/quiz.js" defer></script>

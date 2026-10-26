@@ -120,6 +120,16 @@
   })();
   window.BL.zoomMark = LB.mark;
 
+
+  /* ---- 8. кнопка «Написать» (WhatsApp / Instagram) ---- */
+  var fab = $('#fab');
+  if(fab){
+    var ft = $('#fab-t');
+    ft.addEventListener('click',function(e){ e.stopPropagation(); var o = fab.classList.toggle('open'); ft.setAttribute('aria-expanded',o); });
+    document.addEventListener('click',function(e){ if(!fab.contains(e.target)){ fab.classList.remove('open'); ft.setAttribute('aria-expanded',false); } });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ fab.classList.remove('open'); ft.setAttribute('aria-expanded',false); } });
+  }
+
   /* ---- общий цикл на rAF ---- */
   var ticking = false, hooks = [onScroll,heroPar,sweepReveal];
   window.BL.onFrame = function(fn){ hooks.push(fn); fn(); };

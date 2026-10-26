@@ -16,7 +16,7 @@
 
 <header class="nav" id="nav">
   <div class="nav-in">
-    <a class="logo" href="index.html" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="../../images/logo-mark.png" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span><sup>Riga</sup></a>
+    <a class="logo" href="index.html" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="../../images/logo-mark.png" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
     <div class="nav-r">
       <div class="langs" aria-label="Language"><a href="../lv/index.html" hreflang="lv">LV</a><a href="../ru/index.html" hreflang="ru">RU</a><a href="index.html" class="on" aria-current="true" hreflang="en">EN</a></div>
       <a class="btn btn-main btn-sm" href="#zapis">Book now</a>
@@ -66,31 +66,25 @@
   </div>
 </section>
 
-<!-- ЗАПИСЬ -->
+<!-- ЗАПИСЬ: сначала дата и время, потом процедура, потом данные -->
 <section class="bk inline" id="zapis" data-dock-hide>
-  <div class="demo-bar"><i></i>Demo page: this is how booking will look. Nothing is sent, and the available times are generated.</div>
   <div class="bk-grid">
 
     <div class="bk-main" id="bk-main">
+      <div class="demo-bar"><i></i>Demo page: this is how booking will look. Nothing is sent, and the available times are generated.</div>
       <div class="bk-top">
         <span class="eyebrow rv">Online booking</span>
         <div class="steps rv" style="--d:1" id="steps">
-          <button class="stp on" type="button" data-s="1"><b>1</b><span>Treatment</span></button>
-          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Date &amp; time</span></button>
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>Date &amp; time</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Treatment</span></button>
           <button class="stp" type="button" data-s="3" disabled><b>3</b><span>Your details</span></button>
         </div>
       </div>
 
       <div class="pane show" id="p1">
-        <h2>What suits you?</h2>
-        <p class="lead">Choose a treatment. We confirm the time and price in the next steps. <a class="link-u" href="#podbor">Not sure what to choose? Find your treatment</a></p>
-        <div class="optgrid" id="optgrid"></div>
-        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Choose a date <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      </div>
-
-      <div class="pane" id="p2">
-        <h2>Choose an available date</h2>
-        <p class="lead">Free days are marked with a dot. Then pick a time.</p>
+        <h2>Choose a date and time</h2>
+        <p class="lead">Free days are highlighted. Then pick a time.</p>
+        <div class="picked" id="picked" hidden><span id="picked-t"></span><button type="button" id="picked-x" aria-label="Clear selection">✕</button></div>
         <div class="cal">
           <div class="cal-h"><h3 id="cal-title"></h3>
             <div class="cal-nav">
@@ -105,6 +99,13 @@
           <h4 id="times-title"></h4>
           <div class="tg2" id="times"></div>
         </div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>Choose a treatment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>What suits you?</h2>
+        <p class="lead">Only treatments that fit the selected time are shown. <a class="link-u" href="#podbor" data-open-quiz>Not sure what to choose? Find your treatment</a></p>
+        <div class="optgrid" id="optgrid"></div>
         <div class="pane-foot">
           <button class="btn btn-ghost" type="button" data-back="1">Back</button>
           <button class="btn btn-main" type="button" id="go3" disabled>Your details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -117,13 +118,17 @@
         <form class="form" id="form" novalidate>
           <div class="fld"><label for="fn">First name *</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
           <div class="fld"><label for="ln">Last name *</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
-          <div class="fld"><label for="ph">Phone *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
-          <div class="fld"><label for="ig">Instagram (optional)</label><input id="ig" placeholder="@username"></div>
-          <div class="fld full"><label for="cm">Comment (optional)</label><textarea id="cm" maxlength="500" placeholder="Questions, wishes or anything else"></textarea></div>
-          <p class="terms">By confirming your booking, you agree that if it is cancelled or rescheduled less than 24 hours before the treatment, the full price of the treatment is charged.</p>
+          <div class="fld full"><label for="ph">Phone *</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <details class="more full"><summary>More (optional)</summary>
+            <div class="more-in">
+              <div class="fld"><label for="ig">Instagram (optional)</label><input id="ig" placeholder="@username"></div>
+              <div class="fld"><label for="cm">Comment (optional)</label><textarea id="cm" maxlength="500" placeholder="Questions, wishes or anything else"></textarea></div>
+            </div>
+          </details>
           <div class="form-err" id="form-err" role="alert"></div>
+          <p class="terms">By confirming your booking, you agree that if it is cancelled or rescheduled less than 24 hours before the treatment, the full price of the treatment is charged.</p>
         </form>
-        <div class="pane-foot">
+        <div class="pane-foot pane-foot-form">
           <button class="btn btn-ghost" type="button" data-back="2">Back</button>
           <button class="btn btn-main" type="button" id="submit">Confirm booking <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
@@ -144,38 +149,16 @@
     <aside class="sum" id="sum" aria-live="polite">
       <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
       <h3>Your booking</h3>
-      <div class="srow"><span>Treatment</span><span id="s-name"><b class="dash">—</b></span></div>
-      <div class="srow"><span>Duration</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="srow"><span>Date</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>Time</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Treatment</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>Duration</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="total"><span>Total</span><div class="big" id="s-total">€0</div></div>
       <p class="help">Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, room 506, Riga. Questions – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </aside>
   </div>
 </section>
 <div class="toast" id="toast" role="status"></div>
-
-<!-- ПОДБОР ПРОЦЕДУРЫ -->
-<section class="sec" id="podbor">
-  <div class="wrap quiz-wrap">
-    <div class="sec-head">
-      <span class="eyebrow rv">Find your treatment</span>
-      <h2 class="h-l rv" style="--d:1">Not sure <span class="em">what to choose?</span></h2>
-      <p class="lead rv" style="--d:2">Answer 10 short questions and we will suggest which treatment may suit you best.</p>
-    </div>
-    <div class="quiz rv" style="--d:3" id="quiz">
-      <div class="quiz-start" id="quiz-start"><button class="btn btn-main" type="button" id="quiz-go">Start the quiz <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      <div class="quiz-run" id="quiz-run" hidden>
-        <div class="quiz-bar" id="quiz-bar"></div>
-        <div class="quiz-count" id="quiz-count"></div>
-        <h3 class="quiz-q" id="quiz-q"></h3>
-        <div class="quiz-opts" id="quiz-opts"></div>
-        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">Back</button>
-      </div>
-      <div class="quiz-res" id="quiz-res" hidden></div>
-    </div>
-  </div>
-</section>
 
 <div class="strip" aria-hidden="true"><div class="strip-track">
   <span>R-Sleek</span><span>B-Flexy</span><span>EMS Zero</span><span>Pressotherapy</span><span>Lymphatic drainage</span><span>Body contouring</span><span>R-Sleek</span><span>B-Flexy</span><span>EMS Zero</span><span>Pressotherapy</span><span>Lymphatic drainage</span><span>Body contouring</span>
@@ -273,6 +256,21 @@
       <div class="fcard" style="--i:2"><div class="fnum">03</div><div><h3>Come to the studio</h3><p>Deglava Biroji, 5th floor, room 506. You will get a reminder about a day before your visit.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div></div>
       <div class="fcard" style="--i:3"><div class="fnum">04</div><div><h3>The treatment itself</h3><p>One session takes 30 to 45 minutes; two EMS Zero sessions in a row take 60.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
     </div>
+  </div>
+</section>
+
+
+<!-- ПОДБОР ПРОЦЕДУРЫ: приглашение (сам тест открывается в отдельном окне) -->
+<section class="sec" id="podbor">
+  <div class="wrap quiz-teaser">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="qt-text">
+      <span class="eyebrow rv">Find your treatment</span>
+      <h2 class="h-l rv" style="--d:1">Not sure <span class="em">what to choose?</span></h2>
+      <p class="lead rv" style="--d:2">Answer 10 short questions and we will suggest which treatment may suit you best.</p>
+      <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>Start the quiz <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    </div>
+    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">10</div><span>questions</span></div>
   </div>
 </section>
 
@@ -389,13 +387,35 @@
 
 <footer class="f">
   <span>© BodyLab.Beauty · Riga</span>
-  <span><a href="../../en/index.html">Current site</a> · <a href="../../info/index.html">Client information</a></span>
+  <span><a href="../../en/index.html">Current site</a> · <a href="info/index.html">Client information</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">Book online <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
 
-<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Body contouring massage","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Vacuum roller massage","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 session","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 sessions in a row","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Pressotherapy","tag":"Lymphatic drainage","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"€","suf":""},"months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsDate":["January","February","March","April","May","June","July","August","September","October","November","December"],"wdShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"wdFull":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"dateFmt":"{wd}, {d} {m}","min":"min","freeTime":"Available times","errReq":"Please fill in all required fields.","errPhone":"Please enter a valid phone number for the selected country.","toast":"Demo: in the live version this adds the event to your calendar","sumDate":"Date","sumTime":"Time","sumSvc":"Service","sumName":"Name"}</script>
-<script type="application/json" id="quiz-data">{"ids":["r-sleek","b-flexy","ems-zero","presoterapija"],"w":[[[3,1,1,0],[1,3,0,0],[0,0,3,0],[0,0,0,3],[1,0,0,2]],[[2,2,1,0],[2,1,2,0],[1,1,0,2],[1,0,2,0],[2,1,1,1]],[[1,0,1,0],[0,0,3,0],[0,1,1,0]],[[3,1,0,0],[1,3,0,0],[0,0,0,3],[0,0,3,0]],[[0,0,2,0],[1,1,0,1],[0,0,1,0]],[[0,0,0,3],[0,0,0,1],[0,0,0,0]],[[1,3,0,0],[1,1,0,0],[0,0,0,0]],[[0,0,0,0],[1,1,0,0]],[[0,0,0,2],[0,0,0,2],[1,0,1,0]],[[2,1,1,0],[1,2,0,0],[0,0,3,0],[0,0,0,3]]],"q":[["What matters most to you right now?",["Reduce volume and define contours","Tackle cellulite and uneven skin","Tone muscles without working out","Ease swelling and heavy legs","Simply relax"]],["Which area would you like to work on?",["Hips and glutes","Stomach and waist","Legs","Arms and back","The whole body"]],["How do you feel about exercise?",["I like working out","I want results without exercise","I exercise occasionally"]],["Which kind of treatment feels more comfortable?",["Deep, intensive massage","Vacuum and rollers","Gentle and relaxing","Muscle stimulation"]],["How much time do you have for a visit?",["About 30 minutes","Up to 45 minutes","An hour or more"]],["Do swelling or heavy legs bother you?",["Yes, often","Sometimes","No"]],["Do cellulite or uneven skin bother you?",["Yes, noticeably","A little","No"]],["What suits you better?",["Try it once","Do a course of sessions"]],["What is your lifestyle like?",["Desk job","On my feet a lot","Active"]],["What matters most?",["Shape and volume","Skin condition","Muscle tone","Well-being and lightness"]]],"results":{"r-sleek":{"name":"R-Sleek","tag":"Body contouring massage","img":"images/service-rsleek.jpg","key":"r-sleek","why":["Body volume reduction","Deep lymphatic drainage","Improving skin tone and elasticity"],"from":true,"price":"€35","pkg":true,"href":"r-sleek/index.html"},"b-flexy":{"name":"B-Flexy","tag":"Vacuum roller massage","img":"images/service-bflexy.jpg","key":"b-flexy","why":["Reducing the appearance of cellulite","Improving tissue microcirculation","Refining body contours"],"from":true,"price":"€30","pkg":true,"href":"b-flexy/index.html"},"ems-zero":{"name":"EMS Zero","tag":"EMS muscle stimulation","img":"images/service-emszero.jpg","key":"ems-zero-1","why":["Improving muscle tone","Supporting fat burning","Working the muscles without physical strain"],"from":true,"price":"€20","pkg":false,"href":"ems-zero/index.html"},"presoterapija":{"name":"Pressotherapy","tag":"Pressotherapy / lymphatic drainage","img":"images/service-presoterapija.jpg","key":"presoterapija","why":["Reducing swelling","Improving lymph drainage","Easing the feeling of heaviness in the legs"],"from":false,"price":"€25","pkg":false,"href":"pressotherapy/index.html"}},"ui":{"eyebrow":"Find your treatment","h2a":"Not sure ","h2em":"what to choose?","lead":"Answer 10 short questions and we will suggest which treatment may suit you best.","start":"Start the quiz","of":"of","back":"Back","resultEyebrow":"Best match","alt":"Also worth a look","why":"Why","book":"Book","more":"About the treatment","again":"Start over","package":"For regular sessions there is a 10-session package","note":"This is a suggestion based on your answers, not medical advice. If you have health problems or doubts about whether a treatment suits you, consult a doctor before booking.","from":"from ","noteExtra":"If you have health conditions or are unsure whether the treatment is right for you, please consult your doctor before booking and let us know."},"cur":{"pre":"€","suf":""}}</script>
+<div class="qm" id="quiz-modal" role="dialog" aria-modal="true" aria-label="Find your treatment" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="quiz-close" aria-label="Close"><i></i></button>
+    <div class="quiz" id="quiz">
+      <div class="quiz-run" id="quiz-run">
+        <div class="quiz-bar" id="quiz-bar"></div>
+        <div class="quiz-count" id="quiz-count"></div>
+        <h3 class="quiz-q" id="quiz-q"></h3>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">Back</button>
+      </div>
+      <div class="quiz-res" id="quiz-res" hidden></div>
+    </div>
+  </div>
+</div>
+
+<div class="fab" id="fab">
+  <a class="fab-o fab-wa" href="https://wa.me/37120888805?text=Hello!%20I%20have%20a%20question." target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  <a class="fab-o fab-ig" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></a>
+  <button class="fab-t" id="fab-t" type="button" aria-label="Message" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+</div>
+
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Body contouring massage","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Vacuum roller massage","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 session","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 sessions in a row","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Pressotherapy","tag":"Lymphatic drainage","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"€","suf":""},"months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsDate":["January","February","March","April","May","June","July","August","September","October","November","December"],"wdShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"wdFull":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"dateFmt":"{wd}, {d} {m}","min":"min","freeTime":"Available times","errReq":"Please fill in all required fields.","errPhone":"Please enter a valid phone number for the selected country.","toast":"Demo: in the live version this adds the event to your calendar","sumDate":"Date","sumTime":"Time","sumSvc":"Service","sumName":"Name","chosen":"Treatment","noFit":"does not fit this time"}</script>
+<script type="application/json" id="quiz-data">{"ids":["r-sleek","b-flexy","ems-zero","presoterapija"],"w":[[[3,1,1,0],[1,3,0,0],[0,0,3,0],[0,0,0,3],[1,0,0,2]],[[2,2,1,0],[2,1,2,0],[1,1,0,2],[1,0,2,0],[2,1,1,1]],[[1,0,1,0],[0,0,3,0],[0,1,1,0]],[[3,1,0,0],[1,3,0,0],[0,0,0,3],[0,0,3,0]],[[0,0,2,0],[1,1,0,1],[0,0,1,0]],[[0,0,0,3],[0,0,0,1],[0,0,0,0]],[[1,3,0,0],[1,1,0,0],[0,0,0,0]],[[0,0,0,0],[1,1,0,0]],[[0,0,0,2],[0,0,0,2],[1,0,1,0]],[[2,1,1,0],[1,2,0,0],[0,0,3,0],[0,0,0,3]]],"q":[["What matters most to you right now?",["Reduce volume and define contours","Tackle cellulite and uneven skin","Tone muscles without working out","Ease swelling and heavy legs","Simply relax"]],["Which area would you like to work on?",["Hips and glutes","Stomach and waist","Legs","Arms and back","The whole body"]],["How do you feel about exercise?",["I like working out","I want results without exercise","I exercise occasionally"]],["Which kind of treatment feels more comfortable?",["Deep, intensive massage","Vacuum and rollers","Gentle and relaxing","Muscle stimulation"]],["How much time do you have for a visit?",["About 30 minutes","Up to 45 minutes","An hour or more"]],["Do swelling or heavy legs bother you?",["Yes, often","Sometimes","No"]],["Do cellulite or uneven skin bother you?",["Yes, noticeably","A little","No"]],["What suits you better?",["Try it once","Do a course of sessions"]],["What is your lifestyle like?",["Desk job","On my feet a lot","Active"]],["What matters most?",["Shape and volume","Skin condition","Muscle tone","Well-being and lightness"]]],"results":{"r-sleek":{"name":"R-Sleek","tag":"Body contouring massage","img":"images/service-rsleek.jpg","key":"r-sleek","why":["Body volume reduction","Deep lymphatic drainage","Improving skin tone and elasticity"],"from":true,"price":"€35","pkg":true,"href":"r-sleek/index.html"},"b-flexy":{"name":"B-Flexy","tag":"Vacuum roller massage","img":"images/service-bflexy.jpg","key":"b-flexy","why":["Reducing the appearance of cellulite","Improving tissue microcirculation","Refining body contours"],"from":true,"price":"€30","pkg":true,"href":"b-flexy/index.html"},"ems-zero":{"name":"EMS Zero","tag":"EMS muscle stimulation","img":"images/service-emszero.jpg","key":"ems-zero-1","why":["Improving muscle tone","Supporting fat burning","Working the muscles without physical strain"],"from":true,"price":"€20","pkg":false,"href":"ems-zero/index.html"},"presoterapija":{"name":"Pressotherapy","tag":"Pressotherapy / lymphatic drainage","img":"images/service-presoterapija.jpg","key":"presoterapija","why":["Reducing swelling","Improving lymph drainage","Easing the feeling of heaviness in the legs"],"from":false,"price":"€25","pkg":false,"href":"pressotherapy/index.html"}},"ui":{"questionsWord":"questions","eyebrow":"Find your treatment","h2a":"Not sure ","h2em":"what to choose?","lead":"Answer 10 short questions and we will suggest which treatment may suit you best.","start":"Start the quiz","of":"of","back":"Back","resultEyebrow":"Best match","alt":"Also worth a look","why":"Why","book":"Book","more":"About the treatment","again":"Start over","package":"For regular sessions there is a 10-session package","note":"This is a suggestion based on your answers, not medical advice. If you have health problems or doubts about whether a treatment suits you, consult a doctor before booking.","from":"from ","noteExtra":"If you have health conditions or are unsure whether the treatment is right for you, please consult your doctor before booking and let us know."},"cur":{"pre":"€","suf":""}}</script>
 <script src="../assets/new.js" defer></script>
 <script src="../assets/booking.js" defer></script>
 <script src="../assets/quiz.js" defer></script>

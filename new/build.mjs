@@ -30,6 +30,8 @@ const ICON = {
   prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
   next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
   chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>',
+  car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-5h10l2 5v5M3 16h18v3H3zM7 13h.01M17 13h.01"/></svg>',
   done: '<svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
 };
 const AURORA = '<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>';
@@ -54,6 +56,7 @@ function paths(page) {
     oldHome: L2 => rel(L2 === 'lv' ? 'index.html' : `${L2}/index.html`),
     oldSvc: (L2, id) => rel(`${L2}/${SVC[id].slug[L2]}/index.html`),
     info: () => rel('info/index.html'),
+    newInfo: L2 => rel(`new/${L2}/info/index.html`),
   };
 }
 
@@ -86,7 +89,7 @@ function nav(page, alt, opts = {}) {
   return `
 <header class="nav" id="nav">
   <div class="nav-in">
-    <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="${p.img('logo-mark.png')}" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span><sup>${esc(t.city)}</sup></a>
+    <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="${p.img('logo-mark.png')}" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
     <div class="nav-r">
       <div class="langs" aria-label="${esc(t.langLabel)}">${langs}</div>
       ${rightBtn}
@@ -114,15 +117,16 @@ function bookingBlock(L, p) {
     ['presoterapija', 'presoterapija', 45, 25, 'service-presoterapija.jpg'],
   ].map(([id, svc, min, price, img]) => ({ id, name: b.names[svc] || SVC[svc].name[L], tag: b.opts[id], min, price, img: `images/${img}` }));
   const data = { options: OPT, cur: CUR[L], months: t.months, monthsDate: t.monthsDate, wdShort: t.wdShort, wdFull: t.wdFull, dateFmt: b.dateFmt,
-    min: b.min, freeTime: b.freeTime, errReq: b.errReq, errPhone: b.errPhone, toast: b.demoToast, sumDate: b.sumDate, sumTime: b.sumTime, sumSvc: b.sumSvc, sumName: b.sumName };
+    min: b.min, freeTime: b.timesFor, errReq: b.errReq, errPhone: b.errPhone, toast: b.demoToast, sumDate: b.sumDate, sumTime: b.sumTime, sumSvc: b.sumSvc, sumName: b.sumName,
+    chosen: b.chosen, noFit: b.noFit };
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
   const html = `
-<!-- ЗАПИСЬ -->
+<!-- ЗАПИСЬ: сначала дата и время, потом процедура, потом данные -->
 <section class="bk inline" id="zapis" data-dock-hide>
-  <div class="demo-bar"><i></i>${esc(b.demo)}</div>
   <div class="bk-grid">
 
     <div class="bk-main" id="bk-main">
+      <div class="demo-bar"><i></i>${esc(b.demo)}</div>
       <div class="bk-top">
         <span class="eyebrow rv">${esc(b.eyebrow)}</span>
         <div class="steps rv" style="--d:1" id="steps">
@@ -133,15 +137,9 @@ function bookingBlock(L, p) {
       </div>
 
       <div class="pane show" id="p1">
-        <h2>${esc(b.s1h)}</h2>
-        <p class="lead">${esc(b.s1lead)} <a class="link-u" href="#podbor">${esc(t.quizLink[0])}${esc(t.quizLink[1])}</a></p>
-        <div class="optgrid" id="optgrid"></div>
-        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>${esc(b.pickDate)} ${ICON.arrow}</button></div>
-      </div>
-
-      <div class="pane" id="p2">
-        <h2>${esc(b.s2h)}</h2>
-        <p class="lead">${esc(b.s2lead)}</p>
+        <h2>${esc(b.dtH)}</h2>
+        <p class="lead">${esc(b.dtLead)}</p>
+        <div class="picked" id="picked" hidden><span id="picked-t"></span><button type="button" id="picked-x" aria-label="${esc(b.removeChosen)}">✕</button></div>
         <div class="cal">
           <div class="cal-h"><h3 id="cal-title"></h3>
             <div class="cal-nav">
@@ -156,6 +154,13 @@ function bookingBlock(L, p) {
           <h4 id="times-title"></h4>
           <div class="tg2" id="times"></div>
         </div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>${esc(b.toProc)} ${ICON.arrow}</button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>${esc(b.procH)}</h2>
+        <p class="lead">${esc(b.procLead)} <a class="link-u" href="#podbor" data-open-quiz>${esc(t.quizLink[0])}${esc(t.quizLink[1])}</a></p>
+        <div class="optgrid" id="optgrid"></div>
         <div class="pane-foot">
           <button class="btn btn-ghost" type="button" data-back="1">${esc(b.back)}</button>
           <button class="btn btn-main" type="button" id="go3" disabled>${esc(b.toData)} ${ICON.arrow}</button>
@@ -168,13 +173,17 @@ function bookingBlock(L, p) {
         <form class="form" id="form" novalidate>
           <div class="fld"><label for="fn">${esc(b.first)}</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
           <div class="fld"><label for="ln">${esc(b.last)}</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
-          <div class="fld"><label for="ph">${esc(b.phone)}</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
-          <div class="fld"><label for="ig">${esc(b.ig)}</label><input id="ig" placeholder="@username"></div>
-          <div class="fld full"><label for="cm">${esc(b.comment)}</label><textarea id="cm" maxlength="500" placeholder="${esc(b.commentPh)}"></textarea></div>
-          <p class="terms">${esc(b.terms)}</p>
+          <div class="fld full"><label for="ph">${esc(b.phone)}</label><div class="phone"><span class="cc">LV +371</span><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <details class="more full"><summary>${esc(b.moreFields)}</summary>
+            <div class="more-in">
+              <div class="fld"><label for="ig">${esc(b.ig)}</label><input id="ig" placeholder="@username"></div>
+              <div class="fld"><label for="cm">${esc(b.comment)}</label><textarea id="cm" maxlength="500" placeholder="${esc(b.commentPh)}"></textarea></div>
+            </div>
+          </details>
           <div class="form-err" id="form-err" role="alert"></div>
+          <p class="terms">${esc(b.terms)}</p>
         </form>
-        <div class="pane-foot">
+        <div class="pane-foot pane-foot-form">
           <button class="btn btn-ghost" type="button" data-back="2">${esc(b.back)}</button>
           <button class="btn btn-main" type="button" id="submit">${esc(b.submit)} ${ICON.arrow}</button>
         </div>
@@ -195,10 +204,10 @@ function bookingBlock(L, p) {
     <aside class="sum" id="sum" aria-live="polite">
       ${AURORA}
       <h3>${esc(b.sumTitle)}</h3>
-      <div class="srow"><span>${esc(b.sumProc)}</span><span id="s-name"><b class="dash">—</b></span></div>
-      <div class="srow"><span>${esc(b.sumDur)}</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="srow"><span>${esc(b.sumDate)}</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>${esc(b.sumTime)}</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="srow"><span>${esc(b.sumProc)}</span><span id="s-name"><b class="dash">—</b></span></div>
+      <div class="srow"><span>${esc(b.sumDur)}</span><span id="s-min"><b class="dash">—</b></span></div>
       <div class="total"><span>${esc(b.sumTotal)}</span><div class="big" id="s-total">${moneyPlain(L, 0)}</div></div>
       <p class="help">${esc(b.help[0])}<a href="${WA}" target="_blank" rel="noopener">${esc(b.help[1])}</a>${esc(b.help[2])}</p>
     </aside>
@@ -208,7 +217,7 @@ function bookingBlock(L, p) {
   return { html, json };
 }
 
-// ═════════════════════════ ТЕСТ «подберите процедуру» ═════════════════════════
+// ═════════════════════════ ТЕСТ «подберите процедуру»: приглашение на странице + отдельное окно ═════════════════════════
 function quizBlock(L, p) {
   const t = T[L], q = t.quizUi;
   const ui = UI[L];
@@ -223,18 +232,26 @@ function quizBlock(L, p) {
   }
   const data = { ids: QZ.IDS, w: QZ.W, q: QZ.QUIZ[L], results, ui: { ...q, noteExtra: ui.beforeText }, cur: CUR[L] };
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
-  const html = `
-<!-- ПОДБОР ПРОЦЕДУРЫ -->
+  const teaser = `
+<!-- ПОДБОР ПРОЦЕДУРЫ: приглашение (сам тест открывается в отдельном окне) -->
 <section class="sec" id="podbor">
-  <div class="wrap quiz-wrap">
-    <div class="sec-head">
+  <div class="wrap quiz-teaser">
+    ${AURORA}
+    <div class="qt-text">
       <span class="eyebrow rv">${esc(q.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(q.h2a)}<span class="em">${esc(q.h2em)}</span></h2>
       <p class="lead rv" style="--d:2">${esc(q.lead)}</p>
+      <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>${esc(q.start)} ${ICON.arrow}</button></div>
     </div>
-    <div class="quiz rv" style="--d:3" id="quiz">
-      <div class="quiz-start" id="quiz-start"><button class="btn btn-main" type="button" id="quiz-go">${esc(q.start)} ${ICON.arrow}</button></div>
-      <div class="quiz-run" id="quiz-run" hidden>
+    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">10</div><span>${esc(q.questionsWord)}</span></div>
+  </div>
+</section>`;
+  const modal = `
+<div class="qm" id="quiz-modal" role="dialog" aria-modal="true" aria-label="${esc(q.eyebrow)}" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="quiz-close" aria-label="${esc(t.lightbox.close)}"><i></i></button>
+    <div class="quiz" id="quiz">
+      <div class="quiz-run" id="quiz-run">
         <div class="quiz-bar" id="quiz-bar"></div>
         <div class="quiz-count" id="quiz-count"></div>
         <h3 class="quiz-q" id="quiz-q"></h3>
@@ -244,8 +261,20 @@ function quizBlock(L, p) {
       <div class="quiz-res" id="quiz-res" hidden></div>
     </div>
   </div>
-</section>`;
-  return { html, json };
+</div>`;
+  return { teaser, modal, json };
+}
+
+// ═════════════════════════ КНОПКА «НАПИСАТЬ» (как на текущем сайте) ═════════════════════════
+function fab(L) {
+  const t = T[L];
+  const wa = `${WA}?text=${encodeURIComponent(t.fab.wa)}`;
+  return `
+<div class="fab" id="fab">
+  <a class="fab-o fab-wa" href="${wa}" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  <a class="fab-o fab-ig" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></a>
+  <button class="fab-t" id="fab-t" type="button" aria-label="${esc(t.fab.label)}" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+</div>`;
 }
 
 // ═════════════════════════ ГЛАВНАЯ ═════════════════════════
@@ -327,7 +356,6 @@ ${nav(page, alt)}
   </div>
 </section>
 ${bk.html}
-${qz.html}
 
 <div class="strip" aria-hidden="true"><div class="strip-track">
   ${[...t.strip, ...t.strip].map(x => `<span>${esc(x)}</span>`).join('')}
@@ -364,6 +392,8 @@ ${HOME_ORDER.map(win).join('\n')}
     </div>
   </div>
 </section>
+
+${qz.teaser}
 
 <!-- ЦИФРЫ -->
 <section class="sec dark" id="cifry">
@@ -472,10 +502,12 @@ ${HOME_ORDER.map(win).join('\n')}
 
 <footer class="f">
   <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a> · <a href="${p.info()}">${esc(t.footer.info)}</a></span>
+  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a> · <a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
+${qz.modal}
+${fab(L)}
 
 <script type="application/json" id="i18n">${bk.json}</script>
 <script type="application/json" id="quiz-data">${qz.json}</script>
@@ -660,10 +692,89 @@ ${nav(page, alt)}
 
 <footer class="f">
   <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldSvc(L, id)}">${esc(t.footer.thisPage)}</a> · <a href="${p.newHome(L)}">${esc(ui.allTreatments)}</a> · <a href="${p.info()}">${esc(t.footer.info)}</a></span>
+  <span><a href="${p.oldSvc(L, id)}">${esc(t.footer.thisPage)}</a> · <a href="${p.newHome(L)}">${esc(ui.allTreatments)}</a> · <a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a></div>
+${fab(L)}
+
+<script src="${p.asset('new.js')}" defer></script>
+</body>
+</html>
+`;
+}
+
+
+// ═════════════════════════ СТРАНИЦА ДЛЯ КЛИЕНТОВ (как /info/ на текущем сайте, в новом стиле) ═════════════════════════
+const DOOR_CODE = '2700#'; // как на текущей странице /info/
+function infoPage(L) {
+  const t = T[L], i = t.info, page = { L, file: `new/${L}/info/index.html` }, p = paths(page);
+  const alt = l2 => p.newInfo(l2);
+  const maps = 'https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga';
+  const waze = 'https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes';
+  return head(page, `${i.title} – BodyLab.Beauty`) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<section class="sec svc-hero info-hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <span class="eyebrow rv">BodyLab.Beauty</span>
+      <h1 class="h-l rv" style="--d:1;margin-top:12px">${esc(i.title)}</h1>
+      <p class="lead rv" style="--d:2;margin-top:14px">${esc(i.sub)}</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="info-grid">
+      <article class="icard rv">
+        <span class="eyebrow">${ICON.pin}${esc(i.addrH)}</span>
+        <p class="ip">${i.addrP}</p>
+        <div class="cta-row" style="margin-top:6px"><a class="btn btn-main btn-sm" href="${maps}" target="_blank" rel="noopener">${esc(i.maps)}</a><a class="btn btn-ghost btn-sm" href="${waze}" target="_blank" rel="noopener">${esc(i.waze)}</a></div>
+        <figure class="ifig" data-gallery="info"><img src="${p.img('building-1.jpg')}" alt="${esc(i.photoAlt[0])}" loading="lazy"></figure>
+      </article>
+      <article class="icard rv" style="--d:1">
+        <span class="eyebrow">${ICON.key}${esc(i.doorH)}</span>
+        <p class="ip">${esc(i.doorP)}</p>
+        <div class="code"><small>${esc(i.doorCode)}</small><div class="big pearl">${DOOR_CODE}</div></div>
+        <figure class="ifig" data-gallery="info"><img src="${p.img('building-2.jpg')}" alt="${esc(i.photoAlt[1])}" loading="lazy"></figure>
+      </article>
+      <article class="icard rv" style="--d:2">
+        <span class="eyebrow">${ICON.car}${esc(i.parkH)}</span>
+        <p class="ip">${i.parkP1}</p>
+        <p class="ip soft">${esc(i.parkP2)}</p>
+      </article>
+      <article class="icard dark-card rv" style="--d:3">
+        <span class="eyebrow">${ICON.shield}${esc(i.cancelH)}</span>
+        <p class="ip">${esc(i.cancelP1)}</p>
+        <p class="ip">${i.cancelP2}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap info-cta">
+    <div class="cta-row rv">
+      <a class="btn btn-main" href="${WA}" target="_blank" rel="noopener">${esc(i.wa)}</a>
+      <a class="btn btn-ghost" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener">${esc(i.ig)}</a>
+      <a class="btn btn-ghost" href="${p.newHome(L)}">${esc(i.home)}</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="f">
+  <span>${esc(t.footer.rights)}</span>
+  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></span>
+</footer>
+${fab(L)}
 
 <script src="${p.asset('new.js')}" defer></script>
 </body>
@@ -680,5 +791,6 @@ function write(file, html) {
 }
 for (const L of LANGS) {
   write(`new/${L}/index.html`, home(L));
+  write(`new/${L}/info/index.html`, infoPage(L));
   for (const S of SERVICES) write(`new/${L}/${S.slug[L]}/index.html`, service(L, S));
 }
