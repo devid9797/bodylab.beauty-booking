@@ -140,19 +140,21 @@ function bookingBlock(L, p) {
         <h2>${esc(b.dtH)}</h2>
         <p class="lead">${esc(b.dtLead)}</p>
         <div class="picked" id="picked" hidden><span id="picked-t"></span><button type="button" id="picked-x" aria-label="${esc(b.removeChosen)}">✕</button></div>
-        <div class="cal">
-          <div class="cal-h"><h3 id="cal-title"></h3>
-            <div class="cal-nav">
-              <button type="button" id="cal-prev" aria-label="${esc(b.prev)}">${ICON.prev}</button>
-              <button type="button" id="cal-next" aria-label="${esc(b.next)}">${ICON.next}</button>
+        <div class="dt">
+          <div class="cal">
+            <div class="cal-h"><h3 id="cal-title"></h3>
+              <div class="cal-nav">
+                <button type="button" id="cal-prev" aria-label="${esc(b.prev)}">${ICON.prev}</button>
+                <button type="button" id="cal-next" aria-label="${esc(b.next)}">${ICON.next}</button>
+              </div>
             </div>
+            <div class="wd">${t.wdHead.map(x => `<span>${x}</span>`).join('')}</div>
+            <div class="days" id="days"></div>
           </div>
-          <div class="wd">${t.wdHead.map(x => `<span>${x}</span>`).join('')}</div>
-          <div class="days" id="days"></div>
-        </div>
-        <div class="times-box" id="times-box" hidden>
-          <h4 id="times-title"></h4>
-          <div class="tg2" id="times"></div>
+          <div class="times-box" id="times-box">
+            <h4 id="times-title" data-hint="${esc(b.pickDateFirst)}">${esc(b.pickDateFirst)}</h4>
+            <div class="tg2" id="times"></div>
+          </div>
         </div>
         <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>${esc(b.toProc)} ${ICON.arrow}</button></div>
       </div>
@@ -243,7 +245,7 @@ function quizBlock(L, p) {
       <p class="lead rv" style="--d:2">${esc(q.lead)}</p>
       <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>${esc(q.start)} ${ICON.arrow}</button></div>
     </div>
-    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">10</div><span>${esc(q.questionsWord)}</span></div>
+    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">5</div><span>${esc(q.questionsWord)}</span></div>
   </div>
 </section>`;
   const modal = `
