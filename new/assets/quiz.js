@@ -29,7 +29,7 @@
     finished = true;
     var s = score(), order = D.ids.map(function(id,j){ return {id:id,s:s[j]}; }).sort(function(a,b){ return b.s - a.s; });
     var top = D.results[order[0].id], second = (order[1].s >= order[0].s*0.6 && order[1].s > 0) ? D.results[order[1].id] : null;
-    var wantsCourse = ans[7] === 1 && top.pkg;
+    var wantsCourse = top.pkg;
     var why = top.why.map(function(w){ return '<li>'+esc(w)+'</li>'; }).join('');
     res.innerHTML =
       '<div class="qres-main"><div class="qres-img"><img class="nozoom" src="'+ROOT+top.img+'" alt="'+esc(top.name)+'"></div>'+

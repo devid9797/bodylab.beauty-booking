@@ -67,10 +67,10 @@
     $('#days').innerHTML = html;
   }
   function renderTimes(){
-    var box = $('#times-box');
-    if(!st.date){ box.hidden = true; return; }
-    box.hidden = false;
-    $('#times-title').textContent = I.freeTime + ' · ' + I.wdFull[st.date.getDay()] + ', ' + I.dateFmt.replace('{wd}, ','').replace('{d}', st.date.getDate()).replace('{m}', I.monthsDate[st.date.getMonth()]);
+    var h = $('#times-title');
+    if(!st.date){ h.textContent = h.dataset.hint; $('#times').innerHTML = ''; $('#times-box').classList.remove('has'); return; }
+    $('#times-box').classList.add('has');
+    h.textContent = I.freeTime + ' · ' + I.wdFull[st.date.getDay()] + ', ' + I.dateFmt.replace('{wd}, ','').replace('{d}', st.date.getDate()).replace('{m}', I.monthsDate[st.date.getMonth()]);
     $('#times').innerHTML = slots(st.date).map(function(s,i){
       return '<button type="button" class="tm'+(st.time===s.t?' sel':'')+'" data-t="'+s.t+'" data-f="'+s.free+'" style="--k:'+i+'">'+s.t+'</button>';
     }).join('');
@@ -82,7 +82,6 @@
     st.date = new Date(+b.dataset.t); st.time = null; st.free = 0;
     $$('.day',$('#days')).forEach(function(x){ x.classList.toggle('sel', x===b); });
     renderTimes(); renderSummary();
-    if(!B.reduce) $('#times-box').scrollIntoView({behavior:'smooth',block:'nearest'});
   });
   $('#times').addEventListener('click',function(e){
     var b = e.target.closest('.tm'); if(!b) return;
