@@ -140,6 +140,19 @@
     clearTimeout(tt); tt = setTimeout(function(){ toast.classList.remove('show'); },2800);
   });});
 
+  /* выбор процедуры снаружи (кнопки цен, тест, ссылка ?s=...) */
+  function goToBooking(id){
+    if(id) pick(id);
+    if(st.opt) go(2);
+    var top = $('#zapis').getBoundingClientRect().top + scrollY - 70;
+    scrollTo({top:top,behavior:B.reduce?'auto':'smooth'});
+  }
+  window.BL.book = {pick:pick, go:go, open:goToBooking, has:function(id){ return OPTIONS.some(function(o){return o.id===id}); }};
+  document.addEventListener('click',function(e){
+    var a = e.target.closest && e.target.closest('[data-pick]'); if(!a) return;
+    var id = a.dataset.pick; if(!window.BL.book.has(id)) return;
+    e.preventDefault(); goToBooking(id);
+  });
   /* предвыбор из ссылки: ?s=r-sleek (со страницы процедуры) */
   var q = new URLSearchParams(location.search).get('s');
   if(q && OPTIONS.some(function(o){return o.id===q})){ pick(q); go(2); }

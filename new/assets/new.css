@@ -588,3 +588,202 @@ footer.f a:hover{color:var(--accent)}
 .m-langs a.on{background:var(--accent);color:var(--card)}
 @media (max-width:760px){.langs{display:none}}
 @media (min-width:761px){.m-langs{display:none}}
+
+/* ===================================================================
+   ПРАВКИ ПО ОТЗЫВАМ ВЛАДЕЛЬЦА (v2)
+   =================================================================== */
+/* ---- логотип + «BodyLab.beauty» слитно + город ---- */
+.logo{align-items:center;gap:10px}
+.logo-mark{height:34px;width:auto;flex:none;transition:filter .4s var(--ease)}
+.logo-t{font-weight:800;font-size:19px;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.logo-t b{font-weight:500;color:var(--accent-soft);transition:color .4s var(--ease)}
+.logo sup{align-self:center;margin:0 0 0 2px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);padding:4px 8px;border-radius:var(--r-pill);background:rgba(75,71,67,.07)}
+.nav.dark .logo-mark{filter:brightness(0) invert(1)}
+.nav.dark .logo-t b{color:#CFC2B3}.nav.dark .logo sup{color:#BDB3A8;background:rgba(255,254,250,.1)}
+@media (max-width:560px){.logo-mark{height:30px}.logo-t{font-size:17px}.logo sup{display:none}.logo{gap:8px}}
+@media (max-width:380px){.logo-t{font-size:15px}.nav .btn-sm{padding:0 14px}}
+
+/* ---- запись внутри главной ---- */
+.bk.inline{padding-top:0}
+.bk.inline .demo-bar{margin:14px auto 14px}
+.hero .wrap{min-height:min(84vh,780px)}
+.lead .link-u{color:var(--accent);font-weight:600;font-size:inherit;white-space:normal}
+
+/* ---- крупное фото: курсор и кнопка лупы ---- */
+.zoomable{cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(32,28,25,.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transition:opacity .4s var(--ease)}
+.lb[hidden]{display:none}.lb.open{opacity:1}
+.lb-f{margin:0;display:grid;justify-items:center;gap:12px;max-width:100vw}
+.lb-f img{max-width:min(92vw,1100px);max-height:82vh;max-height:82svh;width:auto;height:auto;object-fit:contain;border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.7);opacity:0;transform:scale(.94);transition:opacity .5s var(--ease),transform .7s var(--ease)}
+.lb-f img.in{opacity:1;transform:none}
+.lb-f figcaption{font-size:13px;color:#CFC7BD;max-width:80vw;text-align:center}
+.lb-c{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font-size:12px;font-weight:700;letter-spacing:.1em;color:#BDB3A8}
+.lb-x,.lb-n{position:absolute;width:48px;height:48px;border-radius:50%;background:rgba(255,254,250,.12);color:var(--card);display:grid;place-items:center;transition:background .3s var(--ease),transform .3s var(--ease)}
+.lb-x:hover,.lb-n:hover{background:rgba(255,254,250,.24);transform:scale(1.06)}
+.lb-x{top:16px;right:16px}.lb-n{top:50%;margin-top:-24px}.lb-prev{left:16px}.lb-next{right:16px}
+.lb-n svg{width:20px;height:20px}
+.lb-x i,.lb-x i::before{display:block;width:18px;height:2px;background:currentColor;border-radius:2px;position:relative;transform:rotate(45deg)}
+.lb-x i::before{content:"";position:absolute;left:0;top:0;transform:rotate(90deg)}
+.lb.single .lb-n,.lb.single .lb-c{display:none}
+html.lb-open{overflow:hidden}
+@media (max-width:640px){.lb-n{top:auto;bottom:14px;margin:0}.lb-prev{left:calc(50% - 90px)}.lb-next{right:calc(50% - 90px)}.lb-c{bottom:26px;left:50%}}
+
+/* ---- Stebby: логотип без искажений ---- */
+.stebby-logo{width:min(230px,70%);height:auto;margin-top:auto;align-self:flex-start;object-fit:contain}
+
+/* ---- отзывы: крупные карточки, листание ---- */
+.revs{display:grid;gap:6px}
+.rev-scroll{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 6px 24px;margin:0 -6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rev-scroll::-webkit-scrollbar{display:none}
+.rev{flex:none;width:clamp(240px,23vw,310px);margin:0;scroll-snap-align:start;border-radius:26px;overflow:hidden;background:var(--card);box-shadow:0 0 0 1px var(--border),0 26px 44px -30px rgba(75,71,67,.5);transition:transform .6s var(--ease),box-shadow .6s var(--ease)}
+.rev img{width:100%;height:auto;aspect-ratio:324/640;object-fit:cover}
+@media (hover:hover) and (pointer:fine){.rev:hover{transform:translateY(-8px);box-shadow:0 0 0 1px var(--chip-border),0 36px 54px -30px rgba(75,71,67,.55)}}
+.rev-ctl{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.rev-hint{font-size:12.5px;color:var(--text-soft)}
+.rev-ctl .cal-nav button:disabled{opacity:.35;cursor:default}
+@media (max-width:640px){.rev{width:min(74vw,290px)}.rev-hint{display:none}.rev-ctl{justify-content:flex-end}}
+
+/* ---- студия: галерея ---- */
+.studio{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:clamp(150px,19vw,270px);gap:12px}
+.sph{margin:0;overflow:hidden;border-radius:var(--r-l);box-shadow:0 0 0 1px var(--border)}
+.sph img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+@media (hover:hover) and (pointer:fine){.sph:hover img{transform:scale(1.05)}}
+.sph1,.sph2,.sph3{grid-column:span 2;grid-row:span 2}
+.sph4,.sph5{grid-column:span 3}
+.sph:nth-child(n+6){grid-column:span 2}
+@media (max-width:760px){
+  .studio{grid-template-columns:repeat(2,1fr);grid-auto-rows:clamp(150px,44vw,230px)}
+  .sph1,.sph2{grid-column:span 1;grid-row:span 2}
+  .sph3{grid-column:span 2;grid-row:span 1}
+  .sph4,.sph5{grid-column:span 1}
+  .sph:nth-child(n+6){grid-column:span 1}
+}
+
+/* ---- тест «подберите процедуру» ---- */
+.quiz{min-height:200px}
+.quiz-start{display:flex}
+.quiz-run.swap .quiz-q,.quiz-run.swap .qopt,.quiz-res.swap>*{animation:paneIn .7s var(--ease) both}
+.quiz-run.swap .qopt{animation-delay:calc(var(--k)*50ms + .05s)}
+.quiz-bar{display:flex;gap:6px;margin-bottom:14px}
+.quiz-bar i{flex:1;height:5px;border-radius:5px;background:var(--chip-border);transition:background .5s var(--ease)}
+.quiz-bar i.done{background:var(--accent)}.quiz-bar i.on{background:var(--accent-soft)}
+.quiz-count{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--text-soft);margin-bottom:10px}
+.quiz-q{font-size:clamp(24px,3.4vw,40px);font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--accent);margin-bottom:22px;max-width:20em}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.qopt{text-align:left;padding:20px 22px;border-radius:var(--r-m);background:var(--card);box-shadow:0 0 0 1px var(--border);font-size:16px;font-weight:600;letter-spacing:-.02em;color:var(--accent);
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease),background .35s var(--ease),color .35s var(--ease)}
+@media (hover:hover) and (pointer:fine){.qopt:hover{transform:translateY(-3px);box-shadow:0 0 0 1px var(--chip-border),0 22px 36px -26px rgba(75,71,67,.5)}}
+.qopt.on{background:var(--accent);color:var(--card)}
+.qopt:active{transform:scale(.98)}
+.qres-main{display:grid;grid-template-columns:.62fr 1.38fr;gap:clamp(18px,3.4vw,44px);align-items:center}
+.qres-img{border-radius:200px 200px var(--r-l) var(--r-l);overflow:hidden;aspect-ratio:3/4;box-shadow:var(--shadow-card)}
+.qres-img img{width:100%;height:100%;object-fit:cover}
+.qres-body{display:grid;gap:14px}
+.qres-tag{font-size:15px;font-weight:600;color:var(--accent-soft);margin-top:-6px}
+.qres-why b{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft)}
+.qres-why ul{list-style:none;display:grid;gap:8px;margin-top:10px;font-size:15px;color:var(--text)}
+.qres-why li{display:flex;gap:10px;align-items:flex-start}
+.qres-why li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--chip-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.3 2.3 4.7-5' fill='none' stroke='%234B4743' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.qres-pkg{font-size:14px;color:var(--text-soft)}
+.qres-alt{margin-top:26px;display:grid;gap:10px}
+.qalt{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 20px;border-radius:var(--r-m);background:var(--card);box-shadow:0 0 0 1px var(--border)}
+.qalt b{display:block;font-size:18px;letter-spacing:-.03em;color:var(--accent)}.qalt small{font-size:12.5px;color:var(--text-soft)}
+.qres-note{margin:22px 0 14px;font-size:12.5px;line-height:1.55;color:var(--text-soft);max-width:60em}
+@media (max-width:760px){.quiz-opts{grid-template-columns:1fr}.qres-main{grid-template-columns:1fr}.qres-img{width:min(70%,260px);aspect-ratio:3/3.6}.qalt{flex-direction:column;align-items:flex-start}}
+
+/* ---- меню: 8 пунктов должны помещаться ---- */
+.menu{max-height:calc(100vh - 24px);max-height:calc(100svh - 24px);overflow-y:auto;overscroll-behavior:contain}
+.menu a.m-link{font-size:clamp(22px,3.3vw,36px);padding:11px 4px}
+
+/* ===================================================================
+   БЛОК «ПРОЦЕДУРЫ» (липкий): влезает в любой экран, фото не плющит
+   =================================================================== */
+.win{grid-template-rows:auto minmax(0,1fr)}
+.win-body{min-height:0}
+.win-txt{overflow:hidden}
+.win-img img{object-position:50% 35%}
+@media (max-height:760px) and (min-width:821px){
+  .win-txt p{display:none}.win-txt{gap:9px;padding:16px 20px}
+  .win-txt h3{font-size:clamp(24px,2.6vw,32px)}.chips .chip:nth-child(n+4){display:none}
+}
+@media (min-width:821px) and (max-width:1100px){
+  .pin-in{grid-template-columns:.7fr 1.3fr;gap:20px;padding:24px}
+  .pin-l .lead{display:none}.step{font-size:22px}
+  .win-body{grid-template-columns:.8fr 1.2fr}
+  .win-txt{padding:18px 18px 16px}.win-txt p{display:none}
+}
+@media (max-width:820px){
+  .pin{height:calc(var(--n) * 72vh + 28vh)}
+  .pin-stick{padding:70px 6px 6px}
+  .pin-in{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px;padding:14px 10px 10px;border-radius:30px}
+  .pin-l{gap:8px}
+  .pin-l .eyebrow,.pin-l .lead{display:none}
+  .pin-l .h-l{font-size:25px;padding:0 6px}
+  .rail{padding:0 4px}
+  .step{padding:7px 13px;font-size:13px}
+  .stage{height:100%;min-height:0}
+  .win{border-radius:24px}
+  .win-bar{padding:10px 14px}
+  .win-body{grid-template-columns:40% 1fr;grid-template-rows:minmax(0,1fr)}
+  .win-img{margin:8px 0 8px 8px;border-radius:18px}
+  .badge{left:8px;top:8px;font-size:9px;padding:5px 8px}
+  .win-txt{padding:12px 12px 12px 14px;gap:7px}
+  .win-txt h3{font-size:22px}.win-txt .tg{font-size:12px;line-height:1.3}
+  .win-txt p{display:none}
+  .chips{gap:4px}.chips .chip{font-size:10.5px;padding:4px 8px}.chips .chip:nth-child(n+4){display:none}
+  .price-row .pr{padding:6px 0;font-size:11.5px}.price-row .pr b{font-size:16px}
+  .win-txt .btn{--h:38px;font-size:13px;padding:0 14px;margin-top:2px}
+}
+@media (max-width:820px) and (max-height:700px){
+  .pin-l .h-l{display:none}.win-txt .tg{display:none}.chips .chip:nth-child(n+3){display:none}
+}
+.rev:nth-child(odd),.rev:nth-child(even){transform:none}
+@media (hover:hover) and (pointer:fine){.rev:nth-child(odd):hover,.rev:nth-child(even):hover{transform:translateY(-8px)}}
+.quiz-start[hidden],.quiz-run[hidden],.quiz-res[hidden],.times-box[hidden]{display:none!important}
+.bk.inline .demo-bar{margin:14px 8px}
+@media (min-width:641px){.bk.inline .demo-bar{margin:14px auto}}
+@media (max-width:980px){.sum{order:2}.bk.inline .sum{margin-top:2px}}
+@media (max-width:760px){.sph3 img{object-position:50% 78%}}
+@media (min-width:821px){
+  .pin-in{grid-template-rows:minmax(0,1fr)}
+  .stage{height:100%;max-height:640px;align-self:center}
+}
+
+/* ---- узкие экраны (≤1100px): фото на всё окно, текст – на матовой плашке поверх ---- */
+@media (max-width:1100px){
+  .win-body{position:relative;display:block}
+  .win-img{position:absolute;inset:0;margin:0;border-radius:0 0 var(--r-l) var(--r-l)}
+  .win-img::after{content:"";position:absolute;inset:auto 0 0 0;height:58%;background:linear-gradient(180deg,transparent,rgba(43,40,37,.45));pointer-events:none}
+  .win-txt{position:absolute;left:10px;right:10px;bottom:10px;padding:14px 16px 14px;gap:6px;border-radius:22px;
+    background:rgba(255,254,250,.9);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:0 18px 40px -22px rgba(0,0,0,.55);overflow:hidden}
+  .win-txt h3{font-size:24px}
+  .win-txt .tg{font-size:12.5px}
+  .win-txt p{display:none}
+  .win-txt .chips{display:none}
+  .win-txt .price-row{margin-top:2px}
+  .win-txt .price-row .pr{padding:6px 0;font-size:12.5px}.win-txt .price-row .pr b{font-size:17px}
+  .win-txt .btn{--h:42px;font-size:14px;margin-top:4px;width:100%}
+  .win .badge{z-index:2}
+}
+@media (max-width:1100px) and (min-width:821px){
+  .win-txt{left:16px;right:16px;bottom:16px;padding:16px 20px}
+  .win-txt h3{font-size:28px}
+  .win-txt .chips{display:flex}.win-txt .chips .chip:nth-child(n+4){display:none}
+}
+@media (max-width:820px) and (max-height:700px){
+  .win-txt .tg{display:none}.win-txt{padding:10px 14px}.win-txt h3{font-size:20px}
+}
+
+/* ---- левая колонка блока «Процедуры» на ноутбуках: заголовок не раздувает колонку ---- */
+@media (min-width:1101px){
+  .pin-l .h-l{font-size:clamp(30px,3.5vw,54px)}
+  .pin-l{min-height:0}
+  .step{padding:5px 0}
+}
+@media (min-width:1101px) and (max-height:820px){
+  .pin-l .lead{display:none}.pin-l{gap:16px}
+  .pin-l .h-l{font-size:clamp(28px,3vw,42px)}
+  .step{font-size:clamp(20px,2.1vw,28px);padding:3px 0}
+  .step.on small{max-height:28px}
+}
+@media (min-width:821px) and (max-width:1100px){.pin-l .h-l{font-size:clamp(26px,3.6vw,38px)}.pin-l{min-height:0}}
