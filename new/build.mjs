@@ -8,6 +8,7 @@
 // Страницы закрыты от поисковиков (noindex) и не входят в sitemap.
 import { SERVICES, UI } from '../tools/content.mjs';
 import { LANGS, T, CUR, WA, IG, PHONE } from './i18n.mjs';
+import * as QZ from './quiz.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,6 +29,7 @@ const ICON = {
   shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
   prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
   next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   done: '<svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
 };
 const AURORA = '<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>';
@@ -47,7 +49,7 @@ function paths(page) {
     asset: f => rel(`new/assets/${f}`),
     img: f => rel(`images/${f}`),
     newHome: L2 => rel(`new/${L2}/index.html`),
-    newBook: (L2, key) => rel(`new/${L2}/zapis/index.html`) + (key ? `?s=${key}` : ''),
+    newBook: (L2, key) => rel(`new/${L2}/index.html`) + (key ? `?s=${key}` : '') + '#zapis',
     newSvc: (L2, id) => rel(`new/${L2}/${SVC[id].slug[L2]}/index.html`),
     oldHome: L2 => rel(L2 === 'lv' ? 'index.html' : `${L2}/index.html`),
     oldSvc: (L2, id) => rel(`${L2}/${SVC[id].slug[L2]}/index.html`),
@@ -59,7 +61,7 @@ function paths(page) {
 function head(page, title, extra = '') {
   const { L } = page, t = T[L], p = paths(page);
   return `<!DOCTYPE html>
-<html lang="${t.htmlLang}" data-root="${p.up}">
+<html lang="${t.htmlLang}" data-root="${p.up}" data-lb-close="${esc(t.lightbox.close)}" data-lb-prev="${esc(t.lightbox.prev)}" data-lb-next="${esc(t.lightbox.next)}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -79,14 +81,12 @@ function nav(page, alt, opts = {}) {
   const { L } = page, t = T[L], p = paths(page);
   const langs = LANGS.map(l2 => `<a href="${alt(l2)}"${l2 === L ? ' class="on" aria-current="true"' : ''} hreflang="${l2}">${T[l2].code}</a>`).join('');
   const menuLinks = t.menu.map((m, i) => `
-  <a class="m-link" href="${p.newHome(L)}#${['uslugi', 'vizit', 'ceny', 'otzyvy', 'podarok', 'kontakty'][i]}">${esc(m)} <small>${pad(i + 1)}</small></a>`).join('');
-  const rightBtn = opts.back
-    ? `<a class="btn btn-ghost btn-sm" href="${p.newHome(L)}">${esc(t.backToSite)}</a>`
-    : `<a class="btn btn-main btn-sm" href="${p.newBook(L)}">${esc(t.book)}</a>`;
+  <a class="m-link" href="${p.newHome(L)}#${t.anchors[i]}">${esc(m)} <small>${pad(i + 1)}</small></a>`).join('');
+  const rightBtn = `<a class="btn btn-main btn-sm" href="${page.file === `new/${L}/index.html` ? '#zapis' : p.newBook(L)}">${esc(t.book)}</a>`;
   return `
 <header class="nav" id="nav">
   <div class="nav-in">
-    <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty">BodyLab<sup>/beauty</sup></a>
+    <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="${p.img('logo-mark.png')}" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span><sup>${esc(t.city)}</sup></a>
     <div class="nav-r">
       <div class="langs" aria-label="${esc(t.langLabel)}">${langs}</div>
       ${rightBtn}
@@ -103,224 +103,9 @@ function nav(page, alt, opts = {}) {
 </nav>`;
 }
 
-// ═════════════════════════ ГЛАВНАЯ ═════════════════════════
-function home(L) {
-  const t = T[L], page = { L, file: `new/${L}/index.html` }, p = paths(page);
-  const alt = l2 => p.newHome(l2);
-  const book = key => p.newBook(L, key);
-  const cur = n => money(L, n);
-
-  const win = (id, i) => {
-    const s = t.svc[id], S = SVC[id];
-    const prices = s.prices.map(([a, b]) => `<div class="pr"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('');
-    const chips = s.chips.map((c, k) => `<span class="chip" style="--i:${k}">${esc(c)}</span>`).join('');
-    return `
-        <article class="win${i === 0 ? ' on' : ''}" data-i="${i}">
-          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span></div>
-          <div class="win-body">
-            <div class="win-img"><img src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(S.name[L])}" loading="lazy"><span class="badge">${esc(s.badge)}</span></div>
-            <div class="win-txt">
-              <h3>${esc(S.name[L])}</h3><div class="tg">${esc(s.tag)}</div>
-              <p>${esc(s.desc)}</p>
-              <div class="chips">${chips}</div>
-              <div class="price-row">${prices}</div>
-              <a class="btn btn-main btn-sm" href="${p.newSvc(L, id)}">${esc(t.details)} ${ICON.arrow}</a>
-            </div>
-          </div>
-        </article>`;
-  };
-  const steps = HOME_ORDER.map((id, i) => `
-          <button class="step${i === 0 ? ' on' : ''}" type="button" data-i="${i}">${esc(SVC[id].name[L])}<small>${esc(t.svc[id].tag)}</small></button>`).join('');
-
-  const visit = t.visit.steps.map(([h, tx], i) => {
-    const ic = [ICON.cal, ICON.pin, ICON.clock, ICON.star][i];
-    return `
-      <div class="fcard" style="--i:${i}"><div class="fnum">${pad(i + 1)}</div><div><h3>${esc(h)}</h3><p>${esc(tx)}</p></div><div class="ficon">${ic}</div></div>`;
-  }).join('');
-
-  const pcard = (id, i, hot) => {
-    const c = t.prices.cards[id], S = SVC[id], first = S.offers[0];
-    const key = S.offers.find(o => o.book).book;
-    return `
-      <div class="pcard${hot ? ' hot' : ''} rv" style="--d:${i}"><div class="tag">${esc(c.badge)}<span class="pill">${first.minutes} ${esc(t.prices.min)}</span></div><h3>${esc(S.name[L])}</h3><div class="amt">${cur(first.price)}</div><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="${book(key)}">${esc(t.prices.choose)}</a></div>`;
-  };
-  const priceOrder = ['b-flexy', 'r-sleek', 'ems-zero', 'presoterapija'];
-  const stat = (n, label, d, pre, post) => `<div class="stat rv"${d ? ` style="--d:${d}"` : ''}><div class="big">${pre}<span data-count="${n}">${n}</span>${post}</div><p>${esc(label)}</p></div>`;
-  const wa = txt => `${WA}?text=${encodeURIComponent(txt)}`;
-
-  return head(page, t.homeTitle) + `
-<body>
-${nav(page, alt)}
-
-<main id="top">
-
-<!-- HERO -->
-<section class="sec hero">
-  <div class="wrap">
-    ${AURORA}
-    <div>
-      <span class="live rv"><i></i>${esc(t.live)}</span>
-      <h1 class="h-xl">
-        <span class="mask" style="--d:0"><span>${esc(t.h1a)}</span></span>
-        <span class="mask" style="--d:1"><span>${esc(t.h1b)}<span class="em">${esc(t.h1em)}</span></span></span>
-      </h1>
-      <p class="lead rv" style="--d:3">${esc(t.heroLead)}</p>
-      <div class="cta-row rv" style="--d:4">
-        <a class="btn btn-main" href="${book()}">${esc(t.pickTime)} ${ICON.arrow}</a>
-        <a class="btn btn-ghost" href="#uslugi">${esc(t.seeTreatments)}</a>
-      </div>
-    </div>
-    <div class="hero-photo rv" style="--d:3">
-      <div class="ph" id="hero-ph"><img id="hero-img" src="${p.img('hero.jpg')}" alt="BodyLab.Beauty" width="534" height="800" fetchpriority="high"></div>
-      <div class="float-chip fc1"><b>45</b><span>${esc(t.chip1[0])}<small>${esc(t.chip1[1])}</small></span></div>
-      <div class="float-chip fc2"><b>€</b><span>${esc(t.chip2[0])}<small>${esc(t.chip2[1])}</small></span></div>
-    </div>
-  </div>
-</section>
-
-<div class="strip" aria-hidden="true"><div class="strip-track">
-  ${[...t.strip, ...t.strip].map(x => `<span>${esc(x)}</span>`).join('')}
-</div></div>
-
-<!-- УСЛУГИ (липкая секция) -->
-<section class="pin" id="uslugi" style="--n:4" data-dock-hide>
-  <div class="pin-stick">
-    <div class="pin-in">
-      <div class="pin-l">
-        <span class="eyebrow">${esc(t.pin.eyebrow)}</span>
-        <h2 class="h-l">${esc(t.pin.h2a)}<span class="em">${esc(t.pin.h2em)}</span></h2>
-        <p class="lead">${esc(t.pin.lead)}</p>
-        <div class="rail" id="rail">
-          <div class="rail-fill"></div>${steps}
-        </div>
-      </div>
-      <div class="stage" id="stage">
-${HOME_ORDER.map(win).join('\n')}
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- КАК ПРОХОДИТ ВИЗИТ -->
-<section class="sec" id="vizit">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.visit.eyebrow)}</span>
-      <h2 class="h-l rv" style="--d:1">${esc(t.visit.h2a)}<span class="em">${esc(t.visit.h2em)}</span></h2>
-      <p class="lead rv" style="--d:2">${esc(t.visit.lead)}</p>
-    </div>
-    <div class="flow" id="flow">${visit}
-    </div>
-  </div>
-</section>
-
-<!-- ЦИФРЫ -->
-<section class="sec dark" id="cifry">
-  <div class="wrap">
-    ${AURORA}
-    <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.stats.eyebrow)}</span>
-      <h2 class="h-l rv" style="--d:1">${esc(t.stats.h2a)}<span class="em">${esc(t.stats.h2em)}</span></h2>
-    </div>
-    <div class="stats">
-      ${stat(4, t.stats.labels[0], 0, '', '')}
-      ${stat(45, t.stats.labels[1], 1, '', `<small>${esc(t.stats.min)}</small>`)}
-      ${stat(20, t.stats.labels[2], 2, `<small>${esc(t.stats.from)}</small>`, t.stats.eur ? `<small>${esc(t.stats.eur)}</small>` : '')}
-    </div>
-  </div>
-</section>
-
-<!-- ЦЕНЫ -->
-<section class="sec" id="ceny">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.prices.eyebrow)}</span>
-      <h2 class="h-l rv" style="--d:1">${esc(t.prices.h2a)}<span class="em">${esc(t.prices.h2em)}</span></h2>
-    </div>
-    <div class="prices">${priceOrder.map((id, i) => pcard(id, i, id === 'r-sleek')).join('')}
-    </div>
-    <div class="note rv">${ICON.shield}<span>${esc(t.prices.note)}</span></div>
-  </div>
-</section>
-
-<!-- ОТЗЫВЫ -->
-<section class="sec" id="otzyvy">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.reviews.eyebrow)}</span>
-      <h2 class="h-l rv" style="--d:1">${esc(t.reviews.h2a)}<span class="em">${esc(t.reviews.h2em)}</span></h2>
-    </div>
-    <div class="rev-wrap rv"><div class="rev-track" id="rev-track" data-alt="${esc(t.reviews.alt)}"></div></div>
-  </div>
-</section>
-
-<!-- ПОДАРОК + STEBBY -->
-<section class="sec" id="podarok">
-  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
-    <div class="duo">
-      <div class="box gift rv">
-        <img src="${p.img('gift-card.jpg')}" alt="${esc(t.gift.alt)}" loading="lazy">
-        <div style="display:grid;gap:12px">
-          <span class="eyebrow">${esc(t.gift.eyebrow)}</span>
-          <h3 class="h-m">${esc(t.gift.title)}</h3>
-          <p>${esc(t.gift.desc)}</p>
-          <ul>${t.gift.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
-          <a class="btn btn-main btn-sm" href="${wa(t.gift.wa)}" target="_blank" rel="noopener">${esc(t.gift.btn)}</a>
-        </div>
-      </div>
-      <div class="box rv" style="--d:1">
-        <span class="eyebrow">${esc(t.stebby.eyebrow)}</span>
-        <h3 class="h-m">${esc(t.stebby.title)}</h3>
-        <p>${esc(t.stebby.desc)}</p>
-        <img src="${p.img('stebby-logo.png')}" alt="Stebby" style="height:34px;width:auto;margin-top:auto" loading="lazy">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- КОНТАКТЫ -->
-<section class="sec dark" id="kontakty" data-dock-hide>
-  <div class="wrap">
-    ${AURORA}
-    <div class="contact">
-      <div>
-        <span class="eyebrow rv">${esc(t.contact.eyebrow)}</span>
-        <h2 class="h-xl rv" style="--d:1;font-size:clamp(40px,7vw,88px);margin-top:12px">${esc(t.contact.h2a)}<span class="em">${esc(t.contact.h2em)}</span></h2>
-        <div class="rows rv" style="--d:2">
-          <div class="row"><span>${esc(t.contact.address)}</span><span>${esc(t.contact.addrText)}</span></div>
-          <div class="row"><span>${esc(t.contact.phone)}</span><span><a href="tel:+37120888805">${PHONE}</a></span></div>
-          <div class="row"><span>Instagram</span><span><a href="${IG}" target="_blank" rel="noopener">@bodylab.beauty</a></span></div>
-        </div>
-        <div class="cta-row rv" style="--d:3">
-          <a class="btn btn-light" href="${book()}">${esc(t.bookOnline)} ${ICON.arrow}</a>
-          <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>
-        </div>
-      </div>
-      <div class="photos rv" style="--d:2"><img src="${p.img('studio-1.jpg')}" alt="${esc(t.contact.imgAlt1)}" loading="lazy"><img src="${p.img('studio-2.jpg')}" alt="${esc(t.contact.imgAlt2)}" loading="lazy"></div>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer class="f">
-  <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a> · <a href="${p.info()}">${esc(t.footer.info)}</a></span>
-</footer>
-
-<div class="dock" id="dock"><a class="btn btn-main" href="${book()}">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
-
-<script src="${p.asset('new.js')}" defer></script>
-<script src="${p.asset('home.js')}" defer></script>
-</body>
-</html>
-`;
-}
-
-// ═════════════════════════ ЗАПИСЬ (демо) ═════════════════════════
-function booking(L) {
-  const t = T[L], b = t.b, page = { L, file: `new/${L}/zapis/index.html` }, p = paths(page);
-  const alt = l2 => p.newBook(l2);
+// ═════════════════════════ ЗАПИСЬ (встроена в главную; демо) ═════════════════════════
+function bookingBlock(L, p) {
+  const t = T[L], b = t.b;
   const OPT = [
     ['r-sleek', 'r-sleek', 45, 35, 'service-rsleek.jpg'],
     ['b-flexy', 'b-flexy', 45, 30, 'service-bflexy.jpg'],
@@ -331,16 +116,13 @@ function booking(L) {
   const data = { options: OPT, cur: CUR[L], months: t.months, monthsDate: t.monthsDate, wdShort: t.wdShort, wdFull: t.wdFull, dateFmt: b.dateFmt,
     min: b.min, freeTime: b.freeTime, errReq: b.errReq, errPhone: b.errPhone, toast: b.demoToast, sumDate: b.sumDate, sumTime: b.sumTime, sumSvc: b.sumSvc, sumName: b.sumName };
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
-
-  return head(page, t.bookTitle) + `
-<body>
-${nav(page, alt, { back: true })}
-
-<main class="bk">
+  const html = `
+<!-- ЗАПИСЬ -->
+<section class="bk inline" id="zapis" data-dock-hide>
   <div class="demo-bar"><i></i>${esc(b.demo)}</div>
   <div class="bk-grid">
 
-    <section class="bk-main" id="bk-main">
+    <div class="bk-main" id="bk-main">
       <div class="bk-top">
         <span class="eyebrow rv">${esc(b.eyebrow)}</span>
         <div class="steps rv" style="--d:1" id="steps">
@@ -352,7 +134,7 @@ ${nav(page, alt, { back: true })}
 
       <div class="pane show" id="p1">
         <h2>${esc(b.s1h)}</h2>
-        <p class="lead">${esc(b.s1lead)}</p>
+        <p class="lead">${esc(b.s1lead)} <a class="link-u" href="#podbor">${esc(t.quizLink[0])}${esc(t.quizLink[1])}</a></p>
         <div class="optgrid" id="optgrid"></div>
         <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>${esc(b.pickDate)} ${ICON.arrow}</button></div>
       </div>
@@ -406,10 +188,9 @@ ${nav(page, alt, { back: true })}
         <div class="pane-foot">
           <button class="btn btn-main" type="button" data-demo>${esc(b.gcal)}</button>
           <button class="btn btn-ghost" type="button" data-demo>${esc(b.ics)}</button>
-          <a class="btn btn-ghost" href="${p.newHome(L)}">${esc(b.home)}</a>
         </div>
       </div>
-    </section>
+    </div>
 
     <aside class="sum" id="sum" aria-live="polite">
       ${AURORA}
@@ -422,17 +203,286 @@ ${nav(page, alt, { back: true })}
       <p class="help">${esc(b.help[0])}<a href="${WA}" target="_blank" rel="noopener">${esc(b.help[1])}</a>${esc(b.help[2])}</p>
     </aside>
   </div>
+</section>
+<div class="toast" id="toast" role="status"></div>`;
+  return { html, json };
+}
+
+// ═════════════════════════ ТЕСТ «подберите процедуру» ═════════════════════════
+function quizBlock(L, p) {
+  const t = T[L], q = t.quizUi;
+  const ui = UI[L];
+  const results = {};
+  for (const id of QZ.IDS) {
+    const S = SVC[id], key = S.offers.find(o => o.book).book, min = Math.min(...S.offers.map(o => o.price));
+    results[id] = {
+      name: S.name[L], tag: t.svc[id].tag, img: `images/${S.image.replace('/images/', '')}`, key,
+      why: QZ.WHY[id].map(i => S.goals[L][i]), from: S.offers.length > 1,
+      price: moneyPlain(L, min), pkg: S.offers.some(o => o.sessions), href: p.newSvc(L, id),
+    };
+  }
+  const data = { ids: QZ.IDS, w: QZ.W, q: QZ.QUIZ[L], results, ui: { ...q, noteExtra: ui.beforeText }, cur: CUR[L] };
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  const html = `
+<!-- ПОДБОР ПРОЦЕДУРЫ -->
+<section class="sec" id="podbor">
+  <div class="wrap quiz-wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(q.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(q.h2a)}<span class="em">${esc(q.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(q.lead)}</p>
+    </div>
+    <div class="quiz rv" style="--d:3" id="quiz">
+      <div class="quiz-start" id="quiz-start"><button class="btn btn-main" type="button" id="quiz-go">${esc(q.start)} ${ICON.arrow}</button></div>
+      <div class="quiz-run" id="quiz-run" hidden>
+        <div class="quiz-bar" id="quiz-bar"></div>
+        <div class="quiz-count" id="quiz-count"></div>
+        <h3 class="quiz-q" id="quiz-q"></h3>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">${esc(q.back)}</button>
+      </div>
+      <div class="quiz-res" id="quiz-res" hidden></div>
+    </div>
+  </div>
+</section>`;
+  return { html, json };
+}
+
+// ═════════════════════════ ГЛАВНАЯ ═════════════════════════
+const STUDIO = ['studio-3.jpg', 'studio-1.jpg', 'studio-2.jpg', 'building-1.jpg', 'building-2.jpg']; // сюда добавим новые фото студии
+
+function home(L) {
+  const t = T[L], page = { L, file: `new/${L}/index.html` }, p = paths(page);
+  const alt = l2 => p.newHome(l2);
+  const cur = n => money(L, n);
+  const bk = bookingBlock(L, p), qz = quizBlock(L, p);
+
+  const win = (id, i) => {
+    const s = t.svc[id], S = SVC[id];
+    const prices = s.prices.map(([a, b]) => `<div class="pr"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('');
+    const chips = s.chips.map((c, k) => `<span class="chip" style="--i:${k}">${esc(c)}</span>`).join('');
+    return `
+        <article class="win${i === 0 ? ' on' : ''}" data-i="${i}">
+          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span></div>
+          <div class="win-body">
+            <div class="win-img"><img src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(S.name[L])}" loading="lazy"><span class="badge">${esc(s.badge)}</span></div>
+            <div class="win-txt">
+              <h3>${esc(S.name[L])}</h3><div class="tg">${esc(s.tag)}</div>
+              <p>${esc(s.desc)}</p>
+              <div class="chips">${chips}</div>
+              <div class="price-row">${prices}</div>
+              <a class="btn btn-main btn-sm" href="${p.newSvc(L, id)}">${esc(t.details)} ${ICON.arrow}</a>
+            </div>
+          </div>
+        </article>`;
+  };
+  const steps = HOME_ORDER.map((id, i) => `
+          <button class="step${i === 0 ? ' on' : ''}" type="button" data-i="${i}">${esc(SVC[id].name[L])}<small>${esc(t.svc[id].tag)}</small></button>`).join('');
+
+  const visit = t.visit.steps.map(([h, tx], i) => {
+    const ic = [ICON.chat, ICON.cal, ICON.pin, ICON.clock][i];
+    const extra = i === 0 ? ` <a class="link-u" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>` : '';
+    return `
+      <div class="fcard" style="--i:${i}"><div class="fnum">${pad(i + 1)}</div><div><h3>${esc(h)}</h3><p>${esc(tx)}${extra}</p></div><div class="ficon">${ic}</div></div>`;
+  }).join('');
+
+  const pcard = (id, i, hot) => {
+    const c = t.prices.cards[id], S = SVC[id], first = S.offers[0];
+    const key = S.offers.find(o => o.book).book;
+    return `
+      <div class="pcard${hot ? ' hot' : ''} rv" style="--d:${i}"><div class="tag">${esc(c.badge)}<span class="pill">${first.minutes} ${esc(t.prices.min)}</span></div><h3>${esc(S.name[L])}</h3><div class="amt">${cur(first.price)}</div><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="#zapis" data-pick="${key}">${esc(t.prices.choose)}</a></div>`;
+  };
+  const priceOrder = ['b-flexy', 'r-sleek', 'ems-zero', 'presoterapija'];
+  const stat = (it, d) => `<div class="stat rv"${d ? ` style="--d:${d}"` : ''}><div class="big">${it.pre ? `<small>${esc(it.pre)}</small>` : ''}<span data-count="${it.n}">${it.n}</span>${it.post ? `<small>${esc(it.post)}</small>` : ''}</div><p>${esc(it.label)}</p></div>`;
+  const wa = txt => `${WA}?text=${encodeURIComponent(txt)}`;
+  const studio = STUDIO.map((f, i) => `<figure class="sph sph${i + 1}"><img src="${p.img(f)}" alt="${esc(t.studio.alts[i] || t.studio.alts[0])}" loading="lazy"></figure>`).join('');
+
+  return head(page, t.homeTitle) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<!-- HERO -->
+<section class="sec hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <span class="live rv"><i></i>${esc(t.live)}</span>
+      <h1 class="h-xl">
+        <span class="mask" style="--d:0"><span>${esc(t.h1a)}</span></span>
+        <span class="mask" style="--d:1"><span>${esc(t.h1b)}<span class="em">${esc(t.h1em)}</span></span></span>
+      </h1>
+      <p class="lead rv" style="--d:3">${esc(t.heroLead)}</p>
+      <div class="cta-row rv" style="--d:4">
+        <a class="btn btn-main" href="#zapis">${esc(t.pickTime)} ${ICON.arrow}</a>
+        <a class="btn btn-ghost" href="#uslugi">${esc(t.seeTreatments)}</a>
+      </div>
+    </div>
+    <div class="hero-photo rv" style="--d:3">
+      <div class="ph" id="hero-ph"><img id="hero-img" src="${p.img('hero.jpg')}" alt="BodyLab.Beauty" width="534" height="800" fetchpriority="high"></div>
+      <div class="float-chip fc1"><b>${esc(t.chip1.b)}</b><span>${esc(t.chip1.main)}<small>${esc(t.chip1.small)}</small></span></div>
+      <div class="float-chip fc2"><b>${esc(t.chip2.b)}</b><span>${esc(t.chip2.main)}<small>${esc(t.chip2.small)}</small></span></div>
+    </div>
+  </div>
+</section>
+${bk.html}
+${qz.html}
+
+<div class="strip" aria-hidden="true"><div class="strip-track">
+  ${[...t.strip, ...t.strip].map(x => `<span>${esc(x)}</span>`).join('')}
+</div></div>
+
+<!-- УСЛУГИ (липкая секция) -->
+<section class="pin" id="uslugi" style="--n:4" data-dock-hide>
+  <div class="pin-stick">
+    <div class="pin-in">
+      <div class="pin-l">
+        <span class="eyebrow">${esc(t.pin.eyebrow)}</span>
+        <h2 class="h-l">${esc(t.pin.h2a)}<span class="em">${esc(t.pin.h2em)}</span></h2>
+        <p class="lead">${esc(t.pin.lead)}</p>
+        <div class="rail" id="rail">
+          <div class="rail-fill"></div>${steps}
+        </div>
+      </div>
+      <div class="stage" id="stage">
+${HOME_ORDER.map(win).join('\n')}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КАК ПРОХОДИТ ВИЗИТ -->
+<section class="sec" id="vizit">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.visit.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.visit.h2a)}<span class="em">${esc(t.visit.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(t.visit.lead)}</p>
+    </div>
+    <div class="flow" id="flow">${visit}
+    </div>
+  </div>
+</section>
+
+<!-- ЦИФРЫ -->
+<section class="sec dark" id="cifry">
+  <div class="wrap">
+    ${AURORA}
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.stats.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.stats.h2a)}<span class="em">${esc(t.stats.h2em)}</span></h2>
+    </div>
+    <div class="stats">
+      ${t.stats.items.map((it, i) => stat(it, i)).join('\n      ')}
+    </div>
+  </div>
+</section>
+
+<!-- ЦЕНЫ -->
+<section class="sec" id="ceny">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.prices.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.prices.h2a)}<span class="em">${esc(t.prices.h2em)}</span></h2>
+    </div>
+    <div class="prices">${priceOrder.map((id, i) => pcard(id, i, id === 'r-sleek')).join('')}
+    </div>
+    <div class="note rv">${ICON.shield}<span>${esc(t.prices.note)}</span></div>
+  </div>
+</section>
+
+<!-- ОТЗЫВЫ -->
+<section class="sec" id="otzyvy">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.reviews.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.reviews.h2a)}<span class="em">${esc(t.reviews.h2em)}</span></h2>
+    </div>
+    <div class="revs rv" data-gallery="reviews">
+      <div class="rev-scroll" id="rev-track" data-alt="${esc(t.reviews.alt)}"></div>
+      <div class="rev-ctl">
+        <span class="rev-hint">${esc(t.reviewsUi.hint)}</span>
+        <div class="cal-nav"><button type="button" id="rev-prev" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" id="rev-next" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- СТУДИЯ -->
+<section class="sec" id="studija">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.studio.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.studio.h2a)}<span class="em">${esc(t.studio.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(t.studio.lead)}</p>
+    </div>
+    <div class="studio rv" data-gallery="studio" style="--d:3">${studio}</div>
+  </div>
+</section>
+
+<!-- ПОДАРОК + STEBBY -->
+<section class="sec" id="podarok">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="duo">
+      <div class="box gift rv">
+        <img src="${p.img('gift-card.jpg')}" alt="${esc(t.gift.alt)}" loading="lazy">
+        <div style="display:grid;gap:12px">
+          <span class="eyebrow">${esc(t.gift.eyebrow)}</span>
+          <h3 class="h-m">${esc(t.gift.title)}</h3>
+          <p>${esc(t.gift.desc)}</p>
+          <ul>${t.gift.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+          <a class="btn btn-main btn-sm" href="${wa(t.gift.wa)}" target="_blank" rel="noopener">${esc(t.gift.btn)}</a>
+        </div>
+      </div>
+      <div class="box rv" style="--d:1">
+        <span class="eyebrow">${esc(t.stebby.eyebrow)}</span>
+        <h3 class="h-m">${esc(t.stebby.title)}</h3>
+        <p>${esc(t.stebby.desc)}</p>
+        <img class="stebby-logo nozoom" src="${p.img('stebby-logo.png')}" alt="Stebby" width="1280" height="307" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="sec dark" id="kontakty" data-dock-hide>
+  <div class="wrap">
+    ${AURORA}
+    <div class="contact">
+      <div>
+        <span class="eyebrow rv">${esc(t.contact.eyebrow)}</span>
+        <h2 class="h-xl rv" style="--d:1;font-size:clamp(40px,7vw,88px);margin-top:12px">${esc(t.contact.h2a)}<span class="em">${esc(t.contact.h2em)}</span></h2>
+        <div class="rows rv" style="--d:2">
+          <div class="row"><span>${esc(t.contact.address)}</span><span>${esc(t.contact.addrText)}</span></div>
+          <div class="row"><span>${esc(t.contact.phone)}</span><span><a href="tel:+37120888805">${PHONE}</a></span></div>
+          <div class="row"><span>Instagram</span><span><a href="${IG}" target="_blank" rel="noopener">@bodylab.beauty</a></span></div>
+        </div>
+        <div class="cta-row rv" style="--d:3">
+          <a class="btn btn-light" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a>
+          <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+      <div class="photos rv" style="--d:2" data-gallery="contact"><img src="${p.img('studio-1.jpg')}" alt="${esc(t.contact.imgAlt1)}" loading="lazy"><img src="${p.img('studio-2.jpg')}" alt="${esc(t.contact.imgAlt2)}" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <footer class="f">
   <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldHome(L)}">${esc(b.footLive)}</a> · <a href="${p.info()}">${esc(t.footer.info)}</a></span>
+  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a> · <a href="${p.info()}">${esc(t.footer.info)}</a></span>
 </footer>
-<div class="toast" id="toast" role="status"></div>
 
-<script type="application/json" id="i18n">${json}</script>
+<div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
+
+<script type="application/json" id="i18n">${bk.json}</script>
+<script type="application/json" id="quiz-data">${qz.json}</script>
 <script src="${p.asset('new.js')}" defer></script>
 <script src="${p.asset('booking.js')}" defer></script>
+<script src="${p.asset('quiz.js')}" defer></script>
+<script src="${p.asset('home.js')}" defer></script>
 </body>
 </html>
 `;
@@ -630,6 +680,5 @@ function write(file, html) {
 }
 for (const L of LANGS) {
   write(`new/${L}/index.html`, home(L));
-  write(`new/${L}/zapis/index.html`, booking(L));
   for (const S of SERVICES) write(`new/${L}/${S.slug[L]}/index.html`, service(L, S));
 }

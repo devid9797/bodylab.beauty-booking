@@ -49,11 +49,20 @@
     el.textContent = 0; co.observe(el);
   });
 
-  /* отзывы – лента, продублированная для бесшовности */
+  /* отзывы: крупные карточки, листание, клик – открыть крупно (лайтбокс) */
   var track = $('#rev-track');
   if(track){
     var html = '', alt = track.dataset.alt || '';
-    for(var n=1;n<=10;n++) html += '<div class="rev"><img src="'+ROOT+'images/review-'+n+'.jpg" alt="'+alt+' '+n+'" loading="lazy" width="324" height="640"></div>';
-    track.innerHTML = html + html;
+    for(var n=1;n<=10;n++) html += '<figure class="rev"><img src="'+ROOT+'images/review-'+n+'.jpg" alt="'+alt+' '+n+'" loading="lazy" width="324" height="640"></figure>';
+    track.innerHTML = html;
+    if(B.zoomMark) B.zoomMark(track);
+    var step = function(dir){ var w = track.firstElementChild ? track.firstElementChild.getBoundingClientRect().width + 18 : 300; track.scrollBy({left: dir * w * (innerWidth > 700 ? 2 : 1), behavior: reduce ? 'auto' : 'smooth'}); };
+    $('#rev-prev').addEventListener('click',function(){ step(-1); });
+    $('#rev-next').addEventListener('click',function(){ step(1); });
+    var upd = function(){ var max = track.scrollWidth - track.clientWidth - 4; $('#rev-prev').disabled = track.scrollLeft < 4; $('#rev-next').disabled = track.scrollLeft >= max; };
+    track.addEventListener('scroll',upd,{passive:true}); upd(); addEventListener('resize',upd);
   }
+
+  /* студия и остальные фото на странице тоже открываются крупно */
+  if(B.zoomMark) B.zoomMark();
 })();
