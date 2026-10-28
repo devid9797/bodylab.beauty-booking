@@ -29,6 +29,7 @@ const ICON = {
   tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>',
   cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
   pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>',
   star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.7 6.7 19.6l1.1-6L3.4 9.4l6-.8z"/></svg>',
   shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
   prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -369,6 +370,7 @@ ${nav(page, alt)}
   <div class="wrap">
     ${AURORA}
     <div>
+      <span class="tag-women rv"><i></i>${esc(t.womenOnly)}</span>
       <h1 class="h-xl">
         <span class="mask" style="--d:0"><span>${esc(t.h1a)}</span></span>
         <span class="mask" style="--d:1"><span>${esc(t.h1b)}<span class="em">${esc(t.h1em)}</span></span></span>
@@ -593,6 +595,7 @@ function service(L, S) {
           <span class="fact">${ICON.clock}${mins.join(s.orWord)} ${esc(t.b.min)}</span>
           <span class="fact">${ICON.tag}${offers.length > 1 ? esc(s.from) : ''}${ph(minPrice, true)}</span>
           <span class="fact">${ICON.cal}${esc(s.onlineBook)}</span>
+          <span class="fact">${ICON.heart}${esc(t.womenOnly)}</span>
         </div>`;
   const goals = S.goals[L].map((g, i) => `
       <div class="gcard rv" style="--d:${i}"><div class="n pearl">${pad(i + 1)}</div><h3>${esc(g)}</h3></div>`).join('');
