@@ -130,6 +130,16 @@
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ fab.classList.remove('open'); ft.setAttribute('aria-expanded',false); } });
   }
 
+
+  /* ---- 9. язык: выпадающий список рядом с бургером (телефон) ---- */
+  var dd = $('#lang-dd');
+  if(dd){
+    var lb = $('#lang-btn');
+    lb.addEventListener('click',function(e){ e.stopPropagation(); var o = dd.classList.toggle('open'); lb.setAttribute('aria-expanded',o); });
+    document.addEventListener('click',function(e){ if(!dd.contains(e.target)){ dd.classList.remove('open'); lb.setAttribute('aria-expanded',false); } });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ dd.classList.remove('open'); lb.setAttribute('aria-expanded',false); } });
+  }
+
   /* ---- общий цикл на rAF ---- */
   var ticking = false, hooks = [onScroll,heroPar,sweepReveal];
   window.BL.onFrame = function(fn){ hooks.push(fn); fn(); };
