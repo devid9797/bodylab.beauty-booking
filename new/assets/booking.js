@@ -45,8 +45,6 @@
     setRow('s-name', o ? esc(o.name) + '<br><small style="font-weight:500;color:#A39C93">' + esc(o.tag) + ' · ' + o.min + ' ' + I.min + '</small>' : '');
     var pk = $('#picked');                                  // «Процедура: R-Sleek ✕» над календарём, если выбрана заранее
     if(o && st.step === 1){ pk.hidden = false; $('#picked-t').textContent = I.chosen + ': ' + o.name + (o.id.indexOf('ems')===0 ? ' · ' + o.tag : ''); } else pk.hidden = true;
-    var rc = $('#recap');                                    // на телефоне над полями: дата · время · процедура
-    if(rc) rc.innerHTML = (st.date ? '<b>'+fmtDate(st.date)+'</b>' : '') + (st.time ? '<span>'+st.time+'</span>' : '') + (o ? '<span>'+esc(o.name)+(o.id.indexOf('ems')===0 ? ' · '+esc(o.tag) : '')+'</span>' : '');
     $('#go3').disabled = !st.opt;
     $('#go2').disabled = !st.time;
   }
