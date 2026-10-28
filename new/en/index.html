@@ -19,6 +19,7 @@
     <a class="logo" href="index.html" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="../../images/logo-mark.png" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
     <div class="nav-r">
       <div class="langs" aria-label="Language"><a href="../lv/index.html" hreflang="lv">LV</a><a href="../ru/index.html" hreflang="ru">RU</a><a href="index.html" class="on" aria-current="true" hreflang="en">EN</a></div>
+      <div class="lang-dd" id="lang-dd"><button class="lang-btn" id="lang-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Language: EN"><span>EN</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lang-pop" role="menu"><a href="../lv/index.html" hreflang="lv">LV</a><a href="../ru/index.html" hreflang="ru">RU</a><a href="index.html" class="on" aria-current="true" hreflang="en">EN</a></div></div>
       <a class="btn btn-main btn-sm" href="#zapis">Book now</a>
       <button class="menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i></button>
     </div>
@@ -114,6 +115,7 @@
       </div>
 
       <div class="pane" id="p3">
+        <div class="recap" id="recap"></div>
         <h2>Almost done</h2>
         <p class="lead">Leave your contact details – no account needed.</p>
         <form class="form" id="form" novalidate>
@@ -128,6 +130,7 @@
           </details>
           <div class="form-err" id="form-err" role="alert"></div>
           <p class="terms">By confirming your booking, you agree that if it is cancelled or rescheduled less than 24 hours before the treatment, the full price of the treatment is charged.</p>
+          <p class="consent">By submitting the form, you agree to the processing of your data. <a href="privacy/index.html" target="_blank" rel="noopener">Privacy policy</a></p>
         </form>
         <div class="pane-foot pane-foot-form">
           <button class="btn btn-ghost" type="button" data-back="2">Back</button>
@@ -153,7 +156,7 @@
       <div class="srow"><span>Date</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>Time</span><span id="s-time"><b class="dash">—</b></span></div>
       <div class="srow"><span>Treatment</span><span id="s-name"><b class="dash">—</b></span></div>
-      <p class="help">Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, room 506, Riga. Questions – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
+      <p class="help">Questions – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </aside>
   </div>
 </section>
@@ -252,8 +255,8 @@
     <div class="flow" id="flow">
       <div class="fcard" style="--i:0"><div class="fnum">01</div><div><h3>Explore the treatments</h3><p>See how the treatments differ. If you have questions, message us on WhatsApp. <a class="link-u" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a></p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></div></div>
       <div class="fcard" style="--i:1"><div class="fnum">02</div><div><h3>Pick a time online</h3><p>Choose a free time in the online calendar and fill in a short form – no account needed.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div></div>
-      <div class="fcard" style="--i:2"><div class="fnum">03</div><div><h3>Come to the studio</h3><p>Deglava Biroji, 5th floor, room 506. You will get a reminder about a day before your visit.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div></div>
-      <div class="fcard" style="--i:3"><div class="fnum">04</div><div><h3>The treatment itself</h3><p>One session takes 30 to 45 minutes; two EMS Zero sessions in a row take 60.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
+      <div class="fcard" style="--i:2"><div class="fnum">03</div><div><h3>Come to the studio</h3><p>Deglava Biroji, 5th floor. You will get a reminder about a day before your visit.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div></div>
+      <div class="fcard" style="--i:3"><div class="fnum">04</div><div><h3>The treatment itself</h3><p>One session takes 30 to 45 minutes; two EMS Zero sessions in a row take 60. The treatments need a special suit: we provide it, and after that you bring it with you to every visit.</p></div><div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
     </div>
   </div>
 </section>
@@ -297,9 +300,9 @@
       <h2 class="h-l rv" style="--d:1">Treatment <span class="em">options</span></h2>
     </div>
     <div class="prices">
-      <div class="pcard rv" style="--d:0"><div class="tag">Anti-cellulite<span class="pill">45 min</span></div><h3>B-Flexy</h3><div class="amt">€30</div><ul><li>1 session</li><li>10-session package: €280</li><li>Vacuum roller massage</li></ul><a class="btn btn-ghost" href="#zapis" data-pick="b-flexy">Choose</a></div>
-      <div class="pcard hot rv" style="--d:1"><div class="tag">Top treatment<span class="pill">45 min</span></div><h3>R-Sleek</h3><div class="amt">€35</div><ul><li>1 session</li><li>10-session package: €330</li><li>Deep contouring massage</li></ul><a class="btn btn-light" href="#zapis" data-pick="r-sleek">Choose</a></div>
-      <div class="pcard rv" style="--d:2"><div class="tag">Effortless<span class="pill">30 min</span></div><h3>EMS Zero</h3><div class="amt">€20</div><ul><li>1 session</li><li>2 in a row (60 min): €35</li><li>Muscle stimulation</li></ul><a class="btn btn-ghost" href="#zapis" data-pick="ems-zero-1">Choose</a></div>
+      <div class="pcard rv" style="--d:0"><div class="tag">Anti-cellulite<span class="pill">45 min</span></div><h3>B-Flexy</h3><div class="amt">€30</div><ul><li>1 session</li><li>10 sessions – €280</li><li>Vacuum roller massage</li></ul><a class="btn btn-ghost" href="#zapis" data-pick="b-flexy">Choose</a></div>
+      <div class="pcard hot rv" style="--d:1"><div class="tag">Top treatment<span class="pill">45 min</span></div><h3>R-Sleek</h3><div class="amt">€35</div><ul><li>1 session</li><li>10 sessions – €330</li><li>Deep contouring massage</li></ul><a class="btn btn-light" href="#zapis" data-pick="r-sleek">Choose</a></div>
+      <div class="pcard rv" style="--d:2"><div class="tag">Effortless<span class="pill">30 min</span></div><h3>EMS Zero</h3><div class="amt">€20</div><ul><li>1 session</li><li>2 in a row, 60 min – €35</li><li>Muscle stimulation</li></ul><a class="btn btn-ghost" href="#zapis" data-pick="ems-zero-1">Choose</a></div>
       <div class="pcard rv" style="--d:3"><div class="tag">Relaxing<span class="pill">45 min</span></div><h3>Pressotherapy</h3><div class="amt">€25</div><ul><li>1 session</li><li>Lymphatic drainage</li><li>Lighter legs</li></ul><a class="btn btn-ghost" href="#zapis" data-pick="presoterapija">Choose</a></div>
     </div>
     <div class="note rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>If a booking is cancelled or rescheduled less than 24 hours before the treatment, the full price applies. Stebby payment is accepted.</span></div>
@@ -329,7 +332,7 @@
     <div class="sec-head">
       <span class="eyebrow rv">Studio</span>
       <h2 class="h-l rv" style="--d:1">Our <span class="em">studio</span></h2>
-      <p class="lead rv" style="--d:2">Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, room 506. There is parking by the building – 1 hour free.</p>
+      <p class="lead rv" style="--d:2">Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, rooms 506 and 507. There is parking by the building – 1 hour free.</p>
     </div>
     <div class="studio rv" data-gallery="studio" style="--d:3"><figure class="sph sph1"><img src="../../images/studio-3.jpg" alt="BodyLab.Beauty studio" loading="lazy"></figure><figure class="sph sph2"><img src="../../images/studio-1.jpg" alt="Logo on the studio wall" loading="lazy"></figure><figure class="sph sph3"><img src="../../images/studio-2.jpg" alt="Equipment in the studio" loading="lazy"></figure><figure class="sph sph4"><img src="../../images/building-1.jpg" alt="Deglava Biroji business centre" loading="lazy"></figure><figure class="sph sph5"><img src="../../images/building-2.jpg" alt="Business centre lobby" loading="lazy"></figure></div>
   </div>
@@ -368,7 +371,7 @@
         <span class="eyebrow rv">Contact</span>
         <h2 class="h-xl rv" style="--d:1;font-size:clamp(40px,7vw,88px);margin-top:12px">See you <span class="em">at the studio</span></h2>
         <div class="rows rv" style="--d:2">
-          <div class="row"><span>Address</span><span>Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, room 506, Riga, Latvia</span></div>
+          <div class="row"><span>Address</span><span>Augusta Deglava iela 66, “Deglava Biroji”, 5th floor, rooms 506 and 507, Riga, Latvia</span></div>
           <div class="row"><span>Phone</span><span><a href="tel:+37120888805">+371 20888805</a></span></div>
           <div class="row"><span>Instagram</span><span><a href="https://www.instagram.com/bodylab.beauty" target="_blank" rel="noopener">@bodylab.beauty</a></span></div>
         </div>
@@ -386,7 +389,7 @@
 
 <footer class="f">
   <nav class="f-links" aria-label="Client information"><a href="info/index.html">Client information</a><a href="#uslugi">Treatments</a><a href="../../en/index.html">Current site</a></nav>
-  <span class="f-c">© BodyLab.Beauty · Riga</span>
+  <span class="f-c">© BodyLab.Beauty · Riga · <a class="f-priv" href="privacy/index.html">Privacy policy</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">Book online <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>

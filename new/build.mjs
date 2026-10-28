@@ -14,6 +14,7 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = dirname(fileURLToPath(import.meta.url)); // …/new
+const fixCab = (L, s) => L === 'ru' ? s.replace('кабинет 506', 'кабинеты 506, 507') : L === 'lv' ? s.replace('506. kabinetā', '506. un 507. kabinetā') : s.replace('room 506', 'rooms 506 and 507');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const pad = n => String(n).padStart(2, '0');
 const SVC = Object.fromEntries(SERVICES.map(s => [s.id, s]));
@@ -57,6 +58,7 @@ function paths(page) {
     oldSvc: (L2, id) => rel(`${L2}/${SVC[id].slug[L2]}/index.html`),
     info: () => rel('info/index.html'),
     newInfo: L2 => rel(`new/${L2}/info/index.html`),
+    newPrivacy: L2 => rel(`new/${L2}/privacy/index.html`),
   };
 }
 
@@ -92,6 +94,7 @@ function nav(page, alt, opts = {}) {
     <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="${p.img('logo-mark.png')}" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
     <div class="nav-r">
       <div class="langs" aria-label="${esc(t.langLabel)}">${langs}</div>
+      <div class="lang-dd" id="lang-dd"><button class="lang-btn" id="lang-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="${esc(t.langLabel)}: ${t.code}"><span>${t.code}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lang-pop" role="menu">${langs}</div></div>
       ${rightBtn}
       <button class="menu-btn" id="menu-btn" type="button" aria-label="${esc(t.menuAria)}" aria-expanded="false" aria-controls="menu"><i></i></button>
     </div>
@@ -169,6 +172,7 @@ function bookingBlock(L, p) {
       </div>
 
       <div class="pane" id="p3">
+        <div class="recap" id="recap"></div>
         <h2>${esc(b.s3h)}</h2>
         <p class="lead">${esc(b.s3lead)}</p>
         <form class="form" id="form" novalidate>
@@ -183,6 +187,7 @@ function bookingBlock(L, p) {
           </details>
           <div class="form-err" id="form-err" role="alert"></div>
           <p class="terms">${esc(b.terms)}</p>
+          <p class="consent">${esc(t.privacyLine)} <a href="${p.newPrivacy(L)}" target="_blank" rel="noopener">${esc(t.privacyLink)}</a></p>
         </form>
         <div class="pane-foot pane-foot-form">
           <button class="btn btn-ghost" type="button" data-back="2">${esc(b.back)}</button>
@@ -500,7 +505,7 @@ ${qz.teaser}
 
 <footer class="f">
   <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a><a href="#uslugi">${esc(t.menu[1])}</a><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></nav>
-  <span class="f-c">${esc(t.footer.rights)}</span>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
@@ -555,7 +560,7 @@ function service(L, S) {
         ${cta}
       </div>`;
   }).join('');
-  const faq = [...S.faq[L], ui.faqBook, ui.faqCancel, ui.faqPay, ui.faqWhere].map((f, i) => `
+  const faq = [...S.faq[L], ui.faqBook, ui.faqCancel, ui.faqPay, { ...ui.faqWhere, a: fixCab(L, ui.faqWhere.a) }].map((f, i) => `
         <div class="acc-i rv${i === 0 ? ' open' : ''}" style="--d:${i}">
           <button class="acc-q" type="button" aria-expanded="${i === 0}"><span>${esc(f.q)}</span><i></i></button>
           <div class="acc-a"><div><p>${esc(f.a)}</p></div></div>
@@ -676,7 +681,7 @@ ${nav(page, alt)}
 
 <footer class="f">
   <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(ui.allTreatments)}</a><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a><a href="${p.oldSvc(L, id)}">${esc(t.footer.thisPage)}</a></nav>
-  <span class="f-c">${esc(t.footer.rights)}</span>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a></div>
@@ -755,6 +760,50 @@ ${nav(page, alt)}
 
 <footer class="f">
   <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(t.menu[1])}</a><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
+</footer>
+${fab(L)}
+
+<script src="${p.asset('new.js')}" defer></script>
+</body>
+</html>
+`;
+}
+
+
+// ═════════════════════════ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ (простая) ═════════════════════════
+function privacyPage(L) {
+  const t = T[L], v = t.privacy, page = { L, file: `new/${L}/privacy/index.html` }, p = paths(page);
+  const alt = l2 => p.newPrivacy(l2);
+  const items = [v.who, v.what, v.why, v.keep, v.rights].map(([h, tx], i) => `
+      <article class="icard rv" style="--d:${i}"><h2 class="ph2">${esc(h)}</h2><p class="ip">${esc(tx)}</p></article>`).join('');
+  return head(page, `${v.title} – BodyLab.Beauty`) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<section class="sec svc-hero info-hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <h1 class="h-l rv">${esc(v.title)}</h1>
+      <p class="lead rv" style="--d:1;margin-top:14px">${esc(v.sub)}</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="prose">${items}
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="f">
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}">${esc(t.menu[1])}</a><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></nav>
   <span class="f-c">${esc(t.footer.rights)}</span>
 </footer>
 ${fab(L)}
@@ -775,5 +824,6 @@ function write(file, html) {
 for (const L of LANGS) {
   write(`new/${L}/index.html`, home(L));
   write(`new/${L}/info/index.html`, infoPage(L));
+  write(`new/${L}/privacy/index.html`, privacyPage(L));
   for (const S of SERVICES) write(`new/${L}/${S.slug[L]}/index.html`, service(L, S));
 }
