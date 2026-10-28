@@ -25,14 +25,15 @@
   </div>
 </header>
 <nav class="menu" id="menu" aria-label="Меню">
-  <a class="m-link" href="index.html#zapis">Запись <small>01</small></a>
+  <a class="m-link" href="index.html#zapis">Онлайн-запись <small>01</small></a>
   <a class="m-link" href="index.html#uslugi">Процедуры <small>02</small></a>
   <a class="m-link" href="index.html#vizit">Как проходит визит <small>03</small></a>
-  <a class="m-link" href="index.html#ceny">Цены <small>04</small></a>
-  <a class="m-link" href="index.html#otzyvy">Отзывы <small>05</small></a>
-  <a class="m-link" href="index.html#studija">Студия <small>06</small></a>
-  <a class="m-link" href="index.html#podarok">Подарочная карта <small>07</small></a>
-  <a class="m-link" href="index.html#kontakty">Контакты <small>08</small></a>
+  <a class="m-link" href="index.html#podbor">Подбор процедуры <small>04</small></a>
+  <a class="m-link" href="index.html#ceny">Цены <small>05</small></a>
+  <a class="m-link" href="index.html#otzyvy">Отзывы <small>06</small></a>
+  <a class="m-link" href="index.html#studija">Студия <small>07</small></a>
+  <a class="m-link" href="index.html#podarok">Подарочная карта <small>08</small></a>
+  <a class="m-link" href="index.html#kontakty">Контакты <small>09</small></a>
   <div class="m-foot">
     <a class="btn btn-main" href="index.html#zapis">Записаться онлайн</a>
     <a class="btn btn-ghost" href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>
@@ -47,7 +48,6 @@
   <div class="wrap">
     <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
     <div>
-      <span class="live rv"><i></i>Онлайн-запись открыта</span>
       <h1 class="h-xl">
         <span class="mask" style="--d:0"><span>Красивое тело</span></span>
         <span class="mask" style="--d:1"><span>начинается <span class="em">здесь</span></span></span>
@@ -71,9 +71,8 @@
   <div class="bk-grid">
 
     <div class="bk-main" id="bk-main">
-      <div class="demo-bar"><i></i>Демо: данные не отправляются, время сгенерировано.</div>
+      <h2 class="bk-title">Онлайн-запись</h2>
       <div class="bk-top">
-        <span class="eyebrow rv">Онлайн-запись</span>
         <div class="steps rv" style="--d:1" id="steps">
           <button class="stp on" type="button" data-s="1"><b>1</b><span>Дата и время</span></button>
           <button class="stp" type="button" data-s="2" disabled><b>2</b><span>Процедура</span></button>
@@ -154,8 +153,6 @@
       <div class="srow"><span>Дата</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>Время</span><span id="s-time"><b class="dash">—</b></span></div>
       <div class="srow"><span>Процедура</span><span id="s-name"><b class="dash">—</b></span></div>
-      <div class="srow"><span>Длительность</span><span id="s-min"><b class="dash">—</b></span></div>
-      <div class="total"><span>Итого</span><div class="big" id="s-total">0 €</div></div>
       <p class="help">Augusta Deglava iela 66, «Deglava Biroji», 5-й этаж, кабинет 506, Рига. Вопросы – <a href="https://wa.me/37120888805" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </aside>
   </div>
@@ -388,8 +385,8 @@
 </main>
 
 <footer class="f">
-  <span>© BodyLab.Beauty · Рига</span>
-  <span><a href="../../ru/index.html">Текущий сайт</a> · <a href="info/index.html">Информация для клиентов</a></span>
+  <nav class="f-links" aria-label="Информация для клиентов"><a href="info/index.html">Информация для клиентов</a><a href="#uslugi">Процедуры</a><a href="../../ru/index.html">Текущий сайт</a></nav>
+  <span class="f-c">© BodyLab.Beauty · Рига</span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">Записаться онлайн <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
@@ -416,7 +413,7 @@
   <button class="fab-t" id="fab-t" type="button" aria-label="Написать" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
 </div>
 
-<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя","chosen":"Процедура","noFit":"не помещается в это время"}</script>
+<script type="application/json" id="i18n">{"options":[{"id":"r-sleek","name":"R-Sleek","tag":"Массаж моделирования тела","min":45,"price":35,"img":"images/service-rsleek.jpg"},{"id":"b-flexy","name":"B-Flexy","tag":"Вакуумно-роликовый массаж","min":45,"price":30,"img":"images/service-bflexy.jpg"},{"id":"ems-zero-1","name":"EMS Zero","tag":"1 процедура","min":30,"price":20,"img":"images/service-emszero.jpg"},{"id":"ems-zero-2","name":"EMS Zero","tag":"2 процедуры подряд","min":60,"price":35,"img":"images/service-emszero.jpg"},{"id":"presoterapija","name":"Прессотерапия","tag":"Лимфодренаж","min":45,"price":25,"img":"images/service-presoterapija.jpg"}],"cur":{"pre":"","suf":"€"},"months":["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],"monthsDate":["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],"wdShort":["вс","пн","вт","ср","чт","пт","сб"],"wdFull":["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],"dateFmt":"{wd}, {d} {m}","min":"мин","freeTime":"Свободное время","errReq":"Пожалуйста, заполните все обязательные поля.","errPhone":"Пожалуйста, введите корректный номер телефона для выбранной страны.","toast":"Демо: в рабочей версии здесь добавится событие в календарь","sumDate":"Дата","sumTime":"Время","sumSvc":"Услуга","sumName":"Имя","chosen":"Процедура","noFit":"свободно только {n} мин"}</script>
 <script type="application/json" id="quiz-data">{"ids":["r-sleek","b-flexy","ems-zero","presoterapija"],"w":[[[3,1,1,0],[1,3,0,0],[0,0,3,0],[0,0,0,3],[1,0,0,2]],[[1,0,1,0],[0,0,3,0],[0,1,1,0]],[[3,1,0,0],[1,3,0,0],[0,0,0,3],[0,0,3,0]],[[0,0,0,3],[0,0,0,1],[0,0,0,0]],[[1,3,0,0],[1,1,0,0],[0,0,0,0]]],"q":[["Что для вас сейчас главное?",["Уменьшить объёмы и подчеркнуть контуры","Заняться целлюлитом и неровной кожей","Подтянуть мышцы без тренировок","Убрать отёки и тяжесть в ногах","Просто расслабиться"]],["Как вы относитесь к физической нагрузке?",["Люблю тренироваться","Хочу результат без нагрузки","Иногда занимаюсь"]],["Какое воздействие вам комфортнее?",["Глубокий, интенсивный массаж","Вакуум и ролики","Мягкое расслабляющее","Стимуляция мышц"]],["Беспокоят ли вас отёки или тяжесть в ногах?",["Да, часто","Иногда","Нет"]],["Беспокоит ли вас целлюлит или неровность кожи?",["Да, заметно","Немного","Нет"]]],"results":{"r-sleek":{"name":"R-Sleek","tag":"Массаж моделирования тела","img":"images/service-rsleek.jpg","key":"r-sleek","why":["Уменьшение объёма тела","Глубокий лимфодренаж","Улучшение тонуса и эластичности кожи"],"from":true,"price":"35 €","pkg":true,"href":"r-sleek/index.html"},"b-flexy":{"name":"B-Flexy","tag":"Вакуумно-роликовый массаж","img":"images/service-bflexy.jpg","key":"b-flexy","why":["Уменьшение проявлений целлюлита","Улучшение микроциркуляции тканей","Коррекция контуров тела"],"from":true,"price":"30 €","pkg":true,"href":"b-flexy/index.html"},"ems-zero":{"name":"EMS Zero","tag":"EMS-стимуляция мышц","img":"images/service-emszero.jpg","key":"ems-zero-1","why":["Улучшение мышечного тонуса","Ускорение сжигания жира","Результат без физической нагрузки"],"from":true,"price":"20 €","pkg":false,"href":"ems-zero/index.html"},"presoterapija":{"name":"Прессотерапия","tag":"Прессотерапия / лимфодренаж","img":"images/service-presoterapija.jpg","key":"presoterapija","why":["Уменьшение отёчности","Улучшение оттока лимфы","Уменьшение чувства тяжести в ногах"],"from":false,"price":"25 €","pkg":false,"href":"presoterapija/index.html"}},"ui":{"questionsWord":"вопросов","eyebrow":"Подбор процедуры","h2a":"Не знаете, ","h2em":"что выбрать?","lead":"Ответьте на 5 коротких вопросов – подскажем, какая процедура подойдёт вам больше всего.","start":"Пройти тест","of":"из","back":"Назад","resultEyebrow":"Лучше всего подойдёт","alt":"Также стоит посмотреть","why":"Почему","book":"Записаться","more":"Подробнее о процедуре","again":"Пройти заново","package":"Для регулярных процедур есть абонемент на 10 процедур","note":"Это подсказка на основе ваших ответов, а не рекомендация врача. Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом.","from":"от ","noteExtra":"Если у вас есть проблемы со здоровьем или сомнения, подходит ли вам процедура, перед записью проконсультируйтесь с врачом и сообщите нам об этом."},"cur":{"pre":"","suf":"€"}}</script>
 <script src="../assets/new.js" defer></script>
 <script src="../assets/booking.js" defer></script>

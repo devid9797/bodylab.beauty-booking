@@ -20,11 +20,11 @@
   function seed(d){ return (d.getDate()*7 + d.getMonth()*13 + d.getFullYear()) % 11; }
   function dayOpen(d){ return d > today && d.getDay() !== 0 && seed(d) % 5 !== 0 && (d - today) < 1000*60*60*24*75; }
   function allSlots(d){
-    var out = [], WIN = [30,45,60,90,60,45];
+    var out = [], WIN = [90,60,60,120,60,90,45,60,90,60];
     for(var h=10; h<20; h++){
       for(var m=0; m<60; m+=30){
         var k = seed(d) + h*3 + m/30;
-        if(k % 3 === 0) continue;                       // занято
+        if(k % 4 === 0) continue;                       // занято
         var free = WIN[k % WIN.length];
         out.push({t:h+':'+(m?'30':'00'), free:free});
       }
@@ -42,9 +42,7 @@
     var o = st.opt;
     setRow('s-date', st.date ? fmtDate(st.date) : '');
     setRow('s-time', st.time || '');
-    setRow('s-name', o ? esc(o.name) + '<br><small style="font-weight:500;color:#A39C93">' + esc(o.tag) + '</small>' : '');
-    setRow('s-min', o ? o.min + ' ' + I.min : '');
-    $('#s-total').innerHTML = money(o ? o.price : 0);
+    setRow('s-name', o ? esc(o.name) + '<br><small style="font-weight:500;color:#A39C93">' + esc(o.tag) + ' · ' + o.min + ' ' + I.min + '</small>' : '');
     var pk = $('#picked');                                  // «Процедура: R-Sleek ✕» над календарём, если выбрана заранее
     if(o && st.step === 1){ pk.hidden = false; $('#picked-t').textContent = I.chosen + ': ' + o.name + (o.id.indexOf('ems')===0 ? ' · ' + o.tag : ''); } else pk.hidden = true;
     $('#go3').disabled = !st.opt;
@@ -97,7 +95,7 @@
     grid.innerHTML = OPTIONS.map(function(o){
       var fits = !st.time || o.min <= st.free, on = st.opt && st.opt.id === o.id;
       return '<button type="button" class="opt'+(on?' on':'')+(fits?'':' off')+'" data-id="'+o.id+'" aria-pressed="'+(!!on)+'"'+(fits?'':' disabled')+'><img src="'+ROOT+o.img+'" alt="" loading="lazy">'+
-        '<div><h3>'+esc(o.name)+'</h3><p>'+esc(o.tag)+'</p><div class="pr2">'+o.min+' '+I.min+' · '+money(o.price)+(fits?'':' · <span class="nofit">'+esc(I.noFit)+'</span>')+'</div></div>'+
+        '<div><h3>'+esc(o.name)+'</h3><p>'+esc(o.tag)+'</p><div class="pr2">'+o.min+' '+I.min+' · '+money(o.price)+(fits?'':' · <span class="nofit">'+esc(I.noFit.replace('{n}', st.free))+'</span>')+'</div></div>'+
         '<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>';
     }).join('');
   }

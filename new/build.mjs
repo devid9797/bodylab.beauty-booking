@@ -126,9 +126,8 @@ function bookingBlock(L, p) {
   <div class="bk-grid">
 
     <div class="bk-main" id="bk-main">
-      <div class="demo-bar"><i></i>${esc(b.demo)}</div>
+      <h2 class="bk-title">${esc(b.eyebrow)}</h2>
       <div class="bk-top">
-        <span class="eyebrow rv">${esc(b.eyebrow)}</span>
         <div class="steps rv" style="--d:1" id="steps">
           <button class="stp on" type="button" data-s="1"><b>1</b><span>${esc(b.steps[0])}</span></button>
           <button class="stp" type="button" data-s="2" disabled><b>2</b><span>${esc(b.steps[1])}</span></button>
@@ -209,8 +208,6 @@ function bookingBlock(L, p) {
       <div class="srow"><span>${esc(b.sumDate)}</span><span id="s-date"><b class="dash">—</b></span></div>
       <div class="srow"><span>${esc(b.sumTime)}</span><span id="s-time"><b class="dash">—</b></span></div>
       <div class="srow"><span>${esc(b.sumProc)}</span><span id="s-name"><b class="dash">—</b></span></div>
-      <div class="srow"><span>${esc(b.sumDur)}</span><span id="s-min"><b class="dash">—</b></span></div>
-      <div class="total"><span>${esc(b.sumTotal)}</span><div class="big" id="s-total">${moneyPlain(L, 0)}</div></div>
       <p class="help">${esc(b.help[0])}<a href="${WA}" target="_blank" rel="noopener">${esc(b.help[1])}</a>${esc(b.help[2])}</p>
     </aside>
   </div>
@@ -339,7 +336,6 @@ ${nav(page, alt)}
   <div class="wrap">
     ${AURORA}
     <div>
-      <span class="live rv"><i></i>${esc(t.live)}</span>
       <h1 class="h-xl">
         <span class="mask" style="--d:0"><span>${esc(t.h1a)}</span></span>
         <span class="mask" style="--d:1"><span>${esc(t.h1b)}<span class="em">${esc(t.h1em)}</span></span></span>
@@ -503,8 +499,8 @@ ${qz.teaser}
 </main>
 
 <footer class="f">
-  <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a> · <a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></span>
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a><a href="#uslugi">${esc(t.menu[1])}</a><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)}</span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
@@ -607,7 +603,6 @@ ${nav(page, alt)}
   <div class="wrap">
     <div class="how">
       <div class="sec-head" style="margin:0">
-        <span class="eyebrow rv">${esc(s.about)}</span>
         <h2 class="h-l rv" style="--d:1">${esc(ui.howTitle)}</h2>
       </div>
       <div class="rv" style="--d:2">${how}</div>
@@ -617,9 +612,6 @@ ${nav(page, alt)}
 
 <section class="sec">
   <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
-    <div class="sec-head" style="padding:clamp(20px,3vw,40px) clamp(8px,2vw,24px) 0">
-      <span class="eyebrow rv">${esc(ui.goalsTitle)}</span>
-    </div>
     <div class="goals">${goals}
     </div>
   </div>
@@ -663,16 +655,6 @@ ${nav(page, alt)}
   </div>
 </section>
 
-<section class="sec">
-  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
-    <div class="sec-head" style="padding:clamp(20px,3vw,40px) clamp(8px,2vw,24px) 0">
-      <span class="eyebrow rv">${esc(ui.otherTitle)}</span>
-    </div>
-    <div class="ocards">${others}
-    </div>
-  </div>
-</section>
-
 <section class="sec dark" data-dock-hide>
   <div class="wrap">
     ${AURORA}
@@ -693,8 +675,8 @@ ${nav(page, alt)}
 </main>
 
 <footer class="f">
-  <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldSvc(L, id)}">${esc(t.footer.thisPage)}</a> · <a href="${p.newHome(L)}">${esc(ui.allTreatments)}</a> · <a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></span>
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(ui.allTreatments)}</a><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a><a href="${p.oldSvc(L, id)}">${esc(t.footer.thisPage)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)}</span>
 </footer>
 
 <div class="dock" id="dock"><a class="btn btn-main" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a></div>
@@ -724,8 +706,7 @@ ${nav(page, alt)}
   <div class="wrap">
     ${AURORA}
     <div>
-      <span class="eyebrow rv">BodyLab.Beauty</span>
-      <h1 class="h-l rv" style="--d:1;margin-top:12px">${esc(i.title)}</h1>
+      <h1 class="h-l rv">${esc(i.title)}</h1>
       <p class="lead rv" style="--d:2;margin-top:14px">${esc(i.sub)}</p>
     </div>
   </div>
@@ -743,7 +724,7 @@ ${nav(page, alt)}
       <article class="icard rv" style="--d:1">
         <span class="eyebrow">${ICON.key}${esc(i.doorH)}</span>
         <p class="ip">${esc(i.doorP)}</p>
-        <div class="code"><small>${esc(i.doorCode)}</small><div class="big pearl">${DOOR_CODE}</div></div>
+        <div class="code"><small>${esc(i.doorCode)}</small><div class="door">${DOOR_CODE}</div></div>
         <figure class="ifig" data-gallery="info"><img src="${p.img('building-2.jpg')}" alt="${esc(i.photoAlt[1])}" loading="lazy"></figure>
       </article>
       <article class="icard rv" style="--d:2">
@@ -773,8 +754,8 @@ ${nav(page, alt)}
 </main>
 
 <footer class="f">
-  <span>${esc(t.footer.rights)}</span>
-  <span><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></span>
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(t.menu[1])}</a><a href="${p.oldHome(L)}">${esc(t.footer.current)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)}</span>
 </footer>
 ${fab(L)}
 
