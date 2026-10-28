@@ -9,12 +9,15 @@
 import { SERVICES, UI } from '../tools/content.mjs';
 import { LANGS, T, CUR, WA, IG, PHONE } from './i18n.mjs';
 import * as QZ from './quiz.mjs';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = dirname(fileURLToPath(import.meta.url)); // …/new
 const fixCab = (L, s) => L === 'ru' ? s.replace('кабинет 506', 'кабинеты 506, 507') : L === 'lv' ? s.replace('506. kabinetā', '506. un 507. kabinetā') : s.replace('room 506', 'rooms 506 and 507');
+// Версия файла в ссылке (?v=…) – чтобы браузер не использовал старый закэшированный CSS/JS вместе с новой страницей
+const ver = f => createHash('sha1').update(readFileSync(join(root, 'assets', f))).digest('hex').slice(0, 8);
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const pad = n => String(n).padStart(2, '0');
 const SVC = Object.fromEntries(SERVICES.map(s => [s.id, s]));
@@ -49,7 +52,7 @@ function paths(page) {
   const up = upRel ? upRel + '/' : '';
   return {
     up,
-    asset: f => rel(`new/assets/${f}`),
+    asset: f => rel(`new/assets/${f}`) + '?v=' + ver(f),
     img: f => rel(`images/${f}`),
     newHome: L2 => rel(`new/${L2}/index.html`),
     newBook: (L2, key) => rel(`new/${L2}/index.html`) + (key ? `?s=${key}` : '') + '#zapis',
@@ -172,7 +175,6 @@ function bookingBlock(L, p) {
       </div>
 
       <div class="pane" id="p3">
-        <div class="recap" id="recap"></div>
         <h2>${esc(b.s3h)}</h2>
         <p class="lead">${esc(b.s3lead)}</p>
         <form class="form" id="form" novalidate>
@@ -775,31 +777,17 @@ ${fab(L)}
 function privacyPage(L) {
   const t = T[L], v = t.privacy, page = { L, file: `new/${L}/privacy/index.html` }, p = paths(page);
   const alt = l2 => p.newPrivacy(l2);
-  const items = [v.who, v.what, v.why, v.keep, v.rights].map(([h, tx], i) => `
-      <article class="icard rv" style="--d:${i}"><h2 class="ph2">${esc(h)}</h2><p class="ip">${esc(tx)}</p></article>`).join('');
+  const items = [v.who, v.what, v.why, v.keep, v.rights].map(([h, tx]) => `
+    <p><b>${esc(h)}.</b> ${esc(tx)}</p>`).join('');
   return head(page, `${v.title} – BodyLab.Beauty`) + `
 <body>
 ${nav(page, alt)}
 
 <main id="top">
-
-<section class="sec svc-hero info-hero">
-  <div class="wrap">
-    ${AURORA}
-    <div>
-      <h1 class="h-l rv">${esc(v.title)}</h1>
-      <p class="lead rv" style="--d:1;margin-top:14px">${esc(v.sub)}</p>
-    </div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
-    <div class="prose">${items}
-    </div>
-  </div>
-</section>
-
+  <article class="legal">
+    <h1>${esc(v.title)}</h1>
+    <p class="sub">${esc(v.sub)}</p>${items}
+  </article>
 </main>
 
 <footer class="f">
