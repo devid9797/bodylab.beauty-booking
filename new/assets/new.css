@@ -1218,3 +1218,17 @@ footer.f{display:grid;gap:14px;justify-items:start;padding:26px 20px 120px;font-
   .pm-info .btn{justify-self:stretch}
 }
 @media (max-width:760px){.pm-photo{aspect-ratio:16/10;background:var(--card)}.pm-photo img{object-fit:contain}}
+
+/* ---- v10: подзаголовок-«кикер» нормального размера; больше воздуха сверху в записи и процедурах ---- */
+.kicker{display:block;font-size:clamp(16px,1.5vw,19px);font-weight:700;letter-spacing:-.01em;color:var(--accent-soft)}
+.bk-main{padding-top:clamp(28px,3vw,42px)}
+.pin-in{padding-top:clamp(34px,4.6vw,66px)}
+@media (max-width:820px){
+  .pin-in{padding-top:28px}
+}
+@media (max-width:640px){
+  .bk-main{padding-top:22px}
+  .pin-in{padding-top:26px}
+}
+@media (max-width:640px) and (max-height:620px){.bk-main{padding-top:14px}.pin-in{padding-top:18px}}
+@media (min-width:981px) and (max-height:780px){.bk-main{padding-top:24px}}

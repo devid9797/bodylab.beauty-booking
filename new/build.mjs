@@ -244,7 +244,6 @@ function quizBlock(L, p) {
   <div class="wrap quiz-teaser">
     ${AURORA}
     <div class="qt-text">
-      <span class="eyebrow rv">${esc(q.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(q.h2a)}<span class="em">${esc(q.h2em)}</span></h2>
       <p class="lead rv" style="--d:2">${esc(q.lead)}</p>
       <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>${esc(q.start)} ${ICON.arrow}</button></div>
@@ -398,7 +397,6 @@ ${bk.html}
   <div class="pin-stick">
     <div class="pin-in">
       <div class="pin-l">
-        <span class="eyebrow">${esc(t.pin.eyebrow)}</span>
         <h2 class="h-l">${esc(t.pin.h2a)}<span class="em">${esc(t.pin.h2em)}</span></h2>
         <p class="lead">${esc(t.pin.lead)}</p>
         <div class="rail" id="rail">
@@ -416,7 +414,7 @@ ${HOME_ORDER.map(win).join('\n')}
 <section class="sec" id="vizit">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.visit.eyebrow)}</span>
+      <span class="kicker rv">${esc(t.visit.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.visit.h2a)}<span class="em">${esc(t.visit.h2em)}</span></h2>
       <p class="lead rv" style="--d:2">${esc(t.visit.lead)}</p>
     </div>
@@ -432,7 +430,6 @@ ${qz.teaser}
   <div class="wrap">
     ${AURORA}
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.stats.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.stats.h2a)}<span class="em">${esc(t.stats.h2em)}</span></h2>
     </div>
     <div class="stats">
@@ -445,7 +442,7 @@ ${qz.teaser}
 <section class="sec" id="ceny">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.prices.eyebrow)}</span>
+      <span class="kicker rv">${esc(t.prices.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.prices.h2a)}<span class="em">${esc(t.prices.h2em)}</span></h2>
     </div>
     <div class="prices">${priceOrder.map((id, i) => pcard(id, i, id === 'r-sleek')).join('')}
@@ -458,7 +455,6 @@ ${qz.teaser}
 <section class="sec" id="otzyvy">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.reviews.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.reviews.h2a)}<span class="em">${esc(t.reviews.h2em)}</span></h2>
     </div>
     <div class="revs rv" data-gallery="reviews">
@@ -475,7 +471,6 @@ ${qz.teaser}
 <section class="sec" id="studija">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.studio.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.studio.h2a)}<span class="em">${esc(t.studio.h2em)}</span></h2>
       <p class="lead rv" style="--d:2">${esc(t.studio.lead)}</p>
     </div>
@@ -487,7 +482,6 @@ ${qz.teaser}
 <section class="sec" id="produkcija">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow rv">${esc(t.products.eyebrow)}</span>
       <h2 class="h-l rv" style="--d:1">${esc(t.products.title)}</h2>
       <div class="brand-strip rv" style="--d:2"><div class="brand-wordmark">AROSHA<small>Aesthetic Science</small></div><p class="lead">${esc(t.products.brand)}</p></div>
     </div>
@@ -504,7 +498,6 @@ ${qz.teaser}
       <div class="box gift rv">
         <img src="${p.img('gift-card.jpg')}" alt="${esc(t.gift.alt)}" loading="lazy">
         <div style="display:grid;gap:12px">
-          <span class="eyebrow">${esc(t.gift.eyebrow)}</span>
           <h3 class="h-m">${esc(t.gift.title)}</h3>
           <p>${esc(t.gift.desc)}</p>
           <ul>${t.gift.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
@@ -512,7 +505,6 @@ ${qz.teaser}
         </div>
       </div>
       <div class="box rv" style="--d:1">
-        <span class="eyebrow">${esc(t.stebby.eyebrow)}</span>
         <h3 class="h-m">${esc(t.stebby.title)}</h3>
         <p>${esc(t.stebby.desc)}</p>
         <img class="stebby-logo nozoom" src="${p.img('stebby-logo.png')}" alt="Stebby" width="1280" height="307" loading="lazy">
@@ -527,7 +519,6 @@ ${qz.teaser}
     ${AURORA}
     <div class="contact">
       <div>
-        <span class="eyebrow rv">${esc(t.contact.eyebrow)}</span>
         <h2 class="h-xl rv" style="--d:1;font-size:clamp(40px,7vw,88px);margin-top:12px">${esc(t.contact.h2a)}<span class="em">${esc(t.contact.h2em)}</span></h2>
         <div class="rows rv" style="--d:2">
           <div class="row"><span>${esc(t.contact.address)}</span><span>${esc(t.contact.addrText)}</span></div>
