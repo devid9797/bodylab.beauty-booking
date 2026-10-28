@@ -283,6 +283,33 @@ function fab(L) {
 </div>`;
 }
 
+
+// ───────── каталог Arosha: берём прямо из основного index.html (один источник: цены и тексты не расходятся) ─────────
+function loadProducts() {
+  const h = readFileSync(join(root, '..', 'index.html'), 'utf8');
+  const a = h.indexOf('const PRODUCTS = {');
+  let i = h.indexOf('{', a), d = 0, j = i;
+  for (; j < h.length; j++) { if (h[j] === '{') d++; else if (h[j] === '}') { d--; if (d === 0) break; } }
+  const products = new Function('return (' + h.slice(i, j + 1) + ')')();
+  const o = h.indexOf('const PRODUCT_ORDER');
+  const order = new Function('return (' + h.slice(h.indexOf('[', o), h.indexOf(']', o) + 1) + ')')();
+  return { products, order };
+}
+const CATALOG = loadProducts();
+
+function productsBlock(L) {
+  const t = T[L], v = t.products;
+  const items = CATALOG.order.map(id => {
+    const p = CATALOG.products[id], c = p.content[L];
+    return { id, img: p.image.replace(/^\//, ''), price: p.price, name: c.name, size: c.size || '', sizes: c.sizes || '',
+      description: c.description, composition: c.composition || null, usage: c.usage, properties: c.properties };
+  });
+  const json = JSON.stringify({ items, ui: v }).replace(/</g, '\\u003c');
+  const tiles = items.map((it, i) => `
+      <button class="ptile rv" style="--d:${i % 3}" type="button" data-prod="${esc(it.id)}"><span class="pthumb"><img class="nozoom" src="PIMG:${esc(it.img)}" alt="${esc(it.name)}" loading="lazy" width="900" height="900"></span><span class="pname">${esc(it.name)}</span><span class="pprice">${esc(it.price)}</span></button>`).join('');
+  return { json, tiles };
+}
+
 // ═════════════════════════ ГЛАВНАЯ ═════════════════════════
 const STUDIO = ['studio-3.jpg', 'studio-1.jpg', 'studio-2.jpg', 'building-1.jpg', 'building-2.jpg']; // сюда добавим новые фото студии
 
@@ -290,7 +317,7 @@ function home(L) {
   const t = T[L], page = { L, file: `new/${L}/index.html` }, p = paths(page);
   const alt = l2 => p.newHome(l2);
   const cur = n => money(L, n);
-  const bk = bookingBlock(L, p), qz = quizBlock(L, p);
+  const bk = bookingBlock(L, p), qz = quizBlock(L, p), pr = productsBlock(L);
 
   const win = (id, i) => {
     const s = t.svc[id], S = SVC[id];
@@ -456,6 +483,20 @@ ${qz.teaser}
   </div>
 </section>
 
+<!-- ПРОДУКЦИЯ AROSHA -->
+<section class="sec" id="produkcija">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(t.products.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.products.title)}</h2>
+      <div class="brand-strip rv" style="--d:2"><div class="brand-wordmark">AROSHA<small>Aesthetic Science</small></div><p class="lead">${esc(t.products.brand)}</p></div>
+    </div>
+    <div class="pgrid">${pr.tiles.replace(/PIMG:/g, p.up)}
+    </div>
+    <p class="pnote rv">${esc(t.products.note)}</p>
+  </div>
+</section>
+
 <!-- ПОДАРОК + STEBBY -->
 <section class="sec" id="podarok">
   <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
@@ -512,13 +553,31 @@ ${qz.teaser}
 
 <div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
 ${qz.modal}
+<div class="qm pm" id="prod-modal" role="dialog" aria-modal="true" aria-label="${esc(t.products.title)}" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="prod-close" aria-label="${esc(t.lightbox.close)}"><i></i></button>
+    <div class="pm-body">
+      <figure class="pm-photo"><img id="pm-img" alt=""></figure>
+      <div class="pm-info">
+        <h3 class="pm-name" id="pm-name"></h3>
+        <div class="pm-price" id="pm-price"></div>
+        <div class="pm-sizes" id="pm-sizes"></div>
+        <div class="ptabs" id="pm-tabs"></div>
+        <div class="ptab-panel" id="pm-panel"></div>
+        <a class="btn btn-main" id="pm-order" href="#" target="_blank" rel="noopener">${esc(t.products.order)}</a>
+      </div>
+    </div>
+  </div>
+</div>
 ${fab(L)}
 
 <script type="application/json" id="i18n">${bk.json}</script>
 <script type="application/json" id="quiz-data">${qz.json}</script>
+<script type="application/json" id="products-data">${pr.json}</script>
 <script src="${p.asset('new.js')}" defer></script>
 <script src="${p.asset('booking.js')}" defer></script>
 <script src="${p.asset('quiz.js')}" defer></script>
+<script src="${p.asset('products.js')}" defer></script>
 <script src="${p.asset('home.js')}" defer></script>
 </body>
 </html>
