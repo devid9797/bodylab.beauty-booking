@@ -12,12 +12,26 @@
       wins.forEach(function(w,k){ w.classList.toggle('on',k===i); w.classList.toggle('past',k<i); });
       steps.forEach(function(s,k){ s.classList.toggle('on',k===i); });
       rail.style.setProperty('--p', wins.length>1 ? i/(wins.length-1) : 0);
+      $$('.wa-b',pin).forEach(function(b){ b.disabled = (+b.dataset.dir < 0 && i === 0) || (+b.dataset.dir > 0 && i === wins.length-1); });
     };
     B.onFrame(function(){
       var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       var p = Math.min(1,Math.max(0,-r.top/total));
       setActive(Math.min(wins.length-1, Math.floor(p*wins.length)));
     });
+    /* листание карточек влево-вправо (и стрелками) – то же, что прокрутка вниз */
+    function goTo(i){
+      i = Math.max(0, Math.min(wins.length-1, i));
+      var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
+      scrollTo({top: scrollY + r.top + total*(i+.5)/wins.length, behavior: reduce?'auto':'smooth'});
+    }
+    var stage = $('#stage'), tx = 0, ty = 0, tt = 0;
+    stage.addEventListener('touchstart',function(e){ var t = e.touches[0]; tx = t.clientX; ty = t.clientY; tt = Date.now(); },{passive:true});
+    stage.addEventListener('touchend',function(e){
+      var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+      if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - tt < 900) goTo(cur + (dx < 0 ? 1 : -1));
+    },{passive:true});
+    $$('.wa-b',pin).forEach(function(b){ b.addEventListener('click',function(){ goTo(cur + (+b.dataset.dir)); }); });
     steps.forEach(function(s){ s.addEventListener('click',function(){
       var i = +s.dataset.i, r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       scrollTo({top: scrollY + r.top + total*(i+.5)/wins.length, behavior: reduce?'auto':'smooth'});
