@@ -325,7 +325,7 @@ function home(L) {
     const chips = s.chips.map((c, k) => `<span class="chip" style="--i:${k}">${esc(c)}</span>`).join('');
     return `
         <article class="win${i === 0 ? ' on' : ''}" data-i="${i}">
-          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span></div>
+          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span><span class="wa" aria-hidden="false"><button type="button" class="wa-b" data-dir="-1" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" class="wa-b" data-dir="1" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button></span></div>
           <div class="win-body">
             <div class="win-img"><img src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(S.name[L])}" loading="lazy"><span class="badge">${esc(s.badge)}</span></div>
             <div class="win-txt">
