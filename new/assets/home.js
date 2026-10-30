@@ -12,6 +12,7 @@
       wins.forEach(function(w,k){ w.classList.toggle('on',k===i); w.classList.toggle('past',k<i); });
       steps.forEach(function(s,k){ s.classList.toggle('on',k===i); });
       rail.style.setProperty('--p', wins.length>1 ? i/(wins.length-1) : 0);
+      pin.classList.toggle('at-end', i === wins.length-1);
       $$('.wa-b',pin).forEach(function(b){ b.disabled = (+b.dataset.dir < 0 && i === 0) || (+b.dataset.dir > 0 && i === wins.length-1); });
     };
     B.onFrame(function(){
@@ -25,11 +26,17 @@
       var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       scrollTo({top: scrollY + r.top + total*(i+.5)/wins.length, behavior: reduce?'auto':'smooth'});
     }
+    /* после последней карточки: кнопка «вниз» ведёт к следующему блоку */
+    function nextBlock(){
+      var t = $('#vizit'); if(!t) return;
+      scrollTo({top: t.getBoundingClientRect().top + scrollY - 76, behavior: reduce?'auto':'smooth'});
+    }
+    $$('[data-pin-next]',pin).forEach(function(b){ b.addEventListener('click',nextBlock); });
     var stage = $('#stage'), tx = 0, ty = 0, tt = 0;
     stage.addEventListener('touchstart',function(e){ var t = e.touches[0]; tx = t.clientX; ty = t.clientY; tt = Date.now(); },{passive:true});
     stage.addEventListener('touchend',function(e){
       var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
-      if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - tt < 900) goTo(cur + (dx < 0 ? 1 : -1));
+      if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - tt < 900) { if(dx < 0 && cur === wins.length-1) nextBlock(); else goTo(cur + (dx < 0 ? 1 : -1)); }
     },{passive:true});
     $$('.wa-b',pin).forEach(function(b){ b.addEventListener('click',function(){ goTo(cur + (+b.dataset.dir)); }); });
     steps.forEach(function(s){ s.addEventListener('click',function(){

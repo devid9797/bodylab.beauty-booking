@@ -32,6 +32,7 @@ const ICON = {
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>',
   star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.7 6.7 19.6l1.1-6L3.4 9.4l6-.8z"/></svg>',
   shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
   prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
   next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
   chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
@@ -325,7 +326,7 @@ function home(L) {
     const chips = s.chips.map((c, k) => `<span class="chip" style="--i:${k}">${esc(c)}</span>`).join('');
     return `
         <article class="win${i === 0 ? ' on' : ''}" data-i="${i}">
-          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span><span class="wa" aria-hidden="false"><button type="button" class="wa-b" data-dir="-1" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" class="wa-b" data-dir="1" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button></span></div>
+          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span><span class="wa" aria-hidden="false"><button type="button" class="wa-b" data-dir="-1" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" class="wa-b" data-dir="1" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button><button type="button" class="wa-down" data-pin-next aria-label="${esc(t.pin.next)}">${ICON.down}</button></span></div>
           <div class="win-body">
             <div class="win-img"><img src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(S.name[L])}" loading="lazy"><span class="badge">${esc(s.badge)}</span></div>
             <div class="win-txt">
@@ -404,6 +405,7 @@ ${bk.html}
         <div class="rail" id="rail">
           <div class="rail-fill"></div>${steps}
         </div>
+        <button class="pin-down" type="button" data-pin-next>${esc(t.pin.next)} ${ICON.down}</button>
       </div>
       <div class="stage" id="stage">
 ${HOME_ORDER.map(win).join('\n')}
