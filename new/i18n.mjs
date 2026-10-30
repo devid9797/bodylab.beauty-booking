@@ -59,7 +59,7 @@ export const T = {
     pickTime: 'Выбрать время', seeTreatments: 'Смотреть процедуры',
     chip1: { b: '4', main: 'процедуры', small: 'в одной студии' }, chip2: { b: '€', main: 'от 20 €', small: 'стоимость процедуры' },
     strip: ['R-Sleek', 'B-Flexy', 'EMS Zero', 'Прессотерапия', 'Лимфодренаж', 'Моделирование тела'],
-    pin: { eyebrow: 'Процедуры', h2a: 'Четыре процедуры – ', h2em: 'выберите свою', lead: 'От глубокого массажа до лимфодренажа. У каждой процедуры своя цель.' },
+    pin: { eyebrow: 'Процедуры', next: 'Дальше', h2a: 'Четыре процедуры – ', h2em: 'выберите свою', lead: 'От глубокого массажа до лимфодренажа. У каждой процедуры своя цель.' },
     details: 'Подробнее',
     svc: {
       'r-sleek': { tag: 'Массаж моделирования тела', desc: 'Механическое воздействие вращающимися роликами, создающее эффект глубокого массажа.', badge: 'Топ процедура',
@@ -155,7 +155,7 @@ export const T = {
     pickTime: 'Izvēlēties laiku', seeTreatments: 'Skatīt procedūras',
     chip1: { b: '4', main: 'procedūras', small: 'vienā studijā' }, chip2: { b: '€', main: 'no 20 €', small: 'procedūras cena' },
     strip: ['R-Sleek', 'B-Flexy', 'EMS Zero', 'Presoterapija', 'Limfodrenāža', 'Ķermeņa modelēšana'],
-    pin: { eyebrow: 'Procedūras', h2a: 'Četras procedūras – ', h2em: 'izvēlies savu', lead: 'No dziļās masāžas līdz limfodrenāžai. Katrai procedūrai ir savs mērķis.' },
+    pin: { eyebrow: 'Procedūras', next: 'Tālāk', h2a: 'Četras procedūras – ', h2em: 'izvēlies savu', lead: 'No dziļās masāžas līdz limfodrenāžai. Katrai procedūrai ir savs mērķis.' },
     details: 'Sīkāk',
     svc: {
       'r-sleek': { tag: 'Ķermeņa modelēšanas masāža', desc: 'Tiek veikta mehāniska iedarbība ar rotējošiem rullīšiem, kas rada dziļu masāžas efektu.', badge: 'Top procedūra',
@@ -249,7 +249,7 @@ export const T = {
     pickTime: 'Choose a time', seeTreatments: 'See treatments',
     chip1: { b: '4', main: 'treatments', small: 'in one studio' }, chip2: { b: '€', main: 'from €20', small: 'per treatment' },
     strip: ['R-Sleek', 'B-Flexy', 'EMS Zero', 'Pressotherapy', 'Lymphatic drainage', 'Body contouring'],
-    pin: { eyebrow: 'Treatments', h2a: 'Four treatments – ', h2em: 'pick yours', lead: 'From deep massage to lymphatic drainage. Each treatment has its own purpose.' },
+    pin: { eyebrow: 'Treatments', next: 'Next', h2a: 'Four treatments – ', h2em: 'pick yours', lead: 'From deep massage to lymphatic drainage. Each treatment has its own purpose.' },
     details: 'Details',
     svc: {
       'r-sleek': { tag: 'Body contouring massage', desc: 'A mechanical treatment using rotating rollers that creates a deep massage effect.', badge: 'Top treatment',
