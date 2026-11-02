@@ -1,68 +1,96 @@
 #!/usr/bin/env node
-// Static prerender for bodylab-beauty.lv (GitHub Pages, no server).
+// Static generator for bodylab-beauty.lv (GitHub Pages, no server).
 //
 //   node tools/build.mjs          regenerate every generated file
 //   node tools/build.mjs --check  exit 1 if any generated file is out of date
 //
-// Source of truth:
-//   index.html          the page + booking app (layout, CSS, JS, I18N dictionary)
-//   tools/content.mjs   SEO metadata and the service pages' content
+// Sources of truth (edit these, never the generated pages):
+//   tools/build.mjs        page templates (home, treatment pages, info, privacy, 404 ...)
+//   tools/i18n.mjs         texts of the design in lv / ru / en
+//   tools/content.mjs      SEO metadata, prices, durations, FAQ and long texts of the treatments
+//   tools/quiz.mjs         questions of the "find your treatment" quiz
+//   tools/data/*.mjs       Arosha product catalogue, phone country codes
+//   assets/*.css|js        styles and scripts (assets/site.js = tracking, consent, attribution)
 //
 // Generated (do not edit by hand):
-//   index.html (LV, prerendered in place), ru/index.html, en/index.html,
-//   <lang>/<service>/index.html, lv/index.html (redirect to /), 404.html,
-//   sitemap.xml, llms.txt
+//   index.html (LV home), ru/index.html, en/index.html, <lang>/<treatment>/index.html,
+//   <lang>/info/, <lang>/privacy/, info/ (LV), lv/ and new/ redirects, 404.html, sitemap.xml, llms.txt
 //
-// Prerendering = the I18N texts are written straight into the HTML, so search
-// engines and AI crawlers that don't run JavaScript see the real content. The
-// page's JS still runs on top of it exactly as before.
-
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import vm from 'node:vm';
+// The archive copy of the previous site lives in old/ (static, not generated).
 import {
   SITE, SALON_ID, LANGS, DEFAULT_LANG, BUSINESS, HOME_PATH, HOME_META, UI, SERVICES,
 } from './content.mjs';
+import { T, CUR, WA, IG, PHONE } from './i18n.mjs';
+import * as QZ from './quiz.mjs';
+import { PRODUCTS, PRODUCT_ORDER } from './data/products.mjs';
+import { PHONE_COUNTRIES } from './data/phone-countries.mjs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECK = process.argv.includes('--check');
 
-// ---------- helpers ----------
-const esc = s => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+// Version of an asset in its link (?v=...) – a browser never pairs a new page with an old cached stylesheet/script.
+const ver = f => createHash('sha1').update(readFileSync(join(ROOT, 'assets', f))).digest('hex').slice(0, 8);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const pad = n => String(n).padStart(2, '0');
 const abs = path => SITE + path;
-const servicePath = (svc, lang) => `/${lang}/${svc.slug[lang]}/`;
-const euro = (n, lang) => lang === 'en' ? `€${n}` : `${n} €`;
 const jsonLd = obj => `<script type="application/ld+json">\n${JSON.stringify(obj, null, 2).replace(/</g, '\\u003c')}\n</script>`;
+const SVC = Object.fromEntries(SERVICES.map(s => [s.id, s]));
+const HOME_ORDER = ['r-sleek', 'b-flexy', 'ems-zero', 'presoterapija'];
 
-function replaceBetween(s, start, end, inner) {
-  const a = s.indexOf(start);
-  const b = s.indexOf(end, a);
-  if (a === -1 || b === -1) throw new Error(`markers not found: ${start}`);
-  return s.slice(0, a + start.length) + inner + s.slice(b);
+const ICON = {
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.7 6.7 19.6l1.1-6L3.4 9.4l6-.8z"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>',
+  car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-5h10l2 5v5M3 16h18v3H3zM7 13h.01M17 13h.01"/></svg>',
+  done: '<svg viewBox="0 0 24 24" fill="none" stroke="#FFFEFA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+};
+const AURORA = '<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>';
+const lcfirst = s => (/^[A-ZА-ЯĀČĒĢĪĶĻŅŠŪŽ][a-zа-яāčēģīķļņšūž]/.test(s) ? s[0].toLowerCase() + s.slice(1) : s);
+const money = (L, n) => { const c = CUR[L]; return `${c.pre}${n}${c.suf ? `<small> ${c.suf}</small>` : ''}`; };
+const moneyPlain = (L, n) => `${CUR[L].pre}${n}${CUR[L].suf ? ' ' + CUR[L].suf : ''}`;
+
+// ───────── addresses (kept identical to the previous site wherever a page existed there) ─────────
+//   home: /  /ru/  /en/        treatment: /<lang>/<slug>/        info: /info/ (lv)  /ru/info/  /en/info/
+const svcUrl = (L, id) => `/${L}/${SVC[id].slug[L]}/`;
+const infoUrl = L => (L === 'lv' ? '/info/' : `/${L}/info/`);
+const privacyUrl = L => `/${L}/privacy/`;
+const fileOf = url => (url.endsWith('/') ? url.slice(1) + 'index.html' : url.slice(1));
+const byLang = fn => Object.fromEntries(LANGS.map(l => [l, fn(l)]));
+
+// All links are absolute from the site root (the site is served from the root of bodylab-beauty.lv).
+function paths() {
+  return {
+    asset: f => `/assets/${f}?v=${ver(f)}`,
+    img: f => `/images/${f}`,
+    newHome: L2 => HOME_PATH[L2],
+    newBook: (L2, key) => `${HOME_PATH[L2]}${key ? `?book=${key}` : ''}#zapis`,
+    newSvc: svcUrl,
+    newInfo: infoUrl,
+    newPrivacy: privacyUrl,
+  };
 }
 
-// ---------- read sources ----------
-const template = readFileSync(join(ROOT, 'index.html'), 'utf8');
-const css = template.match(/<style>[\s\S]*?<\/style>/)[0];
+// ───────── <head> SEO block ─────────
+const alternates = (pathByLang, xDefaultPath) => LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${abs(pathByLang[l])}">`)
+  .concat(`<link rel="alternate" hreflang="x-default" href="${abs(xDefaultPath)}">`).join('\n');
+const OG_LOCALE = { lv: 'lv_LV', ru: 'ru_RU', en: 'en_GB' };
 
-const i18nStart = template.indexOf('const I18N = {');
-const i18nEnd = template.indexOf('\n  };\n', i18nStart);
-const I18N = vm.runInNewContext('(' + template.slice(i18nStart + 'const I18N = '.length, i18nEnd + 4) + ')');
-for (const lang of LANGS) if (!I18N[lang]) throw new Error(`I18N.${lang} missing`);
-
-// ---------- <head> SEO block ----------
-function alternates(pathByLang, xDefaultPath) {
-  return LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${abs(pathByLang[l])}">`)
-    .concat(`<link rel="alternate" hreflang="x-default" href="${abs(xDefaultPath)}">`)
-    .join('\n');
-}
-
-function headBlock({ lang, title, description, path, pathByLang, xDefault, ogType = 'website', image = BUSINESS.image, ld }) {
-  const locales = { lv: 'lv_LV', ru: 'ru_RU', en: 'en_GB' };
-  return `
-<title>${esc(title)}</title>
+function seoBlock({ lang, title, description, path, pathByLang, xDefault, ogType = 'website', image = BUSINESS.image, ld }) {
+  return `<title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${abs(path)}">
 ${alternates(pathByLang, xDefault)}
@@ -72,261 +100,906 @@ ${alternates(pathByLang, xDefault)}
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="${image}">
 <meta property="og:url" content="${abs(path)}">
-<meta property="og:locale" content="${locales[lang]}">
-${LANGS.filter(l => l !== lang).map(l => `<meta property="og:locale:alternate" content="${locales[l]}">`).join('\n')}
+<meta property="og:locale" content="${OG_LOCALE[lang]}">
+${LANGS.filter(l => l !== lang).map(l => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`).join('\n')}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
 <meta name="twitter:image" content="${image}">
-${jsonLd(ld)}
-`;
+${jsonLd(ld)}`;
 }
 
 // One business entity, referenced from every page by its @id.
 function salonNode(lang) {
   return {
-    '@type': 'BeautySalon',
-    '@id': SALON_ID,
-    name: BUSINESS.name,
-    url: SITE + '/',
-    image: BUSINESS.image,
-    logo: BUSINESS.logo,
-    telephone: BUSINESS.phone,
-    priceRange: '€€',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: BUSINESS.street,
-      addressLocality: BUSINESS.city,
-      addressCountry: BUSINESS.country,
-    },
+    '@type': 'BeautySalon', '@id': SALON_ID, name: BUSINESS.name, url: SITE + '/', image: BUSINESS.image, logo: BUSINESS.logo,
+    telephone: BUSINESS.phone, priceRange: '€€',
+    address: { '@type': 'PostalAddress', streetAddress: BUSINESS.street, addressLocality: BUSINESS.city, addressCountry: BUSINESS.country },
     sameAs: [BUSINESS.instagram],
     hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: { lv: 'Procedūras', ru: 'Процедуры', en: 'Treatments' }[lang],
+      '@type': 'OfferCatalog', name: { lv: 'Procedūras', ru: 'Процедуры', en: 'Treatments' }[lang],
       itemListElement: SERVICES.flatMap(svc => svc.offers.map(o => ({
-        '@type': 'Offer',
-        name: `${svc.name[lang]} – ${o.label[lang]}`,
-        price: o.price,
-        priceCurrency: 'EUR',
-        itemOffered: { '@id': `${abs(servicePath(svc, lang))}#service` },
+        '@type': 'Offer', name: `${svc.name[lang]} – ${o.label[lang]}`, price: o.price, priceCurrency: 'EUR',
+        itemOffered: { '@id': `${abs(svcUrl(lang, svc.id))}#service` },
       }))),
     },
   };
 }
-
 function serviceNode(svc, lang) {
   return {
-    '@type': 'Service',
-    '@id': `${abs(servicePath(svc, lang))}#service`,
-    name: svc.name[lang],
-    description: svc.lead[lang],
-    url: abs(servicePath(svc, lang)),
-    image: abs(svc.image),
-    provider: { '@id': SALON_ID },
+    '@type': 'Service', '@id': `${abs(svcUrl(lang, svc.id))}#service`, name: svc.name[lang], description: svc.lead[lang],
+    url: abs(svcUrl(lang, svc.id)), image: abs(svc.image), provider: { '@id': SALON_ID },
     areaServed: { '@type': 'City', name: { lv: 'Rīga', ru: 'Рига', en: 'Riga' }[lang] },
     offers: svc.offers.map(o => ({
-      '@type': 'Offer',
-      name: o.label[lang],
-      description: `${o.label[lang]}, ${UI[lang].minutes(o.minutes)}`,
-      price: o.price,
-      priceCurrency: 'EUR',
-      url: abs(servicePath(svc, lang)),
+      '@type': 'Offer', name: o.label[lang], description: `${o.label[lang]}, ${UI[lang].minutes(o.minutes)}`,
+      price: o.price, priceCurrency: 'EUR', url: abs(svcUrl(lang, svc.id)),
     })),
   };
 }
 
-// ---------- prerender the I18N texts into a home page ----------
-function fillI18n(html, dict) {
-  // data-i18n-attr: the text goes into an attribute (aria-label etc.)
-  html = html.replace(/<([a-z][a-z0-9]*)\b([^>]*?)\sdata-i18n="([^"]+)"([^>]*?)\sdata-i18n-attr="([^"]+)"([^>]*)>/g,
-    (m, tag, a, key, b, attr, c) => {
-      if (dict[key] == null) return m;
-      let attrs = `${a} data-i18n="${key}"${b} data-i18n-attr="${attr}"${c}`;
-      const re = new RegExp(`\\s${attr}="[^"]*"`);
-      attrs = re.test(attrs) ? attrs.replace(re, ` ${attr}="${esc(dict[key])}"`) : `${attrs} ${attr}="${esc(dict[key])}"`;
-      return `<${tag}${attrs}>`;
-    });
-  // element content (data-i18n-html keeps markup such as <br>)
-  // (opening tags carrying data-i18n-attr are excluded from the match itself, so
-  // their children - e.g. links inside a <nav aria-label> - still get filled)
-  return html.replace(/<([a-z][a-z0-9]*)\b((?:(?!data-i18n-attr)[^>])*\sdata-i18n="([^"]+)"(?:(?!data-i18n-attr)[^>])*)>([\s\S]*?)<\/\1>/g,
-    (m, tag, attrs, key, inner) => {
-      if (dict[key] == null) return m;
-      if (new RegExp(`<${tag}\\b`).test(inner)) throw new Error(`nested <${tag}> inside data-i18n="${key}"`);
-      const val = /\sdata-i18n-html\b/.test(attrs) ? dict[key] : esc(dict[key]);
-      return `<${tag}${attrs}>${val}</${tag}>`;
-    });
-}
+// ───────── shared page head ─────────
+// page = { L, kind: 'home'|'svc'|'info'|'privacy', seo?: {…} }  (seo == null → noindex page)
+const LV_HOME_REDIRECT = `<script>
+  // "/" is the Latvian page. A visitor who explicitly picked RU/EN before is sent to that language's page
+  // (query + hash kept, so UTM tags still work). The original referrer is handed over so traffic-source
+  // detection on the next page still sees where the visitor really came from.
+  (function(){
+    var path = location.pathname;
+    if(path !== '/' && path !== '/index.html') return;
+    var lang;
+    try{ lang = localStorage.getItem('bb_lang'); }catch(e){}
+    if(lang !== 'ru' && lang !== 'en') return;
+    try{ if(document.referrer) sessionStorage.setItem('bb_orig_referrer', document.referrer); }catch(e){}
+    location.replace('/' + lang + '/' + location.search + location.hash);
+  })();
+</script>`;
 
-function prerender(html, dict) {
-  // The booking sheet is app state, not page content: left for the JS.
-  const parts = html.split(/(<!-- prerender:skip:start -->[\s\S]*?<!-- prerender:skip:end -->)/);
-  return parts.map(p => p.startsWith('<!-- prerender:skip:start -->') ? p : fillI18n(p, dict)).join('');
-}
-
-function setLangSwitch(html, lang, hrefByLang) {
-  html = html.replace(/(<a class="lang-option)( active)?(" data-lang="(lv|ru|en)" hreflang="\4" lang="\4" href=")[^"]*(")/g,
-    (m, a, _active, b, l, c) => `${a}${l === lang ? ' active' : ''}${b}${hrefByLang[l]}${c}`);
-  return html.replace(/(<span id="lang-current">)[^<]*(<\/span>)/, `$1${lang.toUpperCase()}$2`);
-}
-
-function renderHome(lang) {
-  const meta = HOME_META[lang];
-  let html = template.replace(/<html lang="[^"]*">/, `<html lang="${lang}">`);
-  html = replaceBetween(html, '<!-- seo:head:start (generated by tools/build.mjs from tools/content.mjs - edit there) -->', '<!-- seo:head:end -->',
-    headBlock({
-      lang, title: meta.title, description: meta.description,
-      path: HOME_PATH[lang], pathByLang: HOME_PATH, xDefault: HOME_PATH[DEFAULT_LANG],
-      ld: { '@context': 'https://schema.org', '@graph': [
-        salonNode(lang),
-        { '@type': 'WebPage', '@id': abs(HOME_PATH[lang]) + '#webpage', url: abs(HOME_PATH[lang]), name: meta.title, inLanguage: lang, about: { '@id': SALON_ID } },
-      ] },
-    }));
-  html = prerender(html, I18N[lang]);
-  html = html.replace(/(<a[^>]*\sdata-page="([a-z-]+)"[^>]*\shref=")[^"]*(")/g, (m, a, id, b) => {
-    const svc = SERVICES.find(s => s.id === id);
-    if (!svc) throw new Error(`unknown data-page ${id}`);
-    return a + servicePath(svc, lang) + b;
-  });
-  return setLangSwitch(html, lang, HOME_PATH);
-}
-
-// ---------- service pages ----------
-const homes = Object.fromEntries(LANGS.map(l => [l, renderHome(l)]));
-function partial(lang, name) {
-  const html = homes[lang];
-  const a = html.indexOf(`<!-- partial:${name}:start -->`);
-  const b = html.indexOf(`<!-- partial:${name}:end -->`);
-  if (a === -1 || b === -1) throw new Error(`partial ${name} not found`);
-  // in-page anchors of the home page must point back to it
-  return html.slice(a, b + `<!-- partial:${name}:end -->`.length).replace(/href="#/g, `href="${HOME_PATH[lang]}#`);
-}
-const CHEVRON_LEFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
-const GRID_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>';
-
-const ICONS = template.match(/<link rel="icon"[^>]*>\n<link rel="apple-touch-icon"[^>]*>/)[0];
-const FONTS = template.match(/<link rel="preconnect" href="https:\/\/fonts.googleapis.com">[\s\S]*?rel="stylesheet">/)[0];
-const LANG_SWITCH_TOGGLE = template.match(/<button class="lang-toggle"[\s\S]*?<\/button>/)[0];
-
-function renderService(svc, lang) {
-  const ui = UI[lang];
-  const home = HOME_PATH[lang];
-  const name = svc.name[lang];
-  const path = servicePath(svc, lang);
-  const pathByLang = Object.fromEntries(LANGS.map(l => [l, servicePath(svc, l)]));
-  const bookHref = key => `${home}?book=${key}#calendar-card`;
-  const faq = [...svc.faq[lang], ui.faqBook, ui.faqCancel, ui.faqPay, ui.faqWhere];
-  const others = SERVICES.filter(s => s !== svc);
-
-  const ld = { '@context': 'https://schema.org', '@graph': [
-    serviceNode(svc, lang),
-    salonNode(lang),
-    { '@type': 'FAQPage', mainEntity: faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
-  ] };
-
-  const langMenu = LANGS.map(l =>
-    `<a class="lang-option${l === lang ? ' active' : ''}" data-lang="${l}" hreflang="${l}" lang="${l}" href="${pathByLang[l]}">${l.toUpperCase()}</a>`).join('\n          ');
-
-  const rows = svc.offers.map(o => `<tr><td>${esc(o.label[lang])}</td><td>${o.sessions ? `${o.sessions} × ` : ''}${ui.minutes(o.minutes)}</td><td>${euro(o.price, lang)}</td></tr>`).join('\n          ');
-  const bookable = svc.offers.filter(o => o.book);
-  const bookButtons = bookable.length > 1
-    ? bookable.map(o => `<a class="btn btn-primary" href="${bookHref(o.book)}">${esc(ui.bookVariant(`${o.label[lang]} (${ui.minutes(o.minutes)})`))}</a>`).join('\n      ')
-    : `<a class="btn btn-primary" href="${bookHref(bookable[0].book)}">${esc(ui.book(name))}</a>`;
-
+function head(page, extra = '') {
+  const { L } = page, t = T[L], p = paths();
+  const seo = page.seo ? seoBlock({ lang: L, ...page.seo }) : `<title>${esc(page.title)}</title>\n<meta name="robots" content="noindex">`;
   return `<!DOCTYPE html>
-<html lang="${lang}">
+<html lang="${t.htmlLang}" data-root="/" data-lb-close="${esc(t.lightbox.close)}" data-lb-prev="${esc(t.lightbox.prev)}" data-lb-next="${esc(t.lightbox.next)}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F4ECE2">
-<!-- generated by tools/build.mjs from tools/content.mjs - edit there -->
-${headBlock({ lang, title: svc.meta[lang].title, description: svc.meta[lang].description, path, pathByLang, xDefault: pathByLang[DEFAULT_LANG], ogType: 'article', image: abs(svc.image), ld }).trim()}
-${ICONS}
-${FONTS}
-${css}
-</head>
-<body class="service-page">
-<div class="wrap">
-  <header class="page-top">
-    <a class="back-pill" href="${home}">${CHEVRON_LEFT}<span>${esc(ui.allTreatments)}</span></a>
-    <div class="lang-switch" id="lang-switch">
-      ${LANG_SWITCH_TOGGLE.replace(/(<span id="lang-current">)[^<]*/, `$1${lang.toUpperCase()}`)}
-      <div class="lang-menu" id="lang-menu" aria-label="${esc(ui.langLabel)}">
-          ${langMenu}
+<!-- generated by tools/build.mjs - edit the sources there, not this file -->
+${seo}
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">${page.kind === 'home' && L === 'lv' ? '\n' + LV_HOME_REDIRECT : ''}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="${p.asset('new.css')}">${extra}
+</head>`;
+}
+
+// alt(L2) – address of the same page in another language
+function nav(page, alt) {
+  const { L } = page, t = T[L], p = paths();
+  const langs = LANGS.map(l2 => `<a href="${alt(l2)}"${l2 === L ? ' class="on" aria-current="true"' : ''} hreflang="${l2}" lang="${l2}" data-lang="${l2}">${T[l2].code}</a>`).join('');
+  const menuLinks = t.menu.map((m, i) => `
+  <a class="m-link" href="${p.newHome(L)}#${t.anchors[i]}">${esc(m)} <small>${pad(i + 1)}</small></a>`).join('');
+  const rightBtn = `<a class="btn btn-main btn-sm" href="${page.kind === 'home' ? '#zapis' : p.newBook(L)}">${esc(t.book)}</a>`;
+  return `
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="${p.newHome(L)}" aria-label="BodyLab.Beauty"><img class="logo-mark nozoom" src="${p.img('logo-mark.png')}" alt="" width="46" height="40"><span class="logo-t">BodyLab<b>.beauty</b></span></a>
+    <div class="nav-r">
+      <div class="langs" aria-label="${esc(t.langLabel)}">${langs}</div>
+      <div class="lang-dd" id="lang-dd"><button class="lang-btn" id="lang-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="${esc(t.langLabel)}: ${t.code}"><span>${t.code}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lang-pop" role="menu">${langs}</div></div>
+      ${rightBtn}
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="${esc(t.menuAria)}" aria-expanded="false" aria-controls="menu"><i></i></button>
+    </div>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="${esc(t.menuAria)}">${menuLinks}
+  <div class="m-foot">
+    <a class="btn btn-main" href="${p.newBook(L)}">${esc(t.bookOnline)}</a>
+    <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>
+    <span class="m-langs">${langs}</span>
+  </div>
+</nav>`;
+}
+
+// ═════════════════════════ ONLINE BOOKING (real: reads the studio's free times, sends the booking) ═════════════════════════
+// The `service` text below is what the booking webhook (Make.com) receives – keep these exact strings.
+const SERVICE_VALUES = {
+  'r-sleek': 'R-Sleek (45 min)',
+  'b-flexy': 'B-Flexy (45 min)',
+  'ems-zero-1': 'EMS Zero - 1 procedūra (30 min)',
+  'ems-zero-2': 'EMS Zero - 2 procedūras (60 min)',
+  'presoterapija': 'Presoterapija (45 min)',
+};
+function bookingBlock(L, p) {
+  const t = T[L], b = t.b, lv = t.live;
+  const OPT = [
+    ['r-sleek', 'r-sleek', 45, 35, 'service-rsleek.jpg'],
+    ['b-flexy', 'b-flexy', 45, 30, 'service-bflexy.jpg'],
+    ['ems-zero-1', 'ems-zero', 30, 20, 'service-emszero.jpg'],
+    ['ems-zero-2', 'ems-zero', 60, 35, 'service-emszero.jpg'],
+    ['presoterapija', 'presoterapija', 45, 25, 'service-presoterapija.jpg'],
+  ].map(([id, svc, min, price, img]) => ({
+    id, value: SERVICE_VALUES[id], name: b.names[svc] || SVC[svc].name[L], tag: b.opts[id], min, price, img: `images/${img}`,
+  }));
+  const data = {
+    options: OPT, cur: CUR[L], months: t.months, monthsDate: t.monthsDate, wdShort: t.wdShort, wdFull: t.wdFull, dateFmt: b.dateFmt,
+    min: b.min, freeTime: b.timesFor, pickDateFirst: b.pickDateFirst, sumDate: b.sumDate, sumTime: b.sumTime, sumSvc: b.sumSvc, sumName: b.sumName,
+    chosen: b.chosen, errReq: b.errReq, errPhone: b.errPhone, live: lv, submit: b.submit, done: b.done,
+  };
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  const phoneOptions = PHONE_COUNTRIES.map(([iso, dial, min, max]) => `<option value="+${dial}" data-min="${min}" data-max="${max}"${iso === 'LV' ? ' selected' : ''}>${iso} +${dial}</option>`).join('');
+  const html = `
+<!-- ONLINE BOOKING: date & time -> treatment -> details.  (#calendar-card = the anchor of the old site's links) -->
+<section class="bk inline" id="zapis" data-dock-hide>
+  <span id="calendar-card" class="anchor-alias"></span>
+  <div class="bk-grid">
+
+    <div class="bk-main" id="bk-main">
+      <h2 class="bk-title">${esc(b.eyebrow)}</h2>
+      <div class="bk-top">
+        <div class="steps rv" style="--d:1" id="steps">
+          <button class="stp on" type="button" data-s="1"><b>1</b><span>${esc(b.steps[0])}</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>${esc(b.steps[1])}</span></button>
+          <button class="stp" type="button" data-s="3" disabled><b>3</b><span>${esc(b.steps[2])}</span></button>
+        </div>
+      </div>
+
+      <div class="pane show" id="p1">
+        <h2>${esc(b.dtH)}</h2>
+        <p class="lead">${esc(b.dtLead)}</p>
+        <div class="picked" id="picked" hidden><span id="picked-t"></span><button type="button" id="picked-x" aria-label="${esc(b.removeChosen)}">✕</button></div>
+        <div class="cal-msg" id="cal-msg">${esc(lv.calLoading)}</div>
+        <div class="dt" id="dt" hidden>
+          <div class="cal">
+            <div class="cal-h"><h3 id="cal-title"></h3>
+              <div class="cal-nav">
+                <button type="button" id="cal-prev" aria-label="${esc(b.prev)}">${ICON.prev}</button>
+                <button type="button" id="cal-next" aria-label="${esc(b.next)}">${ICON.next}</button>
+              </div>
+            </div>
+            <div class="wd">${t.wdHead.map(x => `<span>${x}</span>`).join('')}</div>
+            <div class="days" id="days"></div>
+          </div>
+          <div class="times-box" id="times-box">
+            <h4 id="times-title" data-hint="${esc(b.pickDateFirst)}">${esc(b.pickDateFirst)}</h4>
+            <div class="tg2" id="times"></div>
+          </div>
+        </div>
+        <div class="pane-foot"><button class="btn btn-main" type="button" id="go2" disabled>${esc(b.toProc)} ${ICON.arrow}</button></div>
+      </div>
+
+      <div class="pane" id="p2">
+        <h2>${esc(b.procH)}</h2>
+        <p class="lead">${esc(b.procLead)} <a class="link-u" href="#podbor" data-open-quiz>${esc(t.quizLink[0])}${esc(t.quizLink[1])}</a></p>
+        <div class="optgrid" id="optgrid"></div>
+        <div class="pane-foot">
+          <button class="btn btn-ghost" type="button" data-back="1">${esc(b.back)}</button>
+          <button class="btn btn-main" type="button" id="go3" disabled>${esc(b.toData)} ${ICON.arrow}</button>
+        </div>
+      </div>
+
+      <div class="pane" id="p3">
+        <h2>${esc(b.s3h)}</h2>
+        <p class="lead">${esc(b.s3lead)}</p>
+        <form class="form" id="form" novalidate>
+          <div class="fld"><label for="fn">${esc(b.first)}</label><input id="fn" autocomplete="given-name" placeholder="Anna"></div>
+          <div class="fld"><label for="ln">${esc(b.last)}</label><input id="ln" autocomplete="family-name" placeholder="Bērziņa"></div>
+          <div class="fld full"><label for="ph">${esc(b.phone)}</label><div class="phone"><select id="pc" class="cc" aria-label="${esc(lv.phoneCodeAria)}">${phoneOptions}</select><input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="20000000"></div></div>
+          <details class="more full"><summary>${esc(b.moreFields)}</summary>
+            <div class="more-in">
+              <div class="fld"><label for="ig">${esc(b.ig)}</label><input id="ig" placeholder="@username"></div>
+              <div class="fld"><label for="cm">${esc(b.comment)}</label><textarea id="cm" maxlength="500" placeholder="${esc(b.commentPh)}"></textarea></div>
+            </div>
+          </details>
+          <div class="form-err" id="form-err" role="alert"></div>
+          <p class="terms">${esc(b.terms)}</p>
+          <p class="consent">${esc(t.privacyLine)} <a href="${p.newPrivacy(L)}" target="_blank" rel="noopener">${esc(t.privacyLink)}</a></p>
+        </form>
+        <div class="pane-foot pane-foot-form">
+          <button class="btn btn-ghost" type="button" data-back="2">${esc(b.back)}</button>
+          <button class="btn btn-main" type="button" id="submit">${esc(b.submit)} ${ICON.arrow}</button>
+        </div>
+      </div>
+
+      <div class="pane" id="p4">
+        <div class="done-ic">${ICON.done}</div>
+        <h2>${esc(b.done)}</h2>
+        <div class="confirm" id="confirm"></div>
+        <p class="lead conf-cal">${esc(lv.confirmAddCal)}</p>
+        <div class="pane-foot conf-btns">
+          <a class="btn btn-main" id="gcal-link" href="#" target="_blank" rel="noopener">${esc(b.gcal)}</a>
+          <a class="btn btn-ghost" id="ics-link" href="#" download="BodyLabBeauty-booking.ics">${esc(b.ics)}</a>
+        </div>
+        <p class="hint-s">${esc(lv.gcalHint)}</p>
+        <p class="hint-s">${esc(lv.confirmReminder)}</p>
+        <div class="pane-foot"><button class="btn btn-ghost" type="button" id="conf-close">${esc(b.closeConfirm)}</button></div>
       </div>
     </div>
-  </header>
 
-  <main>
-  <section class="card service-hero">
-    <img class="service-hero-photo" src="${svc.image}" alt="${esc(name)} – BodyLab.Beauty" width="800" height="600">
-    <div class="service-hero-body">
-      <h1>${esc(svc.h1[lang])}</h1>
-      <p class="service-lead">${esc(svc.lead[lang])}</p>
-      <a class="btn btn-primary" href="${bookHref(bookable[0].book)}">${esc(ui.book(name))}</a>
+    <aside class="sum" id="sum" aria-live="polite">
+      ${AURORA}
+      <h3>${esc(b.sumTitle)}</h3>
+      <div class="srow"><span>${esc(b.sumDate)}</span><span id="s-date"><b class="dash">—</b></span></div>
+      <div class="srow"><span>${esc(b.sumTime)}</span><span id="s-time"><b class="dash">—</b></span></div>
+      <div class="srow"><span>${esc(b.sumProc)}</span><span id="s-name"><b class="dash">—</b></span></div>
+      <p class="help">${esc(b.help[0])}<a href="${WA}" target="_blank" rel="noopener">${esc(b.help[1])}</a>${esc(b.help[2])}</p>
+    </aside>
+  </div>
+</section>
+<div class="toast" id="toast" role="status"></div>`;
+  return { html, json };
+}
+
+// ═════════════════════════ ТЕСТ «подберите процедуру»: приглашение на странице + отдельное окно ═════════════════════════
+function quizBlock(L, p) {
+  const t = T[L], q = t.quizUi;
+  const ui = UI[L];
+  const results = {};
+  for (const id of QZ.IDS) {
+    const S = SVC[id], key = S.offers.find(o => o.book).book, min = Math.min(...S.offers.map(o => o.price));
+    results[id] = {
+      name: S.name[L], tag: t.svc[id].tag, img: `images/${S.image.replace('/images/', '')}`, key,
+      why: QZ.WHY[id].map(i => S.goals[L][i]), from: S.offers.length > 1,
+      price: moneyPlain(L, min), pkg: S.offers.some(o => o.sessions), href: p.newSvc(L, id),
+    };
+  }
+  const data = { ids: QZ.IDS, w: QZ.W, q: QZ.QUIZ[L], results, ui: { ...q, noteExtra: ui.beforeText }, cur: CUR[L] };
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  const teaser = `
+<!-- ПОДБОР ПРОЦЕДУРЫ: приглашение (сам тест открывается в отдельном окне) -->
+<section class="sec" id="podbor">
+  <div class="wrap quiz-teaser">
+    ${AURORA}
+    <div class="qt-text">
+      <h2 class="h-l rv" style="--d:1">${esc(q.h2a)}<span class="em">${esc(q.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(q.lead)}</p>
+      <div class="cta-row rv" style="--d:3"><button class="btn btn-main" type="button" data-open-quiz>${esc(q.start)} ${ICON.arrow}</button></div>
     </div>
-  </section>
-
-  <section class="card content-card">
-    <h2>${esc(ui.howTitle)}</h2>
-    ${svc.how[lang].map(p => `<p>${esc(p)}</p>`).join('\n    ')}
-  </section>
-
-  <section class="card content-card">
-    <h2>${esc(ui.goalsTitle)}</h2>
-    <ul class="service-effects">
-      ${svc.goals[lang].map(g => `<li>${esc(g)}</li>`).join('\n      ')}
-    </ul>
-  </section>
-
-  <section class="card content-card">
-    <h2>${esc(ui.expectTitle)}</h2>
-    <p>${esc(ui.expectText)}</p>
-    <p>${esc(ui.beforeText)}</p>
-  </section>
-
-  <section class="card content-card" id="cenas">
-    <h2>${esc(ui.pricesTitle)}</h2>
-    <table class="price-table">
-      <thead><tr><th>${esc(ui.colOption)}</th><th>${esc(ui.colDuration)}</th><th>${esc(ui.colPrice)}</th></tr></thead>
-      <tbody>
-          ${rows}
-      </tbody>
-    </table>
-    <p style="margin-top:12px">${esc(ui.paymentText)}</p>
-    ${bookButtons}
-  </section>
-
-  <section class="card content-card">
-    <h2>${esc(ui.faqTitle)}</h2>
-    ${faq.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join('\n    ')}
-  </section>
-
-  ${partial(lang, 'directions')}
-  </main>
-
-  <nav class="card content-card" aria-label="${esc(ui.otherTitle)}">
-    <h2>${esc(ui.otherTitle)}</h2>
-    <div class="related-links">
-      ${others.map(o => `<a href="${servicePath(o, lang)}">${esc(o.name[lang])}</a>`).join('\n      ')}
+    <div class="qt-num rv" style="--d:2" aria-hidden="true"><div class="qt-big pearl">5</div><span>${esc(q.questionsWord)}</span></div>
+  </div>
+</section>`;
+  const modal = `
+<div class="qm" id="quiz-modal" role="dialog" aria-modal="true" aria-label="${esc(q.eyebrow)}" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="quiz-close" aria-label="${esc(t.lightbox.close)}"><i></i></button>
+    <div class="quiz" id="quiz">
+      <div class="quiz-run" id="quiz-run">
+        <div class="quiz-bar" id="quiz-bar"></div>
+        <div class="quiz-count" id="quiz-count"></div>
+        <h3 class="quiz-q" id="quiz-q"></h3>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <button class="btn btn-ghost btn-sm" type="button" id="quiz-back">${esc(q.back)}</button>
+      </div>
+      <div class="quiz-res" id="quiz-res" hidden></div>
     </div>
-    <a class="btn btn-outline home-btn" href="${home}">${GRID_ICON}${esc(ui.backHome)}</a>
-  </nav>
+  </div>
+</div>`;
+  return { teaser, modal, json };
+}
 
-  ${partial(lang, 'footer')}
+// ═════════════════════════ КНОПКА «НАПИСАТЬ» (как на текущем сайте) ═════════════════════════
+function fab(L) {
+  const t = T[L];
+  const wa = `${WA}?text=${encodeURIComponent(t.fab.wa)}`;
+  return `
+<div class="fab" id="fab">
+  <a class="fab-o fab-wa" href="${wa}" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  <a class="fab-o fab-ig" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></a>
+  <button class="fab-t" id="fab-t" type="button" aria-label="${esc(t.fab.label)}" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+</div>`;
+}
+
+
+// ───────── Arosha catalogue (tools/data/products.mjs) ─────────
+const CATALOG = { products: PRODUCTS, order: PRODUCT_ORDER };
+
+function productsBlock(L) {
+  const t = T[L], v = t.products;
+  const items = CATALOG.order.map(id => {
+    const p = CATALOG.products[id], c = p.content[L];
+    return { id, img: p.image.replace(/^\//, ''), price: p.price, name: c.name, size: c.size || '', sizes: c.sizes || '',
+      description: c.description, composition: c.composition || null, usage: c.usage, properties: c.properties };
+  });
+  const json = JSON.stringify({ items, ui: v }).replace(/</g, '\\u003c');
+  const tiles = items.map((it, i) => `
+      <button class="ptile rv" style="--d:${i % 3}" type="button" data-prod="${esc(it.id)}"><span class="pthumb"><img class="nozoom" src="PIMG:${esc(it.img)}" alt="${esc(it.name)}" loading="lazy" width="900" height="900"></span><span class="pname">${esc(it.name)}</span><span class="pprice">${esc(it.price)}</span></button>`).join('');
+  return { json, tiles };
+}
+
+// ═════════════════════════ ГЛАВНАЯ ═════════════════════════
+const STUDIO = ['studio-3.jpg', 'studio-1.jpg', 'studio-2.jpg', 'building-1.jpg', 'building-2.jpg']; // сюда добавим новые фото студии
+
+function home(L) {
+  const t = T[L], p = paths();
+  const meta = HOME_META[L];
+  const page = { L, kind: 'home', seo: {
+    title: meta.title, description: meta.description, path: HOME_PATH[L], pathByLang: HOME_PATH, xDefault: HOME_PATH[DEFAULT_LANG],
+    ld: { '@context': 'https://schema.org', '@graph': [
+      salonNode(L),
+      { '@type': 'WebPage', '@id': abs(HOME_PATH[L]) + '#webpage', url: abs(HOME_PATH[L]), name: meta.title, inLanguage: L, about: { '@id': SALON_ID } },
+    ] },
+  } };
+  const alt = l2 => p.newHome(l2);
+  const cur = n => money(L, n);
+  const bk = bookingBlock(L, p), qz = quizBlock(L, p), pr = productsBlock(L);
+
+  const win = (id, i) => {
+    const s = t.svc[id], S = SVC[id];
+    const prices = s.prices.map(([a, b]) => `<div class="pr"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('');
+    const chips = s.chips.map((c, k) => `<span class="chip" style="--i:${k}">${esc(c)}</span>`).join('');
+    return `
+        <article class="win${i === 0 ? ' on' : ''}" data-i="${i}">
+          <div class="win-bar"><i></i><i></i><i></i><span>${pad(i + 1)} / 04 · ${esc((S.name[L]).toUpperCase())}</span><span class="wa" aria-hidden="false"><button type="button" class="wa-b" data-dir="-1" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" class="wa-b" data-dir="1" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button></span></div>
+          <div class="win-body">
+            <div class="win-img"><img src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(S.name[L])}" loading="lazy"><span class="badge">${esc(s.badge)}</span></div>
+            <div class="win-txt">
+              <h3>${esc(S.name[L])}</h3><div class="tg">${esc(s.tag)}</div>
+              <p>${esc(s.desc)}</p>
+              <div class="chips">${chips}</div>
+              <div class="price-row">${prices}</div>
+              <a class="btn btn-main btn-sm" href="${p.newSvc(L, id)}">${esc(t.details)} ${ICON.arrow}</a>
+            </div>
+          </div>
+        </article>`;
+  };
+  const steps = HOME_ORDER.map((id, i) => `
+          <button class="step${i === 0 ? ' on' : ''}" type="button" data-i="${i}">${esc(SVC[id].name[L])}<small>${esc(t.svc[id].tag)}</small></button>`).join('');
+
+  const visit = t.visit.steps.map(([h, tx], i) => {
+    const ic = [ICON.chat, ICON.cal, ICON.pin, ICON.clock][i];
+    const extra = i === 0 ? ` <a class="link-u" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>` : '';
+    return `
+      <div class="fcard" style="--i:${i}"><div class="fnum">${pad(i + 1)}</div><div><h3>${esc(h)}</h3><p>${esc(tx)}${extra}</p></div><div class="ficon">${ic}</div></div>`;
+  }).join('');
+
+  const pcard = (id, i, hot) => {
+    const c = t.prices.cards[id], S = SVC[id], first = S.offers[0];
+    const key = S.offers.find(o => o.book).book;
+    return `
+      <div class="pcard${hot ? ' hot' : ''} rv" style="--d:${i}"><div class="tag">${esc(c.badge)}<span class="pill">${first.minutes} ${esc(t.prices.min)}</span></div><h3>${esc(S.name[L])}</h3><div class="amt">${cur(first.price)}</div><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="#zapis" data-pick="${key}">${esc(t.prices.choose)}</a></div>`;
+  };
+  const priceOrder = ['b-flexy', 'r-sleek', 'ems-zero', 'presoterapija'];
+  const stat = (it, d) => `<div class="stat rv"${d ? ` style="--d:${d}"` : ''}><div class="big">${it.pre ? `<small>${esc(it.pre)}</small>` : ''}<span data-count="${it.n}">${it.n}</span>${it.post ? `<small>${esc(it.post)}</small>` : ''}</div><p>${esc(it.label)}</p></div>`;
+  const wa = txt => `${WA}?text=${encodeURIComponent(txt)}`;
+  const studio = STUDIO.map((f, i) => `<figure class="sph sph${i + 1}"><img src="${p.img(f)}" alt="${esc(t.studio.alts[i] || t.studio.alts[0])}" loading="lazy"></figure>`).join('');
+
+  return head(page) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<!-- HERO -->
+<section class="sec hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <span class="tag-women rv"><i></i>${esc(t.womenOnly)}</span>
+      <h1 class="h-xl">
+        <span class="mask" style="--d:0"><span>${esc(t.h1a)}</span></span>
+        <span class="mask" style="--d:1"><span>${esc(t.h1b)}<span class="em">${esc(t.h1em)}</span></span></span>
+      </h1>
+      <p class="lead rv" style="--d:3">${esc(t.heroLead)}</p>
+      <div class="cta-row rv" style="--d:4">
+        <a class="btn btn-main" href="#zapis">${esc(t.pickTime)} ${ICON.arrow}</a>
+        <a class="btn btn-ghost" href="#uslugi">${esc(t.seeTreatments)}</a>
+      </div>
+    </div>
+    <div class="hero-photo rv" style="--d:3">
+      <div class="ph" id="hero-ph"><img id="hero-img" src="${p.img('hero.jpg')}" alt="BodyLab.Beauty" width="534" height="800" fetchpriority="high"></div>
+      <div class="float-chip fc1"><b>${esc(t.chip1.b)}</b><span>${esc(t.chip1.main)}<small>${esc(t.chip1.small)}</small></span></div>
+      <div class="float-chip fc2"><b>${esc(t.chip2.b)}</b><span>${esc(t.chip2.main)}<small>${esc(t.chip2.small)}</small></span></div>
+    </div>
+  </div>
+</section>
+${bk.html}
+
+<div class="strip" aria-hidden="true"><div class="strip-track">
+  ${[...t.strip, ...t.strip].map(x => `<span>${esc(x)}</span>`).join('')}
+</div></div>
+
+<!-- УСЛУГИ (липкая секция) -->
+<section class="pin" id="uslugi" style="--n:4" data-dock-hide>
+  <div class="pin-stick">
+    <div class="pin-in">
+      <div class="pin-l">
+        <h2 class="h-l">${esc(t.pin.h2a)}<span class="em">${esc(t.pin.h2em)}</span></h2>
+        <p class="lead">${esc(t.pin.lead)}</p>
+        <div class="rail" id="rail">
+          <div class="rail-fill"></div>${steps}
+        </div>
+      </div>
+      <div class="stage" id="stage">
+${HOME_ORDER.map(win).join('\n')}
+      </div>
+    </div>
+    <button class="pin-go" type="button" data-pin-next>${esc(t.pin.next)} ${ICON.down}</button>
+  </div>
+</section>
+
+<!-- КАК ПРОХОДИТ ВИЗИТ -->
+<section class="sec" id="vizit">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker rv">${esc(t.visit.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.visit.h2a)}<span class="em">${esc(t.visit.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(t.visit.lead)}</p>
+    </div>
+    <div class="flow" id="flow">${visit}
+    </div>
+  </div>
+</section>
+
+${qz.teaser}
+
+<!-- ЦИФРЫ -->
+<section class="sec dark" id="cifry">
+  <div class="wrap">
+    ${AURORA}
+    <div class="sec-head">
+      <h2 class="h-l rv" style="--d:1">${esc(t.stats.h2a)}<span class="em">${esc(t.stats.h2em)}</span></h2>
+    </div>
+    <div class="stats">
+      ${t.stats.items.map((it, i) => stat(it, i)).join('\n      ')}
+    </div>
+  </div>
+</section>
+
+<!-- ЦЕНЫ -->
+<section class="sec" id="ceny">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker rv">${esc(t.prices.eyebrow)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(t.prices.h2a)}<span class="em">${esc(t.prices.h2em)}</span></h2>
+    </div>
+    <div class="prices">${priceOrder.map((id, i) => pcard(id, i, id === 'r-sleek')).join('')}
+    </div>
+    <div class="note rv">${ICON.shield}<span>${esc(t.prices.note)}</span></div>
+  </div>
+</section>
+
+<!-- ОТЗЫВЫ -->
+<section class="sec" id="otzyvy">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h-l rv" style="--d:1">${esc(t.reviews.h2a)}<span class="em">${esc(t.reviews.h2em)}</span></h2>
+    </div>
+    <div class="revs rv" data-gallery="reviews">
+      <div class="rev-scroll" id="rev-track" data-alt="${esc(t.reviews.alt)}"></div>
+      <div class="rev-ctl">
+        <span class="rev-hint">${esc(t.reviewsUi.hint)}</span>
+        <div class="cal-nav"><button type="button" id="rev-prev" aria-label="${esc(t.reviewsUi.prev)}">${ICON.prev}</button><button type="button" id="rev-next" aria-label="${esc(t.reviewsUi.next)}">${ICON.next}</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- СТУДИЯ -->
+<section class="sec" id="studija">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h-l rv" style="--d:1">${esc(t.studio.h2a)}<span class="em">${esc(t.studio.h2em)}</span></h2>
+      <p class="lead rv" style="--d:2">${esc(t.studio.lead)}</p>
+    </div>
+    <div class="studio rv" data-gallery="studio" style="--d:3">${studio}</div>
+  </div>
+</section>
+
+<!-- ПРОДУКЦИЯ AROSHA -->
+<section class="sec" id="produkcija">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h-l rv" style="--d:1">${esc(t.products.title)}</h2>
+      <div class="brand-strip rv" style="--d:2"><div class="brand-wordmark">AROSHA<small>Aesthetic Science</small></div><p class="lead">${esc(t.products.brand)}</p></div>
+    </div>
+    <div class="pgrid">${pr.tiles.replace(/PIMG:/g, '/')}
+    </div>
+    <p class="pnote rv">${esc(t.products.note)}</p>
+  </div>
+</section>
+
+<!-- ПОДАРОК + STEBBY -->
+<section class="sec" id="podarok">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="duo">
+      <div class="box gift rv">
+        <img src="${p.img('gift-card.jpg')}" alt="${esc(t.gift.alt)}" loading="lazy">
+        <div style="display:grid;gap:12px">
+          <h3 class="h-m">${esc(t.gift.title)}</h3>
+          <p>${esc(t.gift.desc)}</p>
+          <ul>${t.gift.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+          <a class="btn btn-main btn-sm" href="${wa(t.gift.wa)}" target="_blank" rel="noopener">${esc(t.gift.btn)}</a>
+        </div>
+      </div>
+      <div class="box rv" style="--d:1">
+        <h3 class="h-m">${esc(t.stebby.title)}</h3>
+        <p>${esc(t.stebby.desc)}</p>
+        <a class="btn btn-main btn-sm stebby-btn" href="${BUSINESS.stebbyUrl}" target="_blank" rel="noopener">${esc(t.live.stebbyBtn)} ${ICON.arrow}</a>
+        <img class="stebby-logo nozoom" src="${p.img('stebby-logo.png')}" alt="Stebby" width="1280" height="307" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="sec dark" id="kontakty" data-dock-hide>
+  <span id="kontakti" class="anchor-alias"></span>
+  <div class="wrap">
+    ${AURORA}
+    <div class="contact">
+      <div>
+        <h2 class="h-xl rv" style="--d:1;font-size:clamp(40px,7vw,88px);margin-top:12px">${esc(t.contact.h2a)}<span class="em">${esc(t.contact.h2em)}</span></h2>
+        <div class="rows rv" style="--d:2">
+          <div class="row"><span>${esc(t.contact.address)}</span><span>${esc(t.contact.addrText)}</span></div>
+          <div class="row"><span>${esc(t.contact.phone)}</span><span><a href="tel:+37120888805">${PHONE}</a></span></div>
+          <div class="row"><span>Instagram</span><span><a href="${IG}" target="_blank" rel="noopener">@bodylab.beauty</a></span></div>
+        </div>
+        <div class="cta-row rv" style="--d:3">
+          <a class="btn btn-light" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a>
+          <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+        <div class="cta-row rv map-row" style="--d:3"><a class="btn btn-ghost btn-sm" href="${BUSINESS.mapsUrl}" target="_blank" rel="noopener">${ICON.pin} Google Maps</a><a class="btn btn-ghost btn-sm" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">${ICON.pin} Waze</a></div>
+      </div>
+      <div class="photos rv" style="--d:2" data-gallery="contact"><img src="${p.img('studio-1.jpg')}" alt="${esc(t.contact.imgAlt1)}" loading="lazy"><img src="${p.img('studio-2.jpg')}" alt="${esc(t.contact.imgAlt2)}" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="f">
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a><a href="#uslugi">${esc(t.menu[1])}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
+</footer>
+
+<div class="dock" id="dock"><a class="btn btn-main" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a></div>
+${qz.modal}
+<div class="qm pm" id="prod-modal" role="dialog" aria-modal="true" aria-label="${esc(t.products.title)}" hidden>
+  <div class="qm-card">
+    <button class="qm-x" type="button" id="prod-close" aria-label="${esc(t.lightbox.close)}"><i></i></button>
+    <div class="pm-body">
+      <figure class="pm-photo"><img id="pm-img" alt=""></figure>
+      <div class="pm-info">
+        <h3 class="pm-name" id="pm-name"></h3>
+        <div class="pm-price" id="pm-price"></div>
+        <div class="pm-sizes" id="pm-sizes"></div>
+        <div class="ptabs" id="pm-tabs"></div>
+        <div class="ptab-panel" id="pm-panel"></div>
+        <a class="btn btn-main" id="pm-order" href="#" target="_blank" rel="noopener">${esc(t.products.order)}</a>
+      </div>
+    </div>
+  </div>
 </div>
+${fab(L)}
+
+<script type="application/json" id="i18n">${bk.json}</script>
+<script type="application/json" id="quiz-data">${qz.json}</script>
+<script type="application/json" id="products-data">${pr.json}</script>
 <script src="/assets/site.js"></script>
+<script src="${p.asset('new.js')}" defer></script>
+<script src="${p.asset('booking.js')}" defer></script>
+<script src="${p.asset('quiz.js')}" defer></script>
+<script src="${p.asset('products.js')}" defer></script>
+<script src="${p.asset('home.js')}" defer></script>
 </body>
 </html>
 `;
 }
 
-// ---------- small generated files ----------
-function redirectPage(target, lang) {
+// ═════════════════════════ ПРОЦЕДУРА ═════════════════════════
+function service(L, S) {
+  const t = T[L], s = t.s, ui = UI[L], id = S.id, name = S.name[L];
+  const p = paths();
+  const alt = l2 => svcUrl(l2, id);
+  const offers = S.offers;
+  const mins = [...new Set(offers.map(o => o.minutes))].sort((a, b) => a - b);
+  const minPrice = Math.min(...offers.map(o => o.price));
+  const bookKey = offers.find(o => o.book).book;
+  const hotIdx = offers.length > 1 ? offers.length - 1 : -1;
+  const tag = t.svc[id].tag;
+  const ph = (n, plain) => (plain ? moneyPlain(L, n) : money(L, n));
+
+  const facts = `
+        <div class="facts rv" style="--d:3">
+          <span class="fact">${ICON.clock}${mins.join(s.orWord)} ${esc(t.b.min)}</span>
+          <span class="fact">${ICON.tag}${offers.length > 1 ? esc(s.from) : ''}${ph(minPrice, true)}</span>
+          <span class="fact">${ICON.cal}${esc(s.onlineBook)}</span>
+          <span class="fact">${ICON.heart}${esc(t.womenOnly)}</span>
+        </div>`;
+  const goals = S.goals[L].map((g, i) => `
+      <div class="gcard rv" style="--d:${i}"><div class="n pearl">${pad(i + 1)}</div><h3>${esc(g)}</h3></div>`).join('');
+  const how = S.how[L].map(x => `<p>${esc(x)}</p>`).join('');
+  const offerCards = offers.map((o, i) => {
+    const hot = i === hotIdx;
+    const per = o.sessions ? `<div class="per">${ph(Math.round(o.price / o.sessions * 100) / 100, true)} ${esc(s.perSession)}</div>` : `<div class="per">${esc(ui.minutes(o.minutes))}</div>`;
+    const cta = o.book
+      ? `<a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="${p.newBook(L, o.book)}">${esc(ui.book(name))}</a>`
+      : `<a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="${WA}?text=${encodeURIComponent(s.askText(name, lcfirst(o.label[L])))}" target="_blank" rel="noopener">${esc(s.ask)}</a>`;
+    return `
+      <div class="pcard${hot ? ' hot' : ''} rv" style="--d:${i}">
+        <div class="tag">${esc(name)}<span class="pill">${esc(ui.minutes(o.minutes))}</span></div>
+        <h3>${esc(o.label[L])}</h3>
+        <div class="amt">${ph(o.price)}</div>
+        ${per}
+        ${cta}
+      </div>`;
+  }).join('');
+  const faq = [...S.faq[L], ui.faqBook, ui.faqCancel, ui.faqPay, ui.faqWhere].map((f, i) => `
+        <div class="acc-i rv${i === 0 ? ' open' : ''}" style="--d:${i}">
+          <button class="acc-q" type="button" aria-expanded="${i === 0}"><span>${esc(f.q)}</span><i></i></button>
+          <div class="acc-a"><div><p>${esc(f.a)}</p></div></div>
+        </div>`).join('');
+  const others = SERVICES.filter(o => o.id !== id).map((o, i) => {
+    const mp = Math.min(...o.offers.map(x => x.price));
+    return `
+      <a class="ocard rv" style="--d:${i}" href="${p.newSvc(L, o.id)}">
+        <img src="${p.img(o.image.replace('/images/', ''))}" alt="${esc(o.name[L])}" loading="lazy" width="96" height="96">
+        <div><h3>${esc(o.name[L])}</h3><small>${esc(lcfirst(t.svc[o.id].tag))} · ${o.offers.length > 1 ? esc(s.from) : ''}${ph(mp, true)}</small></div>
+        <span class="go">${ICON.arrow}</span>
+      </a>`;
+  }).join('');
+
+  const faqAll = [...S.faq[L], ui.faqBook, ui.faqCancel, ui.faqPay, ui.faqWhere];
+  const page = { L, kind: 'svc', seo: {
+    title: S.meta[L].title, description: S.meta[L].description, path: svcUrl(L, id), pathByLang: byLang(l => svcUrl(l, id)), xDefault: svcUrl(DEFAULT_LANG, id),
+    ogType: 'article', image: abs(S.image),
+    ld: { '@context': 'https://schema.org', '@graph': [
+      serviceNode(S, L), salonNode(L),
+      { '@type': 'FAQPage', mainEntity: faqAll.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+    ] },
+  } };
+  return head(page) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<section class="sec svc-hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <div class="crumbs rv"><a href="${p.newHome(L)}">BodyLab</a><span>/</span><a href="${p.newHome(L)}#uslugi">${esc(s.treatments)}</a><span>/</span><span>${esc(name)}</span></div>
+      <h1 class="h-xl">
+        <span class="mask" style="--d:0"><span>${esc(name)}</span></span>
+        <span class="mask h-sub" style="--d:1"><span><span class="em">${esc(lcfirst(tag))}</span></span></span>
+      </h1>
+      <p class="lead rv" style="--d:3;margin-top:22px">${esc(S.lead[L])}</p>${facts}
+      <div class="cta-row rv" style="--d:4">
+        <a class="btn btn-main" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a>
+        <a class="btn btn-ghost" href="${p.newHome(L)}#uslugi">${esc(ui.allTreatments)}</a>
+      </div>
+    </div>
+    <div class="hero-photo rv" style="--d:3">
+      <div class="ph"><img id="hero-img" src="${p.img(S.image.replace('/images/', ''))}" alt="${esc(name)}" width="534" height="800" fetchpriority="high"></div>
+      <div class="float-chip fc1"><b>${mins[0]}</b><span>${esc(s.min)}<small>${esc(offers.length > 1 || mins.length > 1 ? s.oneSession : s.length)}</small></span></div>
+      <div class="float-chip fc2"><b>€</b><span>${offers.length > 1 ? esc(s.from) : ''}${ph(minPrice, true)}<small>${esc(s.price)}</small></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="how">
+      <div class="sec-head" style="margin:0">
+        <h2 class="h-l rv" style="--d:1">${esc(ui.howTitle)}</h2>
+      </div>
+      <div class="rv" style="--d:2">${how}</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="goals">${goals}
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ceny">
+  <span id="cenas" class="anchor-alias"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">${esc(ui.pricesTitle)}</span>
+      <h2 class="h-l rv" style="--d:1">${esc(s.pickVariant)}<span class="em">${esc(s.variantEm)}</span></h2>
+    </div>
+    <div class="offers">${offerCards}
+    </div>
+    <div class="note rv">${ICON.shield}<span>${esc(ui.paymentText)} ${esc(ui.faqCancel.a.split('. ').slice(-1)[0])}</span></div>
+  </div>
+</section>
+
+<section class="sec dark">
+  <div class="wrap">
+    ${AURORA}
+    <div class="how">
+      <div class="sec-head" style="margin:0">
+        <span class="eyebrow rv">${esc(s.honest)}</span>
+        <h2 class="h-l rv" style="--d:1">${esc(ui.expectTitle)}</h2>
+      </div>
+      <div class="rv" style="--d:2"><p style="color:#CFC7BD">${esc(ui.expectText)}</p><p style="color:#A39C93;font-size:15px;font-weight:500">${esc(ui.beforeText)}</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="how">
+      <div class="sec-head" style="margin:0">
+        <span class="eyebrow rv">${esc(s.faq)}</span>
+        <h2 class="h-l rv" style="--d:1">${esc(ui.faqTitle)}</h2>
+      </div>
+      <div class="acc">${faq}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h-l rv">${esc(ui.otherTitle)}</h2>
+    </div>
+    <div class="ocards">${others}
+    </div>
+  </div>
+</section>
+
+<section class="sec dark" data-dock-hide>
+  <div class="wrap">
+    ${AURORA}
+    <div class="cta-card">
+      <div>
+        <span class="eyebrow rv">${esc(s.ctaEyebrow)}</span>
+        <h2 class="h-l rv" style="--d:1;margin-top:12px">${esc(s.ctaH2a)}<span class="em">${esc(s.ctaH2em)}</span></h2>
+        <p class="lead rv" style="--d:2;margin-top:14px">${esc(s.ctaLead)}</p>
+      </div>
+      <div class="cta-row rv" style="--d:3;margin:0">
+        <a class="btn btn-light" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a>
+        <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">${s.waBtn}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="f">
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(ui.allTreatments)}</a><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
+</footer>
+
+<div class="dock" id="dock"><a class="btn btn-main" href="${p.newBook(L, bookKey)}">${esc(ui.book(name))} ${ICON.arrow}</a></div>
+${fab(L)}
+
+<script src="/assets/site.js"></script>
+<script src="${p.asset('new.js')}" defer></script>
+</body>
+</html>
+`;
+}
+
+
+// ═════════════════════════ СТРАНИЦА ДЛЯ КЛИЕНТОВ (как /info/ на текущем сайте, в новом стиле) ═════════════════════════
+// Links in SMS messages use /info/?lang=ru and /info/?lang=en – keep them working.
+const INFO_LANG_REDIRECT = `
+<script>
+  (function(){ var m = /[?&]lang=(lv|ru|en)\b/.exec(location.search); if(m && m[1] !== 'lv') location.replace('/' + m[1] + '/info/'); })();
+</script>`;
+const DOOR_CODE = '2700#'; // как на текущей странице /info/
+function infoPage(L) {
+  const t = T[L], i = t.info, page = { L, kind: 'info', title: `${i.title} – BodyLab.Beauty` }, p = paths();
+  const alt = l2 => p.newInfo(l2);
+  const maps = 'https://www.google.com/maps/search/?api=1&query=Augusta+Deglava+iela+66%2C+R%C4%ABga';
+  const waze = 'https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes';
+  return head(page, L === 'lv' ? INFO_LANG_REDIRECT : '') + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+
+<section class="sec svc-hero info-hero">
+  <div class="wrap">
+    ${AURORA}
+    <div>
+      <h1 class="h-l rv">${esc(i.title)}</h1>
+      <p class="lead rv" style="--d:2;margin-top:14px">${esc(i.sub)}</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap" style="background:transparent;box-shadow:none;padding:0">
+    <div class="info-grid">
+      <article class="icard rv">
+        <span class="eyebrow">${ICON.pin}${esc(i.addrH)}</span>
+        <p class="ip">${i.addrP}</p>
+        <div class="cta-row" style="margin-top:6px"><a class="btn btn-main btn-sm" href="${maps}" target="_blank" rel="noopener">${esc(i.maps)}</a><a class="btn btn-ghost btn-sm" href="${waze}" target="_blank" rel="noopener">${esc(i.waze)}</a></div>
+        <figure class="ifig" data-gallery="info"><img src="${p.img('building-1.jpg')}" alt="${esc(i.photoAlt[0])}" loading="lazy"></figure>
+      </article>
+      <article class="icard rv" style="--d:1">
+        <span class="eyebrow">${ICON.key}${esc(i.doorH)}</span>
+        <p class="ip">${esc(i.doorP)}</p>
+        <div class="code"><small>${esc(i.doorCode)}</small><div class="door">${DOOR_CODE}</div></div>
+        <figure class="ifig" data-gallery="info"><img src="${p.img('building-2.jpg')}" alt="${esc(i.photoAlt[1])}" loading="lazy"></figure>
+      </article>
+      <article class="icard rv" style="--d:2">
+        <span class="eyebrow">${ICON.car}${esc(i.parkH)}</span>
+        <p class="ip">${i.parkP1}</p>
+        <p class="ip soft">${esc(i.parkP2)}</p>
+      </article>
+      <article class="icard dark-card rv" style="--d:3">
+        <span class="eyebrow">${ICON.shield}${esc(i.cancelH)}</span>
+        <p class="ip">${esc(i.cancelP1)}</p>
+        <p class="ip">${i.cancelP2}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap info-cta">
+    <div class="cta-row rv">
+      <a class="btn btn-main" href="${WA}" target="_blank" rel="noopener">${esc(i.wa)}</a>
+      <a class="btn btn-ghost" href="https://ig.me/m/bodylab.beauty" target="_blank" rel="noopener">${esc(i.ig)}</a>
+      <a class="btn btn-ghost" href="${p.newHome(L)}">${esc(i.home)}</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="f">
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}#uslugi">${esc(t.menu[1])}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)} · <a class="f-priv" href="${p.newPrivacy(L)}">${esc(t.privacyFoot)}</a></span>
+</footer>
+${fab(L)}
+
+<script src="${p.asset('new.js')}" defer></script>
+</body>
+</html>
+`;
+}
+
+
+// ═════════════════════════ ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ (простая) ═════════════════════════
+function privacyPage(L) {
+  const t = T[L], v = t.privacy, p = paths();
+  const page = { L, kind: 'privacy', seo: { title: `${v.title} – BodyLab.Beauty`, description: v.sub, path: privacyUrl(L), pathByLang: byLang(privacyUrl), xDefault: privacyUrl(DEFAULT_LANG),
+    ld: { '@context': 'https://schema.org', '@graph': [salonNode(L), { '@type': 'WebPage', '@id': abs(privacyUrl(L)) + '#webpage', url: abs(privacyUrl(L)), name: v.title, inLanguage: L, about: { '@id': SALON_ID } }] } } };
+  const alt = l2 => p.newPrivacy(l2);
+  const items = [v.who, v.what, v.why, v.keep, v.rights].map(([h, tx]) => `
+    <p><b>${esc(h)}.</b> ${esc(tx)}</p>`).join('');
+  return head(page) + `
+<body>
+${nav(page, alt)}
+
+<main id="top">
+  <article class="legal">
+    <h1>${esc(v.title)}</h1>
+    <p class="sub">${esc(v.sub)}</p>${items}
+  </article>
+</main>
+
+<footer class="f">
+  <nav class="f-links" aria-label="${esc(t.footer.info)}"><a href="${p.newHome(L)}">${esc(t.menu[1])}</a><a href="${p.newInfo(L)}">${esc(t.footer.info)}</a></nav>
+  <span class="f-c">${esc(t.footer.rights)}</span>
+</footer>
+${fab(L)}
+
+<script src="${p.asset('new.js')}" defer></script>
+</body>
+</html>
+`;
+}
+
+// ═════════════════════════ small generated files ═════════════════════════
+function redirectPage(target, lang = 'lv') {
   return `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex">
 <title>BodyLab.Beauty</title>
 <link rel="canonical" href="${abs(target)}">
 <meta http-equiv="refresh" content="0; url=${target}">
@@ -338,39 +1011,42 @@ function redirectPage(target, lang) {
 }
 
 function notFoundPage() {
-  const links = LANGS.map(l => `<li><a href="${HOME_PATH[l]}" hreflang="${l}">${{ lv: 'Uz sākumlapu', ru: 'На главную', en: 'Go to the home page' }[l]}</a></li>`).join('\n    ');
+  const links = LANGS.map(l => `<a class="btn btn-ghost" href="${HOME_PATH[l]}" hreflang="${l}">${{ lv: 'Uz sākumlapu', ru: 'На главную', en: 'Go to the home page' }[l]}</a>`).join('\n      ');
   return `<!DOCTYPE html>
 <html lang="lv">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4ECE2">
 <meta name="robots" content="noindex">
 <title>404 – BodyLab.Beauty</title>
-${ICONS}
-${FONTS}
-${css}
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/new.css?v=${ver('new.css')}">
 </head>
 <body>
-<div class="wrap">
-  <main class="card content-card" style="text-align:center">
-    <h1>404</h1>
+<main class="err404">
+  <div class="err404-in">
+    <img class="logo-mark nozoom" src="/images/logo-mark.png" alt="BodyLab.Beauty" width="92" height="80">
+    <div class="err404-n pearl">404</div>
     <p>Lapa nav atrasta · Страница не найдена · Page not found</p>
-    <ul style="list-style:none;margin-top:12px;line-height:2">
-    ${links}
-    </ul>
-  </main>
-</div>
+    <div class="cta-row">
+      ${links}
+    </div>
+  </div>
+</main>
 </body>
 </html>
 `;
 }
 
+const servicePathsAll = () => SERVICES.map(svc => byLang(l => svcUrl(l, svc.id)));
 function sitemap() {
-  const groups = [HOME_PATH, ...SERVICES.map(svc => Object.fromEntries(LANGS.map(l => [l, servicePath(svc, l)])))];
-  const urls = groups.flatMap(byLang => LANGS.map(lang => `  <url>
-    <loc>${abs(byLang[lang])}</loc>
-${LANGS.map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${abs(byLang[l])}"/>`).join('\n')}
-    <xhtml:link rel="alternate" hreflang="x-default" href="${abs(byLang[DEFAULT_LANG])}"/>
+  const groups = [HOME_PATH, ...servicePathsAll()];
+  const urls = groups.flatMap(pathByLang => LANGS.map(lang => `  <url>
+    <loc>${abs(pathByLang[lang])}</loc>
+${LANGS.map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${abs(pathByLang[l])}"/>`).join('\n')}
+    <xhtml:link rel="alternate" hreflang="x-default" href="${abs(pathByLang[DEFAULT_LANG])}"/>
   </url>`));
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -380,13 +1056,14 @@ ${urls.join('\n')}
 }
 
 function llms() {
+  const euro = (n, lang) => (lang === 'en' ? `€${n}` : `${n} €`);
   const svcLines = lang => SERVICES.map(svc =>
-    `- [${svc.name[lang]}](${abs(servicePath(svc, lang))}): ${svc.offers.map(o => `${o.label[lang]}, ${UI[lang].minutes(o.minutes)} – ${euro(o.price, lang)}`).join('; ')}`).join('\n');
+    `- [${svc.name[lang]}](${abs(svcUrl(lang, svc.id))}): ${svc.offers.map(o => `${o.label[lang]}, ${UI[lang].minutes(o.minutes)} – ${euro(o.price, lang)}`).join('; ')}`).join('\n');
   return `# BodyLab.Beauty
 
-> Body contouring studio in Riga, Latvia (ķermeņa modelēšanas studija Rīgā). Treatments: R-Sleek, B-Flexy, EMS Zero, pressotherapy. Online booking with live availability.
+> Body contouring studio in Riga, Latvia (ķermeņa modelēšanas studija Rīgā) for women. Treatments: R-Sleek, B-Flexy, EMS Zero, pressotherapy. Online booking with live availability.
 
-- Address: Augusta Deglava iela 66, "Deglava Biroji", 5th floor, room 506, Rīga, Latvia
+- Address: Augusta Deglava iela 66, "Deglava Biroji", 5th floor, rooms 506 and 507, Rīga, Latvia
 - Phone / WhatsApp: ${BUSINESS.phoneDisplay}
 - Instagram: ${BUSINESS.instagram}
 - Payment with Stebby wellness benefits is accepted; gift cards are available (valid 3 months).
@@ -408,13 +1085,24 @@ ${svcLines('ru')}
 `;
 }
 
-// ---------- write ----------
+// ═════════════════════════ write ═════════════════════════
 const outputs = new Map();
-for (const lang of LANGS) {
-  outputs.set(lang === DEFAULT_LANG ? 'index.html' : `${lang}/index.html`, renderHome(lang));
-  for (const svc of SERVICES) outputs.set(`${lang}/${svc.slug[lang]}/index.html`, renderService(svc, lang));
+for (const L of LANGS) {
+  outputs.set(fileOf(HOME_PATH[L]), home(L));
+  outputs.set(fileOf(infoUrl(L)), infoPage(L));
+  outputs.set(fileOf(privacyUrl(L)), privacyPage(L));
+  for (const S of SERVICES) outputs.set(fileOf(svcUrl(L, S.id)), service(L, S));
 }
-outputs.set('lv/index.html', redirectPage('/', 'lv'));
+// Addresses that existed before / during the redesign keep working:
+outputs.set('lv/index.html', redirectPage('/'));                 // old: /lv/ -> /
+outputs.set('new/index.html', redirectPage('/'));                // test version addresses (/new/...) -> the real pages
+for (const L of LANGS) {
+  outputs.set(`new/${L}/index.html`, redirectPage(HOME_PATH[L], L));
+  outputs.set(`new/${L}/info/index.html`, redirectPage(infoUrl(L), L));
+  outputs.set(`new/${L}/privacy/index.html`, redirectPage(privacyUrl(L), L));
+  outputs.set(`new/${L}/zapis/index.html`, redirectPage(`${HOME_PATH[L]}#zapis`, L));
+  for (const S of SERVICES) outputs.set(`new/${L}/${S.slug[L]}/index.html`, redirectPage(svcUrl(L, S.id), L));
+}
 outputs.set('404.html', notFoundPage());
 outputs.set('sitemap.xml', sitemap());
 outputs.set('llms.txt', llms());

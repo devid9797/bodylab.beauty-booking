@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /old/
 
 Sitemap: https://bodylab-beauty.lv/sitemap.xml
