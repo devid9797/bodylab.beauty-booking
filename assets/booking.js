@@ -306,6 +306,7 @@
   function go(n){
     var back = n < step; step = n;
     Object.keys(panes).forEach(function(k){ panes[k].classList.remove('show','back'); });
+    $('#zapis').classList.toggle('is-done', n === 4);
     var p = panes[n]; void p.offsetWidth; p.classList.add('show'); if(back) p.classList.add('back');
     $$('.stp').forEach(function(s){
       var k = +s.dataset.s;

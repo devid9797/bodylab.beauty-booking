@@ -303,17 +303,15 @@ function bookingBlock(L, p) {
       </div>
 
       <div class="pane" id="p4">
-        <div class="done-ic">${ICON.done}</div>
-        <h2>${esc(b.done)}</h2>
+        <div class="done-head"><div class="done-ic">${ICON.done}</div><h2>${esc(b.done)}</h2></div>
         <div class="confirm" id="confirm"></div>
-        <p class="lead conf-cal">${esc(lv.confirmAddCal)}</p>
-        <div class="pane-foot conf-btns">
+        <p class="conf-cal">${esc(lv.confirmAddCal)}</p>
+        <div class="conf-btns">
           <a class="btn btn-main" id="gcal-link" href="#" target="_blank" rel="noopener">${esc(b.gcal)}</a>
           <a class="btn btn-ghost" id="ics-link" href="#" download="BodyLabBeauty-booking.ics">${esc(b.ics)}</a>
         </div>
-        <p class="hint-s">${esc(lv.gcalHint)}</p>
-        <p class="hint-s">${esc(lv.confirmReminder)}</p>
-        <div class="pane-foot"><button class="btn btn-ghost" type="button" id="conf-close">${esc(b.closeConfirm)}</button></div>
+        <p class="conf-note">${esc(lv.confirmReminder)}</p>
+        <button class="btn btn-ghost conf-close" type="button" id="conf-close">${esc(b.closeConfirm)}</button>
       </div>
     </div>
 
