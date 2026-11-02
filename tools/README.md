@@ -24,3 +24,6 @@ Local preview (bookings are simulated on localhost – nothing reaches Make.com)
 
 URLs: `/` = Latvian home (also serves existing UTM links), `/ru/`, `/en/`,
 `/<lang>/<service>/` service pages, `/lv/` redirects to `/`.
+
+## Current layout
+`node tools/build.mjs` generates the whole site (new design) into the repo root; `--check` verifies it is up to date. `/old/` is a static noindex copy of the previous site (see old/README.md). Booking logic lives in assets/booking.js.

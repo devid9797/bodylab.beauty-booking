@@ -140,6 +140,15 @@
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ dd.classList.remove('open'); lb.setAttribute('aria-expanded',false); } });
   }
 
+  /* ---- язык: запомнить выбор и сохранить utm/параметры при переходе ---- */
+  $$('a[data-lang]').forEach(function(a){
+    a.addEventListener('click',function(){
+      try{ localStorage.setItem('bb_lang', a.dataset.lang); }catch(e){}
+      var q = location.search;
+      if(q && a.getAttribute('href').indexOf('?') === -1) a.setAttribute('href', a.getAttribute('href') + q);
+    });
+  });
+
   /* ---- общий цикл на rAF ---- */
   var ticking = false, hooks = [onScroll,heroPar,sweepReveal];
   window.BL.onFrame = function(fn){ hooks.push(fn); fn(); };

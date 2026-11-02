@@ -17,7 +17,7 @@ export const BUSINESS = {
   phoneDisplay: '+371 20888805',
   instagram: 'https://www.instagram.com/bodylab.beauty',
   whatsapp: 'https://api.whatsapp.com/send?phone=37120888805',
-  street: 'Augusta Deglava iela 66, "Deglava Biroji", 5. stāvs, 506. kabinets',
+  street: 'Augusta Deglava iela 66, "Deglava Biroji", 5. stāvs, 506. un 507. kabinets',
   city: 'Rīga',
   country: 'LV',
   logo: `${SITE}/images/logo.jpg`,
@@ -72,7 +72,7 @@ export const UI = {
     faqBook: { q: 'Kā pierakstīties?', a: 'Izvēlieties brīvu laiku tiešsaistes kalendārā mūsu mājaslapā un aizpildiet īsu formu – reģistrācija nav nepieciešama. Jautājumus varat uzdot WhatsApp: +371 20888805.' },
     faqCancel: { q: 'Vai pierakstu var atcelt?', a: 'Jā, lūdzam par to informēt iepriekš. Ja pieraksts tiek atcelts mazāk nekā 24 stundas pirms procedūras, tiek piemērota pilna procedūras cena.' },
     faqPay: { q: 'Kā var samaksāt?', a: 'Procedūras var apmaksāt arī ar Stebby labbūtības pabalstiem, ja tos piedāvā jūsu darba devējs. Procedūru var arī uzdāvināt ar BodyLab.Beauty dāvanu karti, kas derīga 3 mēnešus.' },
-    faqWhere: { q: 'Kur atrodas studija un vai ir stāvvieta?', a: 'Studija atrodas Rīgā, Augusta Deglava ielā 66 ("Deglava Biroji"), 5. stāvā, 506. kabinetā. Pie ēkas ir stāvvieta – 1 stunda bez maksas.' },
+    faqWhere: { q: 'Kur atrodas studija un vai ir stāvvieta?', a: 'Studija atrodas Rīgā, Augusta Deglava ielā 66 ("Deglava Biroji"), 5. stāvā, 506. un 507. kabinetā. Pie ēkas ir stāvvieta – 1 stunda bez maksas.' },
   },
   ru: {
     book: name => `Записаться на ${name}`,
@@ -96,7 +96,7 @@ export const UI = {
     faqBook: { q: 'Как записаться?', a: 'Выберите свободное время в онлайн-календаре на нашем сайте и заполните короткую форму – регистрация не нужна. Вопросы можно задать в WhatsApp: +371 20888805.' },
     faqCancel: { q: 'Можно ли отменить запись?', a: 'Да, просим сообщить об этом заранее. Если запись отменяется менее чем за 24 часа до процедуры, оплачивается полная стоимость процедуры.' },
     faqPay: { q: 'Как можно оплатить?', a: 'Процедуры можно оплатить и льготами Stebby, если их предоставляет ваш работодатель. Процедуру можно подарить с подарочной картой BodyLab.Beauty, она действует 3 месяца.' },
-    faqWhere: { q: 'Где находится студия и есть ли парковка?', a: 'Студия находится в Риге, Augusta Deglava iela 66 ("Deglava Biroji"), 5-й этаж, кабинет 506. У здания есть парковка – 1 час бесплатно.' },
+    faqWhere: { q: 'Где находится студия и есть ли парковка?', a: 'Студия находится в Риге, Augusta Deglava iela 66 ("Deglava Biroji"), 5-й этаж, кабинеты 506, 507. У здания есть парковка – 1 час бесплатно.' },
   },
   en: {
     book: name => `Book ${name}`,
@@ -120,7 +120,7 @@ export const UI = {
     faqBook: { q: 'How do I book?', a: 'Pick a free time in the online calendar on our website and fill in a short form – no account needed. You can also ask questions on WhatsApp: +371 20888805.' },
     faqCancel: { q: 'Can I cancel my booking?', a: 'Yes, please let us know in advance. If a booking is cancelled less than 24 hours before the appointment, the full price of the treatment applies.' },
     faqPay: { q: 'How can I pay?', a: 'Treatments can also be paid with Stebby wellness benefits if your employer offers them. You can also give a treatment as a present with a BodyLab.Beauty gift card, valid for 3 months.' },
-    faqWhere: { q: 'Where is the studio and is there parking?', a: 'The studio is in Riga, Augusta Deglava iela 66 ("Deglava Biroji"), 5th floor, room 506. There is parking by the building – 1 hour free.' },
+    faqWhere: { q: 'Where is the studio and is there parking?', a: 'The studio is in Riga, Augusta Deglava iela 66 ("Deglava Biroji"), 5th floor, rooms 506 and 507. There is parking by the building – 1 hour free.' },
   },
 };
 
