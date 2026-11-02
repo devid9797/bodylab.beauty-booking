@@ -845,7 +845,7 @@ html.lb-open{overflow:hidden}
   .fld label{font-size:11.5px}
   .fld input,.fld textarea{font-size:16px;padding:12px 14px;border-radius:14px}
   .fld.full{grid-column:1/-1}
-  .phone{grid-template-columns:auto 1fr}.cc{padding:0 12px;border-radius:14px;font-size:13px}
+  .phone{grid-template-columns:auto 1fr}.cc{padding-left:12px;border-radius:14px;font-size:13px}
   .more-in{grid-template-columns:1fr}
   .terms{font-size:10.5px;line-height:1.45;padding:9px 12px;margin-top:2px}
   .form-err{min-height:0}
@@ -1276,7 +1276,7 @@ footer.f{display:grid;gap:14px;justify-items:start;padding:26px 20px 120px;font-
 .anchor-alias{display:block;height:0;overflow:hidden}
 .stebby-btn{white-space:nowrap}
 .map-row{flex-wrap:wrap}
-select.cc{font:inherit;color:inherit;background:transparent;border:0;outline:0;max-width:96px}
+select.cc{font:inherit;font-size:14px;font-weight:600;color:var(--accent);outline:0;cursor:pointer;width:auto;min-width:118px;padding:0 34px 0 16px;appearance:none;-webkit-appearance:none;background:var(--chip-bg) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%234B4743%27 stroke-width=%272.4%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 12px center/14px}
 .btn-primary,.btn-outline{font:600 14px/1 Montserrat,sans-serif;padding:12px 20px;border-radius:999px;cursor:pointer;border:1px solid var(--accent)}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-outline{background:transparent;color:var(--accent)}
