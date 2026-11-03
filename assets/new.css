@@ -1345,3 +1345,14 @@ select.cc{font:inherit;font-size:14px;font-weight:600;color:var(--accent);outlin
 @media (max-width:640px){
   .bk-top,.steps{display:none}
 }
+
+@media (max-width:820px){#uslugi .stage{touch-action:pan-x pan-y}}
+/* онлайн-запись на телефоне: воздух между заголовком и содержимым */
+@media (max-width:640px){
+  .bk-title{margin-bottom:20px;padding-top:4px}
+  .pane:not(#p4) h2{margin-bottom:14px}
+}
+@media (max-width:640px) and (max-height:700px){
+  .bk-title{margin-bottom:12px}
+  .pane:not(#p4) h2{margin-bottom:8px}
+}
