@@ -15,7 +15,20 @@
       pin.classList.toggle('at-end', i === wins.length-1);
       $$('.wa-b',pin).forEach(function(b){ b.disabled = (+b.dataset.dir < 0 && i === 0) || (+b.dataset.dir > 0 && i === wins.length-1); });
     };
+    /* телефон/планшет (≤820px): обычная горизонтальная лента со свайпом, без «липкой» прокрутки */
+    var mq = window.matchMedia('(max-width:820px)'), stageEl = $('#stage');
+    function railIndex(){
+      var c = stageEl.scrollLeft + stageEl.clientWidth / 2, best = 0, d = 1e9;
+      wins.forEach(function(w,k){ var m = Math.abs(w.offsetLeft + w.offsetWidth/2 - c); if(m < d){ d = m; best = k; } });
+      return best;
+    }
+    stageEl.addEventListener('scroll',function(){ if(mq.matches) setActive(railIndex()); },{passive:true});
+    function slideTo(i){
+      var w = wins[i]; if(!w) return;
+      stageEl.scrollTo({left: w.offsetLeft - (stageEl.clientWidth - w.offsetWidth)/2, behavior: reduce?'auto':'smooth'});
+    }
     B.onFrame(function(){
+      if(mq.matches){ if(cur < 0) setActive(railIndex()); return; }
       var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       var p = Math.min(1,Math.max(0,-r.top/total));
       setActive(Math.min(wins.length-1, Math.floor(p*wins.length)));
@@ -23,6 +36,7 @@
     /* листание карточек влево-вправо (и стрелками) – то же, что прокрутка вниз */
     function goTo(i){
       i = Math.max(0, Math.min(wins.length-1, i));
+      if(mq.matches){ slideTo(i); return; }
       var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       scrollTo({top: scrollY + r.top + total*(i+.5)/wins.length, behavior: reduce?'auto':'smooth'});
     }
@@ -35,12 +49,15 @@
     var stage = $('#stage'), tx = 0, ty = 0, tt = 0;
     stage.addEventListener('touchstart',function(e){ var t = e.touches[0]; tx = t.clientX; ty = t.clientY; tt = Date.now(); },{passive:true});
     stage.addEventListener('touchend',function(e){
+      if(mq.matches) return;
       var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
       if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - tt < 900) { if(dx < 0 && cur === wins.length-1) nextBlock(); else goTo(cur + (dx < 0 ? 1 : -1)); }
     },{passive:true});
     $$('.wa-b',pin).forEach(function(b){ b.addEventListener('click',function(){ goTo(cur + (+b.dataset.dir)); }); });
     steps.forEach(function(s){ s.addEventListener('click',function(){
-      var i = +s.dataset.i, r = pin.getBoundingClientRect(), total = r.height - innerHeight;
+      var i = +s.dataset.i;
+      if(mq.matches){ slideTo(i); return; }
+      var r = pin.getBoundingClientRect(), total = r.height - innerHeight;
       scrollTo({top: scrollY + r.top + total*(i+.5)/wins.length, behavior: reduce?'auto':'smooth'});
     });});
   }

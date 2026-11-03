@@ -120,7 +120,7 @@ export const T = {
     // страница записи
     b: {
       demo: 'Демо: данные не отправляются, время сгенерировано.',
-      eyebrow: 'Онлайн-запись', steps: ['Дата и время', 'Процедура', 'Ваши данные'],
+      eyebrow: 'Онлайн-запись', stepWord: 'Шаг', steps: ['Дата и время', 'Процедура', 'Ваши данные'],
       dtH: 'Выберите дату и время', dtLead: 'Выберите день, затем время.', pickDateFirst: 'Сначала выберите дату', toProc: 'Выбрать процедуру', procH: 'Что вам подходит?', procLead: 'Показаны процедуры, которые помещаются в выбранное время.', noFit: 'свободно только {n} мин', chosen: 'Процедура', removeChosen: 'Убрать выбор', moreFields: 'Дополнительно (необязательно)', timesFor: 'Свободное время',
       s1h: 'Что вам подходит?', s1lead: 'Выберите процедуру. Время и цену подтвердим на следующих шагах.', pickDate: 'Выбрать дату',
       s2h: 'Выберите доступную дату', s2lead: 'Свободные дни отмечены точкой. Затем выберите время.', prev: 'Предыдущий месяц', next: 'Следующий месяц', back: 'Назад', toData: 'Ваши данные',
@@ -215,7 +215,7 @@ export const T = {
       onlineBook: 'Online pieraksts', from: 'no ', sessions: 'procedūras', ctaEyebrow: 'Pieraksts', ctaH2a: 'Gatavi ', ctaH2em: 'sākt?', ctaLead: 'Izvēlies brīvu laiku online – tas ir ātri.', faq: 'BUJ', waBtn: 'WhatsApp' },
     b: {
       demo: 'Demo: dati netiek nosūtīti, laiki ir ģenerēti.',
-      eyebrow: 'Tiešsaistes pieraksts', steps: ['Datums un laiks', 'Procedūra', 'Jūsu dati'],
+      eyebrow: 'Tiešsaistes pieraksts', stepWord: 'Solis', steps: ['Datums un laiks', 'Procedūra', 'Jūsu dati'],
       dtH: 'Izvēlies datumu un laiku', dtLead: 'Izvēlies dienu, tad laiku.', pickDateFirst: 'Vispirms izvēlies datumu', toProc: 'Izvēlēties procedūru', procH: 'Kas jums der?', procLead: 'Parādītas procedūras, kas ietilpst izvēlētajā laikā.', noFit: 'brīvs tikai {n} min', chosen: 'Procedūra', removeChosen: 'Noņemt izvēli', moreFields: 'Papildus (nav obligāti)', timesFor: 'Brīvie laiki',
       s1h: 'Kas jums der?', s1lead: 'Izvēlieties procedūru. Laiku un cenu apstiprināsim nākamajos soļos.', pickDate: 'Izvēlēties datumu',
       s2h: 'Izvēlies pieejamu datumu', s2lead: 'Brīvās dienas atzīmētas ar punktu. Pēc tam izvēlieties laiku.', prev: 'Iepriekšējais mēnesis', next: 'Nākamais mēnesis', back: 'Atpakaļ', toData: 'Jūsu dati',
@@ -310,7 +310,7 @@ export const T = {
       onlineBook: 'Online booking', from: 'from ', sessions: 'sessions', ctaEyebrow: 'Booking', ctaH2a: 'Ready to ', ctaH2em: 'start?', ctaLead: 'Pick a free time online – it is quick.', faq: 'FAQ', waBtn: 'WhatsApp' },
     b: {
       demo: 'Demo: nothing is sent, times are generated.',
-      eyebrow: 'Online booking', steps: ['Date & time', 'Treatment', 'Your details'],
+      eyebrow: 'Online booking', stepWord: 'Step', steps: ['Date & time', 'Treatment', 'Your details'],
       dtH: 'Choose a date and time', dtLead: 'Pick a day, then a time.', pickDateFirst: 'Pick a date first', toProc: 'Choose a treatment', procH: 'What suits you?', procLead: 'Only treatments that fit the selected time are shown.', noFit: 'only {n} min free', chosen: 'Treatment', removeChosen: 'Clear selection', moreFields: 'More (optional)', timesFor: 'Available times',
       s1h: 'What suits you?', s1lead: 'Choose a treatment. We confirm the time and price in the next steps.', pickDate: 'Choose a date',
       s2h: 'Choose an available date', s2lead: 'Free days are marked with a dot. Then pick a time.', prev: 'Previous month', next: 'Next month', back: 'Back', toData: 'Your details',

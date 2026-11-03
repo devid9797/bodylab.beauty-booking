@@ -239,9 +239,9 @@ function bookingBlock(L, p) {
       <h2 class="bk-title">${esc(b.eyebrow)}</h2>
       <div class="bk-top">
         <div class="steps rv" style="--d:1" id="steps">
-          <button class="stp on" type="button" data-s="1"><b>1</b><span>${esc(b.steps[0])}</span></button>
-          <button class="stp" type="button" data-s="2" disabled><b>2</b><span>${esc(b.steps[1])}</span></button>
-          <button class="stp" type="button" data-s="3" disabled><b>3</b><span>${esc(b.steps[2])}</span></button>
+          <button class="stp on" type="button" data-s="1"><b>1</b><span><em>${esc(b.stepWord)} 1/3</em>${esc(b.steps[0])}</span></button>
+          <button class="stp" type="button" data-s="2" disabled><b>2</b><span><em>${esc(b.stepWord)} 2/3</em>${esc(b.steps[1])}</span></button>
+          <button class="stp" type="button" data-s="3" disabled><b>3</b><span><em>${esc(b.stepWord)} 3/3</em>${esc(b.steps[2])}</span></button>
         </div>
       </div>
 
