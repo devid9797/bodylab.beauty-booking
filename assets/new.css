@@ -1356,3 +1356,14 @@ select.cc{font:inherit;font-size:14px;font-weight:600;color:var(--accent);outlin
   .bk-title{margin-bottom:12px}
   .pane:not(#p4) h2{margin-bottom:8px}
 }
+
+/* телефон: лента процедур не наезжает на бегущую строку; кнопки карточек на одном уровне */
+@media (max-width:820px){
+  .pin{margin-top:0}
+  .pin-stick{padding:calc(var(--gap)/2) 6px 10px}
+  .win,.win.on,.win.past{grid-template-rows:auto 1fr}
+  #uslugi .win-body{grid-template-rows:auto 1fr;height:100%}
+  #uslugi .win-txt{height:100%}
+  #uslugi .win-txt .btn{margin-top:auto}
+  #uslugi .price-row{margin-bottom:6px}
+}
