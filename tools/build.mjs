@@ -41,6 +41,7 @@ const jsonLd = obj => `<script type="application/ld+json">\n${JSON.stringify(obj
 const SVC = Object.fromEntries(SERVICES.map(s => [s.id, s]));
 const HOME_ORDER = ['r-sleek', 'b-flexy', 'ems-zero', 'presoterapija'];
 
+const BRAND = { gmaps: '<svg class="brand-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M12 22s-1.9-2.1-3.5-4.6L12 13.5z"/><path fill="#FBBC04" d="M5.1 14.6C4.4 13.4 4 12.2 4 11c0-2 .8-3.800 2.100-5.100L12 11.500z"/><path fill="#4285F4" d="M6.100 5.900A7.900 7.900 0 0 1 12 3.500c2.300 0 4.300.9 5.800 2.400L12 11.500z"/><path fill="#EA4335" d="M12 3.500a7.900 7.900 0 0 1 7.900 7.900c0 1.500-.5 2.900-1.200 4.200C17.500 17.700 14 22 12 22c-.5 0-1-.4-1.400-.9L12 13.500v-2l5.800-5.600A7.900 7.900 0 0 0 12 3.500z"/><circle cx="12" cy="11.200" r="2.700" fill="#fff"/></svg>', waze: '<svg class="brand-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" stroke="#05293a" stroke-width="1.700" stroke-linejoin="round" d="M12.100 3.200c-4.400 0-7.800 3.200-7.800 7.200 0 1.200.3 2.200.8 3.200-.4 1.200-1 2-1.600 2.400 1.300.2 2.600-.1 3.500-.7 1.100.9 2.600 1.400 4.300 1.400 4.600 0 8.200-3.200 8.200-7.300 0-4-3.600-6.200-7.400-6.200z"/><circle cx="9.200" cy="10" r="1.100" fill="#05293a"/><circle cx="14.200" cy="10" r="1.100" fill="#05293a"/><path d="M9.300 12.600c1.600 1.300 3.400 1.300 5 0" fill="none" stroke="#05293a" stroke-width="1.300" stroke-linecap="round"/><circle cx="9" cy="19.400" r="1.600" fill="#fff" stroke="#05293a" stroke-width="1.300"/><circle cx="15.200" cy="19.400" r="1.600" fill="#fff" stroke="#05293a" stroke-width="1.300"/></svg>' };
 const ICON = {
   arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
@@ -458,7 +459,7 @@ function home(L) {
       <div class="pcard${hot ? ' hot' : ''} rv" style="--d:${i}"><div class="tag">${esc(c.badge)}<span class="pill">${first.minutes} ${esc(t.prices.min)}</span></div><h3>${esc(S.name[L])}</h3><div class="amt">${cur(first.price)}</div><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><a class="btn ${hot ? 'btn-light' : 'btn-ghost'}" href="#zapis" data-pick="${key}">${esc(t.prices.choose)}</a></div>`;
   };
   const priceOrder = ['b-flexy', 'r-sleek', 'ems-zero', 'presoterapija'];
-  const stat = (it, d) => `<div class="stat rv"${d ? ` style="--d:${d}"` : ''}><div class="big">${it.pre ? `<small>${esc(it.pre)}</small>` : ''}<span data-count="${it.n}">${it.n}</span>${it.post ? `<small>${esc(it.post)}</small>` : ''}</div><p>${esc(it.label)}</p></div>`;
+  const stat = (it, d) => `<div class="stat rv"${d ? ` style="--d:${d}"` : ''}><div class="big">${it.pre ? `<small${/^[^\p{L}\p{N}]+$/u.test(it.pre) ? ' class="sym"' : ''}>${esc(it.pre)}</small>` : ''}<span data-count="${it.n}">${it.n}</span>${it.post ? `<small${/^[^\p{L}\p{N}]+$/u.test(it.post) ? ' class="sym"' : ''}>${esc(it.post)}</small>` : ''}</div><p>${esc(it.label)}</p></div>`;
   const wa = txt => `${WA}?text=${encodeURIComponent(txt)}`;
   const studio = STUDIO.map((f, i) => `<figure class="sph sph${i + 1}"><img src="${p.img(f)}" alt="${esc(t.studio.alts[i] || t.studio.alts[0])}" loading="lazy"></figure>`).join('');
 
@@ -637,7 +638,7 @@ ${qz.teaser}
           <a class="btn btn-light" href="#zapis">${esc(t.bookOnline)} ${ICON.arrow}</a>
           <a class="btn btn-ghost" href="${WA}" target="_blank" rel="noopener">WhatsApp</a>
         </div>
-        <div class="cta-row rv map-row" style="--d:3"><a class="btn btn-ghost btn-sm" href="${BUSINESS.mapsUrl}" target="_blank" rel="noopener">${ICON.pin} Google Maps</a><a class="btn btn-ghost btn-sm" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">${ICON.pin} Waze</a></div>
+        <div class="cta-row rv map-row" style="--d:3"><a class="btn btn-gmaps btn-sm" href="${BUSINESS.mapsUrl}" target="_blank" rel="noopener">${BRAND.gmaps}Google Maps</a><a class="btn btn-waze btn-sm" href="https://waze.com/ul?q=Augusta%20Deglava%20iela%2066%2C%20R%C4%ABga&navigate=yes" target="_blank" rel="noopener">${BRAND.waze}Waze</a></div>
       </div>
       <div class="photos rv" style="--d:2" data-gallery="contact"><img src="${p.img('studio-1.jpg')}" alt="${esc(t.contact.imgAlt1)}" loading="lazy"><img src="${p.img('studio-2.jpg')}" alt="${esc(t.contact.imgAlt2)}" loading="lazy"></div>
     </div>
@@ -912,7 +913,7 @@ ${nav(page, alt)}
       <article class="icard rv">
         <span class="eyebrow">${ICON.pin}${esc(i.addrH)}</span>
         <p class="ip">${i.addrP}</p>
-        <div class="cta-row" style="margin-top:6px"><a class="btn btn-main btn-sm" href="${maps}" target="_blank" rel="noopener">${esc(i.maps)}</a><a class="btn btn-ghost btn-sm" href="${waze}" target="_blank" rel="noopener">${esc(i.waze)}</a></div>
+        <div class="cta-row" style="margin-top:6px"><a class="btn btn-gmaps btn-sm" href="${maps}" target="_blank" rel="noopener">${BRAND.gmaps}${esc(i.maps)}</a><a class="btn btn-waze btn-sm" href="${waze}" target="_blank" rel="noopener">${BRAND.waze}${esc(i.waze)}</a></div>
         <figure class="ifig" data-gallery="info"><img src="${p.img('building-1.jpg')}" alt="${esc(i.photoAlt[0])}" loading="lazy"></figure>
       </article>
       <article class="icard rv" style="--d:1">
