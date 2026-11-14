@@ -1368,14 +1368,12 @@ select.cc{font:inherit;font-size:14px;font-weight:600;color:var(--accent);outlin
   #uslugi .price-row{margin-bottom:6px}
 }
 
-/* ---- кнопки навигации с цветами и логотипами Google Maps / Waze ---- */
-.btn-gmaps,.btn-waze{gap:9px;font-weight:600}
-.btn-gmaps{background:#fff;color:#3C4043;box-shadow:0 0 0 1px #DADCE0}
-.btn-waze{background:#33CCFF;color:#05293A;box-shadow:0 0 0 1px #33CCFF}
-.btn-gmaps:hover{background:#F8F9FA}
-.btn-waze:hover{background:#5CD8FF}
-.brand-ic{width:20px;height:20px;flex:none}
-.btn-gmaps::before,.btn-gmaps::after,.btn-waze::before,.btn-waze::after{display:none}
+/* ---- кнопки навигации: прежние цвета, крупные официальные логотипы ---- */
+.btn-gmaps,.btn-waze{gap:12px;font-weight:600}
+.brand-ic{flex:none;display:block}
+.ic-gm{width:19px;height:27px}
+.ic-wz{width:30px;height:30px}
+.btn-gmaps.btn-sm,.btn-waze.btn-sm{--h:54px}
 
 /* цифры «студия в цифрах»: слова-подписи как раньше, знак «+» крупнее и по центру строки цифр */
 .big{display:flex;align-items:baseline;justify-content:flex-start}
